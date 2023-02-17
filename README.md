@@ -6,6 +6,12 @@ a little logo-like interpreter, very buggy, but working (working like an old ste
 its based on a tutorial http://blog.strongminds.dk/post/2012/11/30/Writing-a-small-parser-interpreter   
 an interpreter goes from top to down through the source and executes the commands.   
 - written in C# with Godot 4.0 rc1   
+- version 0.1   
+- author systemerror   
+
+
+![Pic1](firstpic.jpg)
+
 
 when you start you see the commander - a one line TextEditor. if you enter for example   
 PRINT "[hello world]    
