@@ -10,7 +10,7 @@ an interpreter goes from top to down through the source and executes the command
 - author systemerror   
 
 
-![Pic1](firstpic.jpg)
+![Pic1](/Godot3DInterpreter/firstpic.jpg)
 
 
 when you start you see the commander - a one line TextEditor. if you enter for example   
