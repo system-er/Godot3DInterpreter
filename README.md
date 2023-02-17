@@ -34,7 +34,7 @@ HOME
 CLEAN - clear the 3D-lines
 SETPENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated
 
-#Commands interpreter "language":
+# Commands interpreter "language":
 ; xxx - a comment
 "X - a string
 "[xx xx] - a string for example "[hello world]
