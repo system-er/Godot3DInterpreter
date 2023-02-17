@@ -37,21 +37,21 @@ SETPENCOLOR number number number - the numbers should be 0-255, also you can typ
 # Commands interpreter "language":   
 ; xxx - a comment   
 "X - a string   
-"[xx xx] - a string for example "[hello world]
-MAKE "variablename number - declare a variable
-PRINT string - print
-REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]
-FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]
-IF xxx ENDIF - if command
-TO procedurename xxx END - a procedure
-GO procedurename - start a procedure
+"[xx xx] - a string for example "[hello world]   
+MAKE "variablename number - declare a variable   
+PRINT string - print   
+REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
+FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
+IF xxx ENDIF - if command   
+TO procedurename xxx END - a procedure   
+GO procedurename - start a procedure   
 
 
 
 
-FAQ:
-- why an interpreter, we have gdscript and other languages?
-  for fun and learning c# with godot 4
+FAQ:   
+- why an interpreter, we have gdscript and other languages?   
+  for fun and learning c# with godot 4   
   
 
 
