@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://ulue5emor5fy"]
+
+[ext_resource type="Script" path="res://src/Godot3DInterpreter.cs" id="1_qi5wj"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_qi5wj")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4543, 7.17397, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.819146, 0.187896, -0.541937, -0.0167712, 0.952265, 0.304812, 0.57334, -0.240596, 0.783195, -42.3731, 20.7779, 65.3433)
+
+[node name="parent" type="MeshInstance3D" parent="."]
+
+[node name="Window" type="Window" parent="."]
+title = "Commander"
+position = Vector2i(100, 590)
+size = Vector2i(800, 30)
+
+[node name="TextLineEdit" type="LineEdit" parent="Window"]
+offset_top = -1.0
+offset_right = 804.0
+offset_bottom = 30.0
+caret_blink = true
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+position = Vector2i(50, 100)
+size = Vector2i(600, 400)
+ok_button_text = "Öffnen"
+file_mode = 0
+access = 2
+root_subfolder = "interpreterprograms"
+filters = PackedStringArray("*.g3i")
+
+[connection signal="text_submitted" from="Window/TextLineEdit" to="." method="_on_line_edit_text_submitted"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

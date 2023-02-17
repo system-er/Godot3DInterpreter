@@ -1,0 +1,7 @@
+; testprogram Godot3DInterpreter
+
+REPEAT 4 
+[
+    FORWARD 30
+    LEFT 90
+]

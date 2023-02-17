@@ -1,0 +1,21 @@
+; testprogram Godot3DInterpreter
+
+TO "CUBE
+    REPEAT 36
+    [
+        REPEAT 4
+        [
+            FORWARD 30
+            LEFT 90
+        ]
+        LEFT 10
+    ]
+END
+
+
+; Start Mainprogram
+SETPENCOLOR RANDOM RANDOM RANDOM
+GO "CUBE
+DOWN 10
+SETPENCOLOR RANDOM RANDOM RANDOM
+GO "CUBE
