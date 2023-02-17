@@ -43,7 +43,7 @@ SETPENCOLOR number number number - the numbers should be 0-255, also you can typ
 # Commands interpreter "language":   
 ; xxx - a comment   
 "X - a string   
-"[xx xx] - a string for example "[hello world]   
+"[xx xx] - a string with spaces, for example "[hello world]   
 MAKE "variablename number - declare a variable   
 PRINT string - print   
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
