@@ -27,7 +27,7 @@ LOAD
 and you can load one of the example-programs in the interpreterprograms-directory. You can take your editor you like and write others and load them with load.   
     
    
-# Commands 3D (you can also write lowercase):   
+# Commands 3D (lowercase allowed):   
 FORWARD number - draw a line forward   
 BACK number   
 LEFT number - change left in degrees   
@@ -40,7 +40,7 @@ HOME
 CLEAN - clear the 3D-lines   
 SETPENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated   
 
-# Commands interpreter "language":   
+# Commands interpreter "language" (lowercase allowed):   
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world]   
