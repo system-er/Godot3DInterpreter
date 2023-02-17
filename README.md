@@ -45,11 +45,11 @@ FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRI
 IF xxx ENDIF - if command   
 TO procedurename xxx END - a procedure   
 GO procedurename - start a procedure   
-
-
-
-
-FAQ:   
+   
+     
+   
+      
+# FAQ:   
 - why an interpreter, we have gdscript and other languages?   
   for fun and learning c# with godot 4   
   
