@@ -43,7 +43,7 @@ PRINT string - print
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 IF xxx ENDIF - if command   
-TO procedurename xxx END - a procedure   
+TO procedurename xxx END - a procedure !working with parameter still buggy!crash!WIP  
 GO procedurename - start a procedure   
    
      
@@ -52,6 +52,8 @@ GO procedurename - start a procedure
 # FAQ:   
 - why an interpreter, we have gdscript and other languages?   
   for fun and learning c# with godot 4   
+- i would like to tell you something
+  try email siddhartha3786-222 at yahoo dot com
   
 
 
