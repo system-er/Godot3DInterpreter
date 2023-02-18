@@ -43,7 +43,7 @@ SETPENCOLOR number number number - the numbers should be 0-255, also you can typ
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world]   
-MAKE "variablename number - declare a variable   
+MAKE "variablename number - declare a variable get the value with :variablename, exampe: MAKE "X 7    PRINT :X   
 PRINT string - print   
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
