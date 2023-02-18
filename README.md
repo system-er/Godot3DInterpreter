@@ -6,7 +6,6 @@ a little logo-like interpreter, very buggy, but working (working like an old ste
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/  
 an interpreter goes from top to down through the source and executes the commands.   
 - written in C# with Godot 4.0 rc1   
-- author systemerror   
 
 
 ![Pic1](Godot3DInterpreter/firstpic.JPG)
