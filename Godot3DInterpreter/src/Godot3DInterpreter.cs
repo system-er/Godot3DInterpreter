@@ -572,10 +572,11 @@ public class LogoParser
         mix = 0;
         miy = 0;
         miz = 0;
+        IntClass.Turtle.Translate(new Godot.Vector3(-TurtlePos.X/2, -TurtlePos.Y/2, -TurtlePos.Z));
         TurtlePos.X = 0;
         TurtlePos.Y = 0;
         TurtlePos.Z = 0;
-        IntClass.Turtle.Translate(new Godot.Vector3(TurtlePos.X, TurtlePos.Y, TurtlePos.Z));
+        
         theta = 0;
         phi = 0;
     }
