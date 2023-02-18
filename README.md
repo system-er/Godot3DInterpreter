@@ -22,7 +22,7 @@ REPEAT 4 [ FORWARD 30 LEFT 90 ]
 you get a Cube.   
 If you like to get real programs, type   
 LOAD   
-and you can load one of the example-programs in the interpreterprograms-directory. You can take your editor you like and write others and load them with load.   
+and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
     
    
 # Commands 3D (lowercase allowed):   
