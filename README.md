@@ -6,7 +6,6 @@ a little logo-like interpreter, very buggy, but working (working like an old ste
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/  
 an interpreter goes from top to down through the source and executes the commands.   
 - written in C# with Godot 4.0 rc1   
-- version 0.1   
 - author systemerror   
 
 
@@ -59,8 +58,15 @@ GO procedurename - start a procedure
 - why an interpreter, we have gdscript and other languages?   
   for fun and learning c# with godot 4   
 - i would like to tell you something
-  try email siddhartha3786-222 at yahoo dot com
+  try email siddhartha3786-222 at yahoo dot com   
   
+    
+    
+    
+    
+# changes:
+18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST   
+
 
 
 
