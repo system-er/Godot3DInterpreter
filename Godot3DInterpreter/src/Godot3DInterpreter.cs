@@ -17,7 +17,7 @@ struct LogoProc
 {
     public string name;
     public int vidx;
-    //public int voldidx;
+    public string proc;
 };
 
 
@@ -633,6 +633,20 @@ public class LogoParser
             }
         }
         ErrorMessage("Parser: getvarstring: no variable found to get value");
+        return "0";
+    }
+
+    public string getprocbody(string procedure)
+    {
+        for (int i = ListProcedures.Count - 1; i >= 0; i--)
+        {
+            //printf("varname varvalue %s %f\n", vec_logovar[i].varname.c_str(),atof(vec_logovar[i].varvalue.c_str()));
+            if (ListProcedures[i].name == procedure)
+            {
+                return ListProcedures[i].proc;
+            }
+        }
+        ErrorMessage("Parser: getprocbody: no procedure found to get body");
         return "0";
     }
     public float setvar(string s, float val)
@@ -1295,12 +1309,14 @@ public class LogoParser
 
                 case (int)Tokens.TO:
                     {
+                        int idxbegin = scanner.idx;
                         Match(nextToken);
                         //Match(TOKEN_NUMBER);
                         Match((int)Tokens.STRING);
                         //std::string stringmake = scanner.scanBuffer;
-                        LogoProc tmpfunc;
-                        tmpfunc.name = scanner.scanBuffer;
+                        LogoProc tmpproc;
+                        tmpproc.name = scanner.scanBuffer;
+                        //tmpproc.proc = "";
                         //printf("to string %s\n", scanner.scanBuffer.c_str());
                         //Match(TOKEN_NUMBER);
                         //int numberrecord = atoi(scanner.scanBuffer.c_str());
@@ -1311,8 +1327,8 @@ public class LogoParser
                         //printf("REPEAT command %i\n", numberrecord);
                         //ParseLogoSentence();
                         //int oldidx=scanner.idx;
-                        tmpfunc.vidx = scanner.idx;
-                        ListProcedures.Add(tmpfunc);
+                        tmpproc.vidx = scanner.idx;
+                        //GD.Print("raw= " + scanner.rawContents + "---idx: " + scanner.idx.ToString());
                         //for (int i = 0; i < numberrecord; i++)
                         //{
                         //scanner.idx=oldidx;
@@ -1330,18 +1346,42 @@ public class LogoParser
                         //} 
                         //printf("to END found %i\n");
                         Match((int)Tokens.END);
-                        if (TestingParser) GD.Print("Parser: " + "found sentence TO name " + tmpfunc.name);
+                        int idxend = scanner.idx;
+                        if (TestingParser) GD.Print("Parser: " + "proc= " + scanner.rawContents.Substring(idxbegin, idxend));
+                        tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend)+" ";
+                        ListProcedures.Add(tmpproc);
+                        if (TestingParser) GD.Print("Parser: " + "found sentence TO name " + tmpproc.name);
                         break;
                     }
                 case (int)Tokens.GO:
                     {
-                       
+                        if (TestingParser) GD.Print("Parser: " + "start GO");
                         //printf("start \n");
                         Match(nextToken);
                         Match((int)Tokens.STRING);
                         string procedurename = scanner.scanBuffer;
                         if (TestingParser) GD.Print("Parser: " + "found sentence GO name " + procedurename);
-                        //make
+                        if (scanner.rawContents.Count("TO \""+procedurename)>0 )
+                        {
+                            if (TestingParser) GD.Print("Parser: " + "found procedure " + procedurename);
+                        }
+                        else
+                        {
+                            if (TestingParser) GD.Print("Parser: " + "found not procedure " + procedurename);
+                            string p = getprocbody(procedurename);
+                            if (p != "0")
+                            {
+                                scanner.rawContents = scanner.rawContents.Insert(0, p);
+                                scanner.idx = procedurename.Length+4;
+                                if (TestingParser) GD.Print("scanner.rawcontents: " + scanner.rawContents);
+                                break;
+                            }
+                            else
+                            {
+                                ErrorMessage("GO procedure - no procedure with name "+procedurename+ " found.");
+                                break;
+                            }
+                        }
                         int nextt2 = scanner.NextToken();
                         string[] parameter = new string[42];
                         
