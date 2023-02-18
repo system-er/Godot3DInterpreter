@@ -514,6 +514,8 @@ public class LogoParser
         TurtlePos.X= TurtlePos.X + x;
         TurtlePos.Y= TurtlePos.Y + y;
         TurtlePos.Z= TurtlePos.Z + z;
+        IntClass.Turtle.Translate(new Godot.Vector3(x/2, y/2, z/2));
+        
 
         //TurtleMoved = true;
         if (!penup) IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor);
@@ -573,6 +575,7 @@ public class LogoParser
         TurtlePos.X = 0;
         TurtlePos.Y = 0;
         TurtlePos.Z = 0;
+        IntClass.Turtle.Translate(new Godot.Vector3(TurtlePos.X, TurtlePos.Y, TurtlePos.Z));
         theta = 0;
         phi = 0;
     }
@@ -1521,7 +1524,7 @@ public partial class Godot3DInterpreter : Node3D
 {
     private Window Win1;
 	private LineEdit Line;
-    private MeshInstance3D Turtle;
+    public MeshInstance3D Turtle;
     private MeshInstance3D ParentN;
     private MeshInstance3D LineMeshInstance;
     private string Input;
@@ -1536,6 +1539,7 @@ public partial class Godot3DInterpreter : Node3D
         Win1 = GetNode<Window>("Window");
 		Line = Win1.GetNode<LineEdit>("TextLineEdit");
         ParentN = GetNode<MeshInstance3D>("parent");
+        Turtle = GetNode<MeshInstance3D>("Turtle");
         FileDia = GetNode<FileDialog>("FileDialog");
 
         //GD.Print(Token.REPEAT);
@@ -1602,6 +1606,7 @@ public partial class Godot3DInterpreter : Node3D
         TurtlePos.X = 0;
         TurtlePos.Y = 0;
         TurtlePos.Z = 0;
+        //Turtle.Translate(new Godot.Vector3(TurtlePos.X, TurtlePos.Y, TurtlePos.Z));
         theta = 0;
         phi = 0;
  

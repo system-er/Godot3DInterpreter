@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://ulue5emor5fy"]
+[gd_scene load_steps=3 format=3 uid="uid://ulue5emor5fy"]
 
 [ext_resource type="Script" path="res://src/Godot3DInterpreter.cs" id="1_qi5wj"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_fgt4o"]
 
 [node name="Node3D" type="Node3D"]
 script = ExtResource("1_qi5wj")
@@ -33,6 +35,11 @@ file_mode = 0
 access = 2
 root_subfolder = "interpreterprograms"
 filters = PackedStringArray("*.g3i")
+
+[node name="Turtle" type="MeshInstance3D" parent="."]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+rotation_edit_mode = 1
+mesh = SubResource("SphereMesh_fgt4o")
 
 [connection signal="text_submitted" from="Window/TextLineEdit" to="." method="_on_line_edit_text_submitted"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
