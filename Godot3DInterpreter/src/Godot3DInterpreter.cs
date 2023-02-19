@@ -1535,6 +1535,10 @@ public partial class Godot3DInterpreter : Node3D
     public Godot.Vector3 CamDir;
 
 
+    public float Deg2Rad(float deg)
+    {
+        return 3.14159265358979f * deg / 180.0f;
+    }
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -1627,15 +1631,27 @@ public partial class Godot3DInterpreter : Node3D
         }
         if (Godot.Input.IsKeyPressed(Key.Up))
         {
-            CamDir -= Transform.Basis.Y;
+            CamDir += Transform.Basis.Y;
             CamDir = CamDir.Normalized();
             Cam.Translate(CamDir);
         }
         if (Godot.Input.IsKeyPressed(Key.Down))
         {
-            CamDir += Transform.Basis.Y;
+            CamDir -= Transform.Basis.Y;
             CamDir = CamDir.Normalized();
             Cam.Translate(CamDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.Left))
+        {
+            CamDir -= Transform.Basis.Y;
+            CamDir = CamDir.Normalized();
+            Cam.RotateY(Deg2Rad(3));
+        }
+        if (Godot.Input.IsKeyPressed(Key.Right))
+        {
+            CamDir -= Transform.Basis.Y;
+            CamDir = CamDir.Normalized();
+            Cam.RotateY(-Deg2Rad(3));
         }
     }
 
