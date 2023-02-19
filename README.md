@@ -38,6 +38,7 @@ HOME
 CLEAN - clear the 3D-lines   
 SETPENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated   
 
+   
 # Commands interpreter "language" (lowercase allowed):   
 ; xxx - a comment   
 "X - a string   
@@ -50,16 +51,11 @@ IF xxx ENDIF - if command
 TO procedurename xxx END - a procedure !working with parameter still buggy!crash!WIP  
 GO procedurename - start a procedure   
    
-     
-   
       
 # FAQ:   
 - why an interpreter, we have gdscript and other languages?   
   for fun and learning c# with godot 4     
   
-    
-    
-    
     
 # changes:
 18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST   
