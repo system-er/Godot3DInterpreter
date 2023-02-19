@@ -62,7 +62,3 @@ GO procedurename - start a procedure
 18.02.2023: added a meshinstance3D-sphere as turtle
 19.02.2023: added camera3d movement with WASD, ArrowUp/Down
  
-
-
-
-
