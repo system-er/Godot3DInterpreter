@@ -1530,6 +1530,10 @@ public partial class Godot3DInterpreter : Node3D
     private MeshInstance3D LineMeshInstance;
     private string Input;
     public FileDialog FileDia;
+    public Camera3D Cam;
+
+    public Godot.Vector3 CamDir;
+
 
 
     // Called when the node enters the scene tree for the first time.
@@ -1542,6 +1546,7 @@ public partial class Godot3DInterpreter : Node3D
         ParentN = GetNode<MeshInstance3D>("parent");
         Turtle = GetNode<MeshInstance3D>("Turtle");
         FileDia = GetNode<FileDialog>("FileDialog");
+        Cam = GetNode<Camera3D>("Camera3D");
 
         //GD.Print(Token.REPEAT);
         //string input = "REPEAT 4    [ FORWARD 100    LEFT 90 ] ";
@@ -1569,6 +1574,8 @@ public partial class Godot3DInterpreter : Node3D
         //GD.Print("LogoParserTest Programm: " + input);
         //var parser = new LogoParser(new LogoScanner(input));
         //parser.ParseLogoProgram();
+
+        
     }
 
 
@@ -1591,6 +1598,38 @@ public partial class Godot3DInterpreter : Node3D
         //}
 
     }
+
+    public override void _Input(InputEvent Inp)
+    {
+        if (Godot.Input.IsKeyPressed(Key.W))
+        {
+            CamDir -= Transform.Basis.Z;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.S))
+        {
+            CamDir += Transform.Basis.Z;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.A))
+        {
+            CamDir -= Transform.Basis.X;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.D))
+        {
+            CamDir += Transform.Basis.X;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
+    }
+
+    //public override void _PhysicsProcess(double delta)
+    //{
+    //}
 
 
     public void TurtleInit()
