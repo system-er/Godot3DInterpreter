@@ -1625,6 +1625,18 @@ public partial class Godot3DInterpreter : Node3D
             CamDir = CamDir.Normalized();
             Cam.Translate(CamDir);
         }
+        if (Godot.Input.IsKeyPressed(Key.Up))
+        {
+            CamDir -= Transform.Basis.Y;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.Down))
+        {
+            CamDir += Transform.Basis.Y;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
     }
 
     //public override void _PhysicsProcess(double delta)
