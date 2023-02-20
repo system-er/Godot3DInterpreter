@@ -1,0 +1,18 @@
+; snakerandom
+
+
+TO "SNAKE
+    REPEAT :N
+    [
+        LEFT RANDOM 90
+        RIGHT RANDOM 90
+        UP RANDOM 40
+        DOWN RANDOM 40
+        SETPENCOLOR RANDOM RANDOM RANDOM
+        FORWARD 5
+    ]
+END
+
+
+MAKE "N 100
+GO "SNAKE
