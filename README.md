@@ -62,5 +62,5 @@ RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for ex
 # changes:
 18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST   
 18.02.2023: added a meshinstance3D-sphere as turtle   
-19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right 
-20.02.2023: new interpretertest snake.g3i and others
+19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right    
+20.02.2023: new interpretertest snake.g3i and others    
