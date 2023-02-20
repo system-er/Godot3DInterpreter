@@ -736,7 +736,18 @@ public class LogoParser
         {
             Random rnd = new Random();
             Match((int)Tokens.RANDOM);
-            return (float)rnd.Next(255);
+            int nto = scanner.NextToken();
+            if (nto == (int)Tokens.NUMBER)
+            {
+                if (TestingParser) GD.Print("Parser: " + "numberor RANDMOM with NUMBER");
+                Match((int)Tokens.NUMBER);
+                return (float)rnd.Next(int.Parse(scanner.scanBuffer));
+            }
+            else
+            {
+                if (TestingParser) GD.Print("Parser: " + "numberor RANDMOM");
+                return (float)rnd.Next(255);
+            }
         }
         else ErrorMessage("Parser: numberor: expected number or variable");
         return 0.0f;
@@ -744,6 +755,7 @@ public class LogoParser
 
     float ParseExpr()
     {
+        if (TestingParser) GD.Print("Parser: " + "Start ParseExpr");
         float op, op1;
         op = ParseFactor();
         //printf("expr %f\n",op);
@@ -768,6 +780,7 @@ public class LogoParser
 
     float ParseFactor()
     {
+        if (TestingParser) GD.Print("Parser: " + "Start ParseFactor");
         float op, op1;
         op = ParseTerm();
         //printf("fact %f\n",op);
@@ -792,6 +805,7 @@ public class LogoParser
 
     float ParseTerm()
     {
+        if (TestingParser) GD.Print("Parser: " + "Start ParseTerm");
         float returnValue = 0;
         int nto = scanner.NextToken();
         if (nto != (int)Tokens.EOF)
@@ -805,7 +819,6 @@ public class LogoParser
             {
                 return numberor();
             }
-            
             else if (nto == (int)Tokens.RANDOM /*||
                      nto == (int)Tokens.ABS ||
                      nto == (int)Tokens.NEG ||
@@ -1340,7 +1353,7 @@ public class LogoParser
                         //ParseLogoSentence();
                         //printf("to vo while %i\n");
 
-                        while (scanner.NextToken() != (int)Tokens.END)
+                        while (scanner.NextToken() != (int)Tokens.END && scanner.NextToken() != (int)Tokens.EOF)
                         {
                             Match(scanner.NextToken());
                             //ParseLogoSentence();
@@ -1351,7 +1364,7 @@ public class LogoParser
                         //printf("to END found %i\n");
                         Match((int)Tokens.END);
                         int idxend = scanner.idx;
-                        if (TestingParser) GD.Print("Parser: " + "proc= " + scanner.rawContents.Substring(idxbegin, idxend));
+                        //if (TestingParser) GD.Print("Parser: " + "proc= " + scanner.rawContents.Substring(idxbegin, idxend));
                         tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend)+" ";
                         ListProcedures.Add(tmpproc);
                         if (TestingParser) GD.Print("Parser: " + "found sentence TO name " + tmpproc.name);
@@ -1387,6 +1400,8 @@ public class LogoParser
                             }
                         }
                         int nextt2 = scanner.NextToken();
+
+                        /*
                         string[] parameter = new string[42];
                         
                         Logovar tmpvar;
@@ -1397,12 +1412,13 @@ public class LogoParser
                         //sprintf(myString, "%f", 0);
                         //vec_logovar[i].varvalue=myString;
                         tmpvar.value = "0";
-                        Listvar.Add(tmpvar);
+                        Listvar.Add(tmpvar); //number of parameter
                         //procedurecounter=0;
                         int parametercount = 0;
                         while (nextt2 == (int)Tokens.NUMBER || nextt2 == (int)Tokens.COLON)
                         {
                             parameter[(int)getvar(procedurename + "_p_a_r_a")] = getstrorvalue();
+                            GD.Print("Parser: GO: parameter= " + parameter[nextt2]);
                             //printf("parameter %i value %i\n", pcounter, parameter[pcounter]);
                             //procedurecounter++;
                             setvar(procedurename + "_p_a_r_a", getvar(procedurename + "_p_a_r_a") + 1);
@@ -1414,14 +1430,18 @@ public class LogoParser
                             nextt2 = scanner.NextToken();
                             parametercount++;
                         }
+                        GD.Print("Parser: GO: parametercount= " + getvar(procedurename + "_p_a_r_a"));
+                      
                         //if (TestingParser) GD.Print("Parser: " + "found sentence GO parametercounter " + parametercount.ToString());
                         //printf("START %s\n", scanner.scanBuffer.c_str());
                         //std::string stringmake = scanner.scanBuffer;
                         //vec_startfunc(procedurename);
-
+                        */
                         int oldidx3 = scanner.idx;
                         int result = 0;
                         //std::string s;
+
+                        
                         for (int i = 0; i < ListProcedures.Count; i++)
                         {
                             //printf("varname varvalue %s %i\n", vec_logovar[i].varname.c_str(),vec_logovar[i].varvalue);
@@ -1429,19 +1449,19 @@ public class LogoParser
                             {
                                 scanner.idx = ListProcedures[i].vidx;
                                 int pcount2 = 0;
-                                while (scanner.NextToken() == (int)Tokens.COLON)
-                                {
-                                    Match((int)Tokens.COLON);
-                                    Logovar vec_tmpvar;
-                                    tmpvar.name = scanner.scanBuffer;
-                                    //char myString[30];
-                                    //sprintf(myString, "%f", parameter[pcount2]);
-                                    tmpvar.value = parameter[pcount2];
-                                    Listvar.Add(tmpvar);
-                                    //printf("varname %s value %i\n", scanner.scanBuffer.c_str(), parameter[pcount2]);
-                                    pcount2++;
-                                    //printf("getint %i\n", vec_getint(scanner.scanBuffer));
-                                }
+                                //while (scanner.NextToken() == (int)Tokens.COLON)
+                                //{
+                                //    Match((int)Tokens.COLON);
+                                //    Logovar vec_tmpvar;
+                                //    tmpvar.name = scanner.scanBuffer;
+                                //    //char myString[30];
+                                //    //sprintf(myString, "%f", parameter[pcount2]);
+                                //    tmpvar.value = parameter[pcount2];
+                                //    Listvar.Add(tmpvar);
+                                //    //printf("varname %s value %i\n", scanner.scanBuffer.c_str(), parameter[pcount2]);
+                                //    pcount2++;
+                                //    //printf("getint %i\n", vec_getint(scanner.scanBuffer));
+                                //}
                                 //ParseLogoProgram();
                                 //printf("idx %i\n", scanner.idx);
                                 //ParseLogoSentence();
@@ -1453,11 +1473,11 @@ public class LogoParser
                                 inprocedure = false;
                                 //Match(TOKEN_END);
                                 scanner.idx = oldidx3;
-                                for (int i2 = 0; i2 < getvar(procedurename + "_p_a_r_a"); i2++)
-                                {
+                                //for (int i2 = 0; i2 < getvar(procedurename + "_p_a_r_a"); i2++)
+                                //{
                                     //Listvar.RemoveAt(Listvar.Count);
                                     //printf("pop\n");
-                                }
+                                //}
                                 //and the counter
                                 //Listvar.RemoveAt(Listvar.Count);
 
@@ -1467,8 +1487,7 @@ public class LogoParser
                         }
                         if (result == 0) ErrorMessage("Parser: GO: no procedure found");
 
-
-                        //printf("maketest number %i\n", vec_logovar[vec_logovar.size()-1].varvalue);
+                        
                         break;
                     }
 
