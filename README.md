@@ -48,8 +48,8 @@ PRINT string - print
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 IF xxx ENDIF - if command   
-TO procedurename xxx END - a procedure (no parameter - declare variables before, see example snake). behind TO only one space!
-GO procedurename - start a procedure (no parameter)
+TO procedurename xxx END - a procedure (no parameter - declare variables before, see example snake). behind TO only one space!    
+GO procedurename - start a procedure (no parameter)    
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49
    
       
