@@ -55,6 +55,7 @@ GO procedurename - start a procedure
 # FAQ:   
 - why an interpreter, we have gdscript and other languages?   
   for fun and learning c# with godot 4     
+- want contact? try email siddhartha3786-222 at yahoo dot com    
   
     
 # changes:
