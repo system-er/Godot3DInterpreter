@@ -43,13 +43,13 @@ SETPENCOLOR number number number - the numbers should be 0-255, also you can typ
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world]   
-MAKE "variablename number - declare a variable get the value with :variablename, exampe: MAKE "X 7    PRINT :X   
+MAKE "variablename number - declare a variable get the value with :variablename, change with "X = 7, exampe: MAKE "X 7    PRINT :X   
 PRINT string - print   
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 IF xxx ENDIF - if command   
-TO procedurename xxx END - a procedure !working with parameter still buggy!crash!WIP  
-GO procedurename - start a procedure   
+TO procedurename xxx END - a procedure (no parameter - declare variables before, see example snake)
+GO procedurename - start a procedure (no parameter)
    
       
 # FAQ:   
@@ -62,4 +62,4 @@ GO procedurename - start a procedure
 18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST   
 18.02.2023: added a meshinstance3D-sphere as turtle   
 19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right 
- 
+
