@@ -2,7 +2,7 @@
 
 WIP - work in progress
 
-a little logo-like interpreter, very buggy, but working (working like an old steammachine, that rattles and steams).   
+a little lowlevel logo-like interpreter, very buggy, but working (working like an old steammachine, that rattles and steams).   
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/  
 
 - written in C# with Godot 4.0 rc1   
