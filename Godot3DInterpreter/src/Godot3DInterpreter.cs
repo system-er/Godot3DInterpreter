@@ -686,7 +686,7 @@ public class LogoParser
         else if (ntok == (int)Tokens.COLON)
         {
             Match((int)Tokens.COLON);
-            //printf("value %s",scanner.scanBuffer.c_str());
+
             return getvarstring(scanner.scanBuffer);
         }
         //else if (ntok == (int)Tokens.ITEM)
@@ -919,7 +919,7 @@ public class LogoParser
         {
             case (int)Tokens.EQUALS:
                 {
-                    //printf("nextbutone equal found\n");
+       
                     Match((int)Tokens.STRING);
                     string varname = scanner.scanBuffer;
                     Match((int)Tokens.EQUALS);
@@ -1388,7 +1388,7 @@ public class LogoParser
                                 //for (int i2 = 0; i2 < getvar(procedurename + "_p_a_r_a"); i2++)
                                 //{
                                     //Listvar.RemoveAt(Listvar.Count);
-                                    //printf("pop\n");
+                       
                                 //}
                                 //and the counter
                                 //Listvar.RemoveAt(Listvar.Count);
