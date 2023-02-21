@@ -55,7 +55,7 @@ FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRI
 IF xxx ENDIF - if command   
 TO procedurename xxx END - a procedure (no parameter - declare variables before, see example snake). behind TO only one space!    
 GO procedurename - start a procedure (no parameter)    
-RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49
+RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
 math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PRINT :X   
       
          
