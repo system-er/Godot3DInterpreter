@@ -40,8 +40,8 @@ PENDOWN
 HOME   
 CLEAN - clear the 3D-lines   
 SETPENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated 
-SPHERE number - draws a sphere (godot meshinstace3d)   
-BOX number - draws a box (godot meshinstace3d)
+SPHERE number - draws a sphere (godot meshinstance3d)   
+BOX number - draws a box (godot meshinstance3d)
 
    
 # Commands interpreter "language" (lowercase allowed):   
