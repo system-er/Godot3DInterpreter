@@ -63,6 +63,8 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
 # FAQ:   
 - why an interpreter, we have gdscript and other languages?   
   for fun and learning c# with godot 4     
+- textures on the boxes?
+  sorry, this is not minecraft
 - want contact? try email siddhartha3786-222 at yahoo dot com    
   
     
