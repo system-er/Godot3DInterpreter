@@ -5,7 +5,7 @@ WIP - work in progress
 a little lowlevel logo-like interpreter, very buggy, but working (working like an old steammachine, that rattles and steams).   
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/  
 
-- written in C# with Godot 4.0 rc1   
+- written in C# with Godot 4.0 rc2   
 
 
 ![Pic1](Godot3DInterpreter/firstpic.JPG)
@@ -71,4 +71,4 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
 18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST, added a meshinstance3D-sphere as turtle   
 19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right    
 20.02.2023: new interpretertest snake.g3i and others    
-21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-()
+21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2
