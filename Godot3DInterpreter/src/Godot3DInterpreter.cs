@@ -6,8 +6,6 @@ using System.Linq;
 using System.Numerics;
 using static Globals;
 
-
-
 public struct Logovar
 {
     public string name;
@@ -72,6 +70,8 @@ class Globals
         "IF",
         "ENDIF",
         "FOR",
+        "SPHERE",
+        "BOX",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -118,7 +118,9 @@ class Globals
         "RANDOMIZE",
         "IF",
         "ENDIF",
-        "FOR"
+        "FOR",
+        "SPHERE",
+        "BOX"
     };
     public enum Tokens : int
     {
@@ -146,26 +148,28 @@ class Globals
         IF=21,
         ENDIF=22,
         FOR=23,
-        NUMBER = 24, //from here not reserved
-        STRING = 25,
-        COMMENT = 26,
-        LBRACKET = 27,
-        RBRACKET = 28,
-        LPARENTHESIS = 29,
-        RPARENTHESIS = 30,
-        LBRACE=31,
-        RBRACE=32,
-        PLUS=33,
-        HYPHEN=34,
-        ASTERISK=35,
-        SLASH=36,
-        EQUALS=37,
-        LESS=38,
-        GREATER=39,
-        COMMA=40,
-        COLON=41,
-        ITEM=42,
-        EOF =43
+        SPHERE=24,
+        BOX=25,
+        NUMBER = 26, //from here not reserved
+        STRING = 27,
+        COMMENT = 28,
+        LBRACKET = 29,
+        RBRACKET = 30,
+        LPARENTHESIS = 31,
+        RPARENTHESIS = 32,
+        LBRACE=33,
+        RBRACE=34,
+        PLUS=35,
+        HYPHEN=36,
+        ASTERISK=37,
+        SLASH=38,
+        EQUALS=39,
+        LESS=40,
+        GREATER=41,
+        COMMA=42,
+        COLON=43,
+        ITEM=44,
+        EOF =45
     }
     public enum TokensReserved : int
     {
@@ -191,7 +195,9 @@ class Globals
         RANDOMIZE = 20,
         IF = 21,
         ENDIF = 22,
-        FOR
+        FOR = 23,
+        SPHERE = 24,
+        BOX = 25
     }
 
 }
@@ -502,7 +508,7 @@ public class LogoParser
     }
     public void TurtleForward(float dist)
     {
-        if (TestingParser) GD.Print("Parser: "+"TurtleForward");
+        //if (TestingParser) GD.Print("Parser: "+"TurtleForward");
         float x, y, z;
 
         TurtlePosOld = TurtlePos;
@@ -531,14 +537,14 @@ public class LogoParser
 
     public void TurtleLeft(float angle)
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleUp");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleUp");
         phi = phi + angle;
         if (phi < 0) phi = 360 + phi;
         if (phi > 360) phi = phi - 360;
     }
     public void TurtleRight(float angle)
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleDown");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleDown");
         phi = phi - angle;
         if (phi < 0) phi = 360 + phi;
         if (phi > 360) phi = phi - 360;
@@ -546,7 +552,7 @@ public class LogoParser
 
     public void TurtleUp(float angle)
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleLeft");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleLeft");
         theta = theta + angle;
         if (theta < 0) theta = 360 + theta;
         if (theta > 360) theta = theta - 360;
@@ -554,11 +560,24 @@ public class LogoParser
 
     public void TurtleDown(float angle)
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleRight");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
         theta = theta - angle;
         if (theta < 0) theta = 360 + theta;
         if (theta > 360) theta = theta - 360;
     }
+
+    public void Sphere(float s)
+    {
+        //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
+        IntClass.DrawSphere(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+    }
+
+    public void Box(float s)
+    {
+        //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
+        IntClass.DrawBox(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+    }
+
 
     public void TurtleHome()
     {
@@ -572,7 +591,7 @@ public class LogoParser
         mix = 0;
         miy = 0;
         miz = 0;
-        IntClass.Turtle.Translate(new Godot.Vector3(-TurtlePos.X/2, -TurtlePos.Y/2, -TurtlePos.Z));
+        IntClass.Turtle.Translate(new Godot.Vector3(-TurtlePos.X/2, -TurtlePos.Y/2, -TurtlePos.Z/2));
         TurtlePos.X = 0;
         TurtlePos.Y = 0;
         TurtlePos.Z = 0;
@@ -612,6 +631,24 @@ public class LogoParser
         IntClass.FileDia.Visible = true;
     }
 
+
+    public float mathcalc()
+    {
+        int ntok = scanner.NextToken();
+        if (ntok == (int)Tokens.RANDOM)
+        {
+            Match((int)Tokens.RANDOM);
+            //printf("in if %s\n", scanner.scanBuffer.c_str());
+            int numbertmp = (int)numberor();
+            //printf("calc value %i\n", numbertmp);
+            //vec_setvar(stringcalc,rand()%numbertmp);
+            //float numbertmp2 = rand() % numbertmp;
+            //return numbertmp2;
+        }
+        return 0.0f;
+    }
+
+ 
 
     float getvar(string s)
     {
@@ -671,7 +708,7 @@ public class LogoParser
                 return val;
             }
         }
-        ErrorMessage ("Parser: setvar: no variable found to set value");
+        ErrorMessage ("Parser: setvar: no variable found: "+s);
         return 0;
     }
 
@@ -809,12 +846,12 @@ public class LogoParser
         int nto = scanner.NextToken();
         if (nto != (int)Tokens.EOF)
         {
-            if (nto==(int)Tokens.PLUS ||nto==(int)Tokens.HYPHEN)
-            {
-            	Match(nto);
-            	return ParseExpr();
-            }
-            if (nto == (int)Tokens.NUMBER ) // || nto == (int)Tokens.VALUE)
+            //if (nto==(int)Tokens.PLUS ||nto==(int)Tokens.HYPHEN)
+            //{
+            //	Match(nto);
+            //	return ParseExpr();
+            //}
+            if (nto == (int)Tokens.NUMBER  || nto == (int)Tokens.COLON)
             {
                 return numberor();
             }
@@ -856,7 +893,7 @@ public class LogoParser
             }
             else
             {
-                ErrorMessage("math expr parser: not expected token found");
+                ErrorMessage("Parser: ParseTerm: math expr parser: not expected token found. scanner.scanBuffer "+ scanner.scanBuffer+ "   raw:"+scanner.rawContents+"   idx:"+scanner.idx.ToString());
             }
         }
         return returnValue;
@@ -891,6 +928,8 @@ public class LogoParser
                 case (int)Tokens.RANDOMIZE:
                 case (int)Tokens.IF:
                 case (int)Tokens.FOR:
+                case (int)Tokens.SPHERE:
+                case (int)Tokens.BOX:
                 case (int)Tokens.REPEAT:
                     ParseLogoSentence();
                     break;
@@ -919,7 +958,7 @@ public class LogoParser
         {
             case (int)Tokens.EQUALS:
                 {
-       
+                    if (TestingParser) GD.Print("Parser: " + "found Token EQUALS");
                     Match((int)Tokens.STRING);
                     string varname = scanner.scanBuffer;
                     Match((int)Tokens.EQUALS);
@@ -932,16 +971,17 @@ public class LogoParser
                     //}
                     //else
                     //{
-                        float result = ParseExpr();
-                        setvar(varname, result);
+
+                    float result = ParseExpr();
+                    setvar(varname, result);
                     //}
                     nextbutone = true;
 
                     break;
                 }
             default:
-                //Match(TOKEN_EOF);
-                // return;
+                //Match((int)Tokens.EOF);
+                //return;
                 break;
         }
 
@@ -1040,6 +1080,22 @@ public class LogoParser
                     n3 = numberor();
                     TurtleSetPenColor(n, n2, n3);
                     if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
+                    break;
+
+                case (int)Tokens.SPHERE:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    n = numberor();
+                    Sphere(n);
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
+                    break;
+
+                case (int)Tokens.BOX:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    n = numberor();
+                    Box(n);
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
 
                 case (int)Tokens.LOAD:
@@ -1628,6 +1684,47 @@ public partial class Godot3DInterpreter : Node3D
         me.SurfaceAddVertex(end);
         me.SurfaceEnd();
         mi.Mesh = me;
+        ParentN.AddChild(mi);
+    }
+
+    public void DrawSphere(Godot.Vector3 pos, float scale , Godot.Color c)
+    {
+        MeshInstance3D mi = new MeshInstance3D();
+        mi.Mesh = new SphereMesh();
+        StandardMaterial3D mat = new StandardMaterial3D();
+        //mat.NoDepthTest = true;
+        //mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+        //mat.VertexColorUseAsAlbedo = true;
+        //mat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
+        mat.AlbedoColor = c;
+        mat.Metallic = 0.85f;
+        mat.Roughness = 0.4f;
+        mi.MaterialOverride = mat;
+        mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
+        var newscale = new Godot.Vector3(scale, scale, scale);
+        mi.Scale = newscale;
+        mi.Translate(pos);
+        ParentN.AddChild(mi);
+    }
+
+
+    public void DrawBox(Godot.Vector3 pos, float scale, Godot.Color c)
+    {
+        MeshInstance3D mi = new MeshInstance3D();
+        mi.Mesh = new BoxMesh();
+        StandardMaterial3D mat = new StandardMaterial3D();
+        //mat.NoDepthTest = true;
+        //mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+        //mat.VertexColorUseAsAlbedo = true;
+        //mat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
+        mat.AlbedoColor = c;
+        mat.Metallic = 0.85f;
+        mat.Roughness = 0.4f;
+        mi.MaterialOverride = mat;
+        mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
+        var newscale = new Godot.Vector3(scale, scale, scale);
+        mi.Scale = newscale;
+        mi.Translate(pos);
         ParentN.AddChild(mi);
     }
 

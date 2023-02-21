@@ -20,13 +20,6 @@ config/icon="res://icon.svg"
 
 project/assembly_name="interpreter"
 
-[input]
-
-Up={
-"deadzone": 0.5,
-"events": []
-}
-
 [rendering]
 
 environment/defaults/default_clear_color=Color(0, 0, 0.356863, 1)
