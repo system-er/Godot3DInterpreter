@@ -40,7 +40,7 @@ PENDOWN
 HOME   
 CLEAN - clear the 3D-lines   
 SETPENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated 
-SPHERE number - draws a sphere (godot meshinstace3d)
+SPHERE number - draws a sphere (godot meshinstace3d)   
 BOX number - draws a box (godot meshinstace3d)
 
    
@@ -56,7 +56,7 @@ IF xxx ENDIF - if command
 TO procedurename xxx END - a procedure (no parameter - declare variables before, see example snake). behind TO only one space!    
 GO procedurename - start a procedure (no parameter)    
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49
-math with */+- behind a = example: MAKE "X 0  "X = :X + 7  PRINT :X   
+math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PRINT :X   
       
          
          
@@ -71,4 +71,4 @@ math with */+- behind a = example: MAKE "X 0  "X = :X + 7  PRINT :X
 18.02.2023: added a meshinstance3D-sphere as turtle   
 19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right    
 20.02.2023: new interpretertest snake.g3i and others    
-21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-
+21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-()
