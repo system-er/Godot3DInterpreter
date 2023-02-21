@@ -61,16 +61,14 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
          
          
 # FAQ:   
-- why an interpreter, we have gdscript and other languages?   
-  for fun and learning c# with godot 4     
+- why an interpreter, we have gdscript and other languages? for fun and learning c# with godot 4     
 - textures on the boxes?
   sorry, this is not minecraft
 - want contact? try email siddhartha3786-222 at yahoo dot com    
   
     
 # changes:
-18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST   
-18.02.2023: added a meshinstance3D-sphere as turtle   
+18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST, added a meshinstance3D-sphere as turtle   
 19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right    
 20.02.2023: new interpretertest snake.g3i and others    
 21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-()
