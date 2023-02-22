@@ -72,3 +72,5 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
     
 # last changes:
   21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2
+  22.02.2023: moved to Godot 4.0 rc3    
+  
