@@ -28,7 +28,7 @@ you get a Cube.
 If you like to get real programs, type   
 LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
     
-camera3d movement with WASD, Arrow    
+camera3D movement with WASD, Arrowkeys    
     
    
 # Commands 3D (lowercase allowed):   
