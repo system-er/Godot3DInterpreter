@@ -28,6 +28,8 @@ you get a Cube.
 If you like to get real programs, type   
 LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
     
+camera3d movement with WASD, Arrow    
+    
    
 # Commands 3D (lowercase allowed):   
 FORWARD number - draw a line forward
@@ -68,8 +70,5 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
 - want contact? try email siddhartha3786-222 at yahoo dot com    
   
     
-# changes:
-18.02.2023: now declare procedure in commander works - example type TO "TEST PRINT "TESTING END and then return. then type GO "TEST, added a meshinstance3D-sphere as turtle   
-19.02.2023: added camera3d movement with WASD, ArrowUp/Down/Left/Right    
-20.02.2023: new interpretertest snake.g3i and others    
-21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2
+# last changes:
+  21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2
