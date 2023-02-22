@@ -6,7 +6,7 @@ a little lowlevel logo-like interpreter, very buggy, but working (working like a
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i will change the variable system to stack-system with ActivationRecords, in work...
 
-- written in C# with Godot 4.0 rc2   
+- written in C# with Godot 4.0 rc3   
 
 
 ![Pic1](Godot3DInterpreter/firstpic.JPG)
