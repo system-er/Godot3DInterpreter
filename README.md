@@ -2,10 +2,9 @@
 
 WIP - work in progress
 
-a little lowlevel logo-like interpreter, very buggy, but working (working like an old steammachine, that rattles and steams).    
-dont look to the code - some parts are chaos and spaghetti...    
+a little lowlevel logo-like interpreter, very buggy, but working (working like an old steammachine, that rattles and steams). dont look to the code - some parts are chaos and spaghetti...    
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
-and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, but recursion still crashes...   
+and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter now work, but recursion does not work.    
 
 - written in C# with Godot 4.0 rc3   
 
@@ -57,7 +56,7 @@ PRINT string - print
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 IF xxx ENDIF - if command   
-TO procedurename xxx END - a procedure, parameter allowed (but recursion still crashes, seeking bugs...), example TO "PROC :A PRINT :A END    
+TO procedurename xxx END - a procedure, parameter allowed ( but recursion does not work ), example TO "PROC :A PRINT :A END    
 GO procedurename - start a procedure, parameter allowed, example GO "PROC 42     
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
 math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PRINT :X   
@@ -74,6 +73,6 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
 # last changes:
   21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2    
   22.02.2023: moved to Godot 4.0 rc3    
-  23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working, but still a bug cause recursion crashes...     
+  23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working    
   
   
