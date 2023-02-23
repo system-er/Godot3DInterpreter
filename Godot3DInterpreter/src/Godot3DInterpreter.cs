@@ -1,27 +1,103 @@
 using Godot;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using static Globals;
 
-public struct Logovar
+
+
+class ActivationRecord
 {
     public string name;
-    public string value;
+    public int type;
+    public int nestinglevel;
+    public Dictionary<string, string> members = new Dictionary<string, string>();
+
+    public ActivationRecord(string n, int t, int nl)
+    {
+        name = n;
+        type = t;
+        nestinglevel = nl;
+    }
+
+    public bool ExistItem(string key)
+    {
+        return members.ContainsKey(key);
+    }
+    public void SetItem(string key, string value)
+    {
+        if (members.ContainsKey(key))
+        {
+            members[key] = value;
+        }
+        else
+        {
+            GD.Print("new Setitem: " + key + " value: " + value);
+            members.Add(key, value);
+            GD.Print("memberscount: " + members.Count.ToString());
+            GD.Print("value:" + members[key]);
+        }
+    }
+
+    public string GetItem(string key)
+    {
+        //GD.Print("Getitem: " + key );
+        return members[key];
+    }
+
+    public int Count()
+    {
+        return (int)members.Count;
+    }
+
+    public string StrDump()
+    { 
+        string temp;
+        temp = "ActivationRecord name: "+ name + "\n"; 
+        temp = temp +"ActivationRecord type: "+ type.ToString()+ "\n"; 
+        temp = temp +"ActivationRecord nestinglevel: "+ nestinglevel.ToString()+ "\n";
+        temp = temp + "memberscount " + members.Count + "\n";
+
+        foreach (string key in members.Keys)
+        {
+            temp += key + "=" + members[key]+"\n";
+        }
+
+        return temp;
+    }
 }
-struct LogoProc
+
+struct G3IProc
 {
     public string name;
     public int vidx;
+    public int idxstart;
     public string proc;
+    public int numberparameter;
+    public List<string> formalparameter;
 };
+
 
 
 class Globals
 {
-    //public static string rawContents;
+    public static int ARTypeProgram = 1;
+    public static int ARTypeProcedure = 2;
+
+    // ActivationRecord for the mainprogram
+    public static ActivationRecord AR = new ActivationRecord(
+            "mainprogram",
+       ARTypeProgram,
+            1 //nestinglevel
+        );
+    public static Stack myStack = new Stack();
+    public static List<G3IProc> ListProcedures = new List<G3IProc>();
+    public static float[] ArgumentArray = new float[42];
 
     public static bool TestingScanner = false;
     public static bool TestingParser = true;
@@ -29,8 +105,7 @@ class Globals
     public static bool NewInput = false;
     public static string NewTextInput = "";
     public static string OldTextInput = "";
-    public static List<Logovar> Listvar = new List<Logovar>();
-    public static List<LogoProc> ListProcedures = new List<LogoProc>();
+
 
     public static int anglex, angley;
     public static float theta, phi;
@@ -72,6 +147,7 @@ class Globals
         "FOR",
         "SPHERE",
         "BOX",
+        "STOP",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -120,7 +196,8 @@ class Globals
         "ENDIF",
         "FOR",
         "SPHERE",
-        "BOX"
+        "BOX",
+        "STOP"
     };
     public enum Tokens : int
     {
@@ -150,26 +227,27 @@ class Globals
         FOR=23,
         SPHERE=24,
         BOX=25,
-        NUMBER = 26, //from here not reserved
-        STRING = 27,
-        COMMENT = 28,
-        LBRACKET = 29,
-        RBRACKET = 30,
-        LPARENTHESIS = 31,
-        RPARENTHESIS = 32,
-        LBRACE=33,
-        RBRACE=34,
-        PLUS=35,
-        HYPHEN=36,
-        ASTERISK=37,
-        SLASH=38,
-        EQUALS=39,
-        LESS=40,
-        GREATER=41,
-        COMMA=42,
-        COLON=43,
-        ITEM=44,
-        EOF =45
+        STOP=26,
+        NUMBER = 27, //from here not reserved
+        STRING = 28,
+        COMMENT = 29,
+        LBRACKET = 30,
+        RBRACKET = 31,
+        LPARENTHESIS = 32,
+        RPARENTHESIS = 33,
+        LBRACE=34,
+        RBRACE=35,
+        PLUS=36,
+        HYPHEN=37,
+        ASTERISK=38,
+        SLASH=39,
+        EQUALS=40,
+        LESS=41,
+        GREATER=42,
+        COMMA=43,
+        COLON=44,
+        ITEM=45,
+        EOF =46
     }
     public enum TokensReserved : int
     {
@@ -197,20 +275,21 @@ class Globals
         ENDIF = 22,
         FOR = 23,
         SPHERE = 24,
-        BOX = 25
+        BOX = 25,
+        STOP = 26
     }
 
 }
 
 
-public class LogoScanner
+public class G3IScanner
 {
     public string rawContents;
     public string scanBuffer;
     public int idx, lookup;
     public char ch;
 
-    public LogoScanner(string input)
+    public G3IScanner(string input)
     {
         rawContents = input;
         idx = 0;
@@ -481,15 +560,26 @@ public class LogoScanner
 }
 
 
-public class LogoParser
+public class G3IParser
 {
-    public LogoScanner scanner;
+    public G3IScanner scanner;
     public Godot3DInterpreter IntClass;
-    //public List<Logovar> Listvar = new List<Logovar>();
-    public LogoParser(LogoScanner logoScanner, Godot3DInterpreter IC)
+    //private ActivationRecord AR;
+
+    public G3IParser(G3IScanner g3iScanner, Godot3DInterpreter IC)
     {
-        scanner = logoScanner;
+        scanner = g3iScanner;
         IntClass = IC;
+   
+    }
+
+    public void VisitProcedureCall(string name)
+    {
+        AR = new ActivationRecord(
+            name,
+            ARTypeProcedure,
+            2 //nestinglevel
+        );
     }
 
     public float Deg2Rad(float deg)
@@ -652,27 +742,30 @@ public class LogoParser
 
     float getvar(string s)
     {
-        for (int i = Listvar.Count() - 1; i >= 0; i--)
+        //for (int i = Listvar.Count() - 1; i >= 0; i--)
+        //for (int i = ARProgram.Count() - 1; i >= 0; i--)
+        //{
+            //if (Listvar[i].name == s)
+        if (AR.ExistItem(s))
         {
-            if (Listvar[i].name == s)
-            {
-                return Listvar[i].value.ToFloat();
-            }
+            //return Listvar[i].value.ToFloat();
+            return AR.GetItem(s).ToFloat();
         }
+        //}
         ErrorMessage("Parser: getvar: no variable found to get value");
         return -1;
     }
 
     public string getvarstring(string s)
     {
-        for (int i = Listvar.Count - 1; i >= 0; i--)
-        {
+        //for (int i = Listvar.Count - 1; i >= 0; i--)
+        //{
          
-            if (Listvar[i].name == s)
-            {
-                return Listvar[i].value;
-            }
+        if (AR.ExistItem(s))
+        {
+            return AR.GetItem(s);
         }
+        //}
         ErrorMessage("Parser: getvarstring: no variable found to get value");
         return "0";
     }
@@ -688,28 +781,57 @@ public class LogoParser
             }
         }
         ErrorMessage("Parser: getprocbody: no procedure found to get body");
-        return "0";
+        return " ";
     }
-    public float setvar(string s, float val)
+
+    public int getprocparanr(string procedure)
     {
-        for (int i = Listvar.Count - 1; i >= 0; i--)//stack von hinten durchsuchen
+        for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-        
-            if (Listvar[i].name == s)
+
+            if (ListProcedures[i].name == procedure)
             {
-                //string myString;
-                //GD.Print(myString + val);
-                //Listvar[i].value = val.ToString();
-                Listvar.RemoveAt(i);
-                Logovar tmpvar;
-                tmpvar.name = s;
-                tmpvar.value = val.ToString();
-                Listvar.Add(tmpvar);
-                return val;
+                return ListProcedures[i].numberparameter;
             }
         }
-        ErrorMessage ("Parser: setvar: no variable found: "+s);
-        return 0;
+        ErrorMessage("Parser: getprocparanr: no procedure found to get numberparameter");
+        return -1;
+    }
+
+    public int getstartidx(string procedure)
+    {
+        for (int i = ListProcedures.Count - 1; i >= 0; i--)
+        {
+
+            if (ListProcedures[i].name == procedure)
+            {
+                return ListProcedures[i].idxstart;
+            }
+        }
+        ErrorMessage("Parser: getstartidx: no procedure found to get startidx");
+        return -1;
+    }
+
+    public void setvarproc(string procedure, int nr)
+    {
+        for (int i = ListProcedures.Count - 1; i >= 0; i--)
+        {
+
+            if (ListProcedures[i].name == procedure)
+            {
+                for (int j = 0; j < nr; j++)
+                {
+                    setvar(ListProcedures[i].formalparameter[j], ArgumentArray[j]);
+                }
+                return;
+            }
+        }
+        ErrorMessage("Parser: setvarproc: no procedure found to set");
+    }
+    public void setvar(string s, float val)
+    { 
+        AR.SetItem(s, val.ToString());
+        GD.Print( AR.StrDump());
     }
 
     public string getstrorvalue()
@@ -723,7 +845,6 @@ public class LogoParser
         else if (ntok == (int)Tokens.COLON)
         {
             Match((int)Tokens.COLON);
-
             return getvarstring(scanner.scanBuffer);
         }
         //else if (ntok == (int)Tokens.ITEM)
@@ -739,20 +860,20 @@ public class LogoParser
     {
         if (scanner.NextToken() == (int)Tokens.NUMBER)
         {
-            GD.Print("numberor - found number: " + scanner.scanBuffer);
+            //GD.Print("numberor - found number: " + scanner.scanBuffer);
             Match((int)Tokens.NUMBER);
             return float.Parse(scanner.scanBuffer);
         }
         else if (scanner.NextToken() == (int)Tokens.HYPHEN)
         {
-            GD.Print("numberor - found -number: " + scanner.scanBuffer);
+            //GD.Print("numberor - found -number: " + scanner.scanBuffer);
             Match((int)Tokens.HYPHEN);
             Match((int)Tokens.NUMBER);
             return -scanner.scanBuffer.ToFloat();
         }
         else if (scanner.NextToken() == (int)Tokens.COLON)
         {
-            GD.Print("numberor - found COLON and variable: " + scanner.scanBuffer);
+            //GD.Print("numberor - found COLON and variable: " + scanner.scanBuffer);
             Match((int)Tokens.COLON);
        
             float returnvalue;
@@ -764,7 +885,7 @@ public class LogoParser
         }
         else if (scanner.NextToken() == (int)Tokens.STRING)
         {
-            GD.Print("numberor - found string: " + scanner.scanBuffer);
+            //GD.Print("numberor - found string: " + scanner.scanBuffer);
             Match((int)Tokens.STRING);
             return ReturnASCIISum(scanner.scanBuffer);
         }
@@ -899,11 +1020,11 @@ public class LogoParser
         return returnValue;
     }
 
-    // <logo-program>  ::= <logo-sentence> { <logo-sentence> } <EOF>
-    public void ParseLogoProgram()
+
+    public void ParseG3IProgram()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseLogoProgram");
-        ParseLogoSentence();
+        if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
+        ParseG3ISentence();
         while (true)
         {
             switch (scanner.NextToken())
@@ -930,29 +1051,28 @@ public class LogoParser
                 case (int)Tokens.FOR:
                 case (int)Tokens.SPHERE:
                 case (int)Tokens.BOX:
+                case (int)Tokens.STOP:
                 case (int)Tokens.REPEAT:
-                    ParseLogoSentence();
+                    ParseG3ISentence();
                     break;
                 case (int)Tokens.COMMENT:
                     Match((int)Tokens.COMMENT);
                     break;
-
+                //case (int)Tokens.EOF:
                 default:
                     Match((int)Tokens.EOF);
+                    //myStack.Pop();
+                    //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                     return;
             }
         }
     }
 
 
-    // <logo-sentence> ::= FORWARD <integer>
-    //                   | BACK <integer>
-    //                   | LEFT <integer>
-    //                   | RIGHT <integer>
-    //                   | REPEAT <integer> [ <logo-sentence> { <logo-sentence> } ]
-    private void ParseLogoSentence()
+
+    private void ParseG3ISentence()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseLogoSentence");
+        if (TestingParser) GD.Print("Parser: " + "Start ParseG3ISentence");
         bool nextbutone = false;
         switch (scanner.NextbutoneToken())
         {
@@ -989,7 +1109,7 @@ public class LogoParser
         {
             var nextToken = scanner.NextToken();
             float n, n2, n3;
-            //if (TestingParser) GD.Print("Parser: "+"ParseLogoSentence-nextToken"+nextToken.ToString());
+            //if (TestingParser) GD.Print("Parser: "+"ParseG3ISentence-nextToken"+nextToken.ToString());
             switch (nextToken)
             {
                 case (int)Tokens.STRING:
@@ -1072,6 +1192,16 @@ public class LogoParser
                     if (TestingParser) GD.Print("Parser: " + "found sentence PENDOWN");
                     break;
 
+                case (int)Tokens.STOP:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    if (TestingParser) GD.Print("Parser: " + "found sentence STOP");
+                    AR = null;
+                    AR = (ActivationRecord)myStack.Pop();
+                    if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                    return;
+                    break;
+
                 case (int)Tokens.SETPENCOLOR:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
@@ -1116,8 +1246,8 @@ public class LogoParser
                     int numberstep = (int)numberor();
                 
                     Match((int)Tokens.LBRACKET);
-                
-                    //ParseLogoSentence();
+
+                    //ParseG3ISentence();
                     int oldidx2 = scanner.idx;
 
                     for (int i = numberstart; i < numberend + 1; i = i + numberstep)
@@ -1128,7 +1258,7 @@ public class LogoParser
                         while (scanner.NextToken() != (int)Tokens.RBRACKET)
                         {
                     
-                            ParseLogoSentence();
+                            ParseG3ISentence();
                         }
                         //Match(RBRACKET);
                     }
@@ -1162,10 +1292,10 @@ public class LogoParser
                             if (vecvaltmp < vecvaltmp2)
                             {
                                 //Match(TOKEN_LBRACKET);
-                                ParseLogoSentence();
+                                ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
                                 {
-                                    ParseLogoSentence();
+                                    ParseG3ISentence();
                                 }
                                 Match((int)Tokens.ENDIF);
                                 break;
@@ -1194,10 +1324,10 @@ public class LogoParser
                             if (vecvaltmp > vecvaltmp2)
                             {
                
-                                ParseLogoSentence();
+                                ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
                                 {
-                                    ParseLogoSentence();
+                                    ParseG3ISentence();
                                 }
                                 Match((int)Tokens.ENDIF);
                                 break;
@@ -1227,10 +1357,10 @@ public class LogoParser
                             {
                               
                                 //Match(TOKEN_LBRACKET);
-                                ParseLogoSentence();
+                                ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
                                 {
-                                    ParseLogoSentence();
+                                    ParseG3ISentence();
                                 }
                                 Match((int)Tokens.ENDIF);
                                 break;
@@ -1282,6 +1412,8 @@ public class LogoParser
                         else if (nextt == (int)Tokens.COLON)
                         {
                             Match((int)Tokens.COLON);
+                            //GD.Print(AR.StrDump());
+                            GD.Print("PRINT COLON: " + scanner.scanBuffer);
                             string stringvar = getvarstring(scanner.scanBuffer);
                  
                             GD.Print(stringvar);
@@ -1313,150 +1445,167 @@ public class LogoParser
                     }
                     else if (nextto == (int)Tokens.NUMBER)
                     {
-                        Logovar tmpvar;
-                        tmpvar.name = arrayname;
-                   
                         Match((int)Tokens.NUMBER);
-         
 
-                        tmpvar.value = scanner.scanBuffer;
-                        if (TestingParser) GD.Print("Parser: " + "found sentence MAKE+NUMBER "+ scanner.scanBuffer);
-                        Listvar.Add(tmpvar);
-                        
+                        if (TestingParser) GD.Print("Parser: " + "found sentence MAKE+NUMBER "+ arrayname+" "+scanner.scanBuffer);
+                   
+                        setvar(arrayname, scanner.scanBuffer.ToFloat());
                         break;
                     }
                     break;
 
                 case (int)Tokens.TO:
                     {
+                        if (TestingParser) GD.Print("Parser: " + "start TO");
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         int idxbegin = scanner.idx;
                         Match(nextToken);
-                        //Match(TOKEN_NUMBER);
                         Match((int)Tokens.STRING);
-                        //std::string stringmake = scanner.scanBuffer;
-                        LogoProc tmpproc;
+                        G3IProc tmpproc;
                         tmpproc.name = scanner.scanBuffer;
-                        //tmpproc.proc = "";
-                   
-                        //Match(TOKEN_NUMBER);
-                        //int numberrecord = atoi(scanner.scanBuffer.c_str());
-                   
-                        //vec_tmpvar.varvalue=numberrecord;
-                        //vec_logovar.push_back(vec_tmpvar);
-                        //Match(TOKEN_LBRACKET);
-                      
-                        //ParseLogoSentence();
-                        //int oldidx=scanner.idx;
                         tmpproc.vidx = scanner.idx;
-                        //GD.Print("raw= " + scanner.rawContents + "---idx: " + scanner.idx.ToString());
-                        //for (int i = 0; i < numberrecord; i++)
-                        //{
-                        //scanner.idx=oldidx;
-                 
-                        //ParseLogoSentence();
-                
+                        tmpproc.numberparameter = 0;
+                        tmpproc.formalparameter = new List<string>();
+                        while ((int)scanner.NextToken() == (int)Tokens.COLON)
+                        {
+                            //GD.Print("Parser: TO: found COLON "+scanner.scanBuffer);
 
+                            //while ((int)scanner.NextToken() == (int)Tokens.STRING)
+                            //{
+                            //Match((int)Tokens.STRING);
+                            if (TestingParser) GD.Print("Parser: TO: found COLON and variable: " + scanner.scanBuffer);
+                            tmpproc.numberparameter = tmpproc.numberparameter + 1;
+                            tmpproc.formalparameter.Add(scanner.scanBuffer);
+                            //}
+                            Match((int)Tokens.COLON);
+
+                            //nextt = scanner.NextToken();
+                        }
+                        if (TestingParser && tmpproc.numberparameter>0)
+                        {
+                            for (int i = 0; i < tmpproc.numberparameter; i++)
+                            {
+                                GD.Print("parameterlist " + i.ToString() + " " + tmpproc.formalparameter[i]);
+                            }
+                        }
+                        tmpproc.idxstart = scanner.idx;
+                        GD.Print("idxstart " + tmpproc.idxstart.ToString());
                         while (scanner.NextToken() != (int)Tokens.END && scanner.NextToken() != (int)Tokens.EOF)
                         {
                             Match(scanner.NextToken());
-                            //ParseLogoSentence();
+                            //ParseG3ISentence();
                         }
 
                         //Match(RBRACKET);
                         //} 
-             
+
                         Match((int)Tokens.END);
                         int idxend = scanner.idx;
                         //if (TestingParser) GD.Print("Parser: " + "proc= " + scanner.rawContents.Substring(idxbegin, idxend));
                         tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend)+" ";
                         ListProcedures.Add(tmpproc);
+                        
                         if (TestingParser) GD.Print("Parser: " + "found sentence TO name " + tmpproc.name);
+                        if (TestingParser) GD.Print("Parser: Procedure: " + getprocbody(tmpproc.name));
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+
                         break;
                     }
                 case (int)Tokens.GO:
                     {
                         if (TestingParser) GD.Print("Parser: " + "start GO");
-                 
+                        
+                        //myStack.Push(AR);
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         Match(nextToken);
                         Match((int)Tokens.STRING);
                         string procedurename = scanner.scanBuffer;
-                        if (TestingParser) GD.Print("Parser: " + "found sentence GO name " + procedurename);
-                        if (scanner.rawContents.Count("TO \""+procedurename)>0 )
+
+                        
+                        int argumentnr = 0;
+                        nextt = (int)scanner.NextToken();
+                        while (nextt == (int)Tokens.NUMBER || nextt == (int)Tokens.COLON)
                         {
-                            if (TestingParser) GD.Print("Parser: " + "found procedure " + procedurename);
+                            float erg = numberor();
+                            ArgumentArray[argumentnr] = erg;
+                            GD.Print("Parser: GO: argument "+ argumentnr.ToString()+" = "+erg);
+                            //Match(nextt);
+                            nextt = (int)scanner.NextToken();
+                            argumentnr++;
+                        }
+
+                        if (TestingParser) GD.Print("Parser: " + "found sentence GO name " + procedurename);
+                        if ( argumentnr != getprocparanr(procedurename))
+                        {
+                            ErrorMessage("Parser: GO procedure - number formalparameter to arguments not equal");
+                            break;
+                        }
+                        int oldidx3 = scanner.idx;
+
+                        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                        myStack.Push(AR);
+                        VisitProcedureCall(procedurename);
+                        setvarproc(procedurename, argumentnr);
+                        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                       
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+
+                        if (TestingParser) GD.Print("Parser: raw: "+ scanner.rawContents);
+                        
+                        string regpattern = @"\bTO\s*""";
+                        regpattern = regpattern + procedurename;
+                        if (TestingParser) GD.Print("Parser: regpattern: " +regpattern);
+                        string regresult = Regex.Match(scanner.rawContents, regpattern).ToString();
+                        if (TestingParser) GD.Print("Parser: regresult: " + regresult+ "   length: "+regresult.Length.ToString());
+                        if (TestingParser) GD.Print("regexsearch: " + Regex.Match(scanner.rawContents, regpattern).Index.ToString());
+
+
+                        if (regresult.Length > 0 )
+                        {
+                            if (TestingParser) GD.Print("Parser: " + "found procedure in raw " + procedurename);
+                            scanner.idx = Regex.Match(scanner.rawContents, regpattern).Index + regresult.Length;
                         }
                         else
                         {
-                            if (TestingParser) GD.Print("Parser: " + "found not procedure " + procedurename);
+                            if (TestingParser) GD.Print("Parser: " + "found no procedure in raw " + procedurename);
                             string p = getprocbody(procedurename);
-                            if (p != "0")
+                            if (p != " ")
                             {
                                 scanner.rawContents = scanner.rawContents.Insert(0, p);
-                                scanner.idx = procedurename.Length+4;
+                                oldidx3 = oldidx3 + p.Length;
+                                //scanner.idx = procedurename.Length+4;
+                                scanner.idx = getstartidx(procedurename);
                                 if (TestingParser) GD.Print("scanner.rawcontents: " + scanner.rawContents);
-                                break;
                             }
                             else
                             {
-                                ErrorMessage("GO procedure - no procedure with name "+procedurename+ " found.");
+                                ErrorMessage("Parser: GO procedure - no procedure with name "+procedurename+ " found.");
+                                AR = null;
+                                AR = (ActivationRecord)myStack.Pop();
                                 break;
                             }
                         }
-                        int nextt2 = scanner.NextToken();
-
-                    
-                        int oldidx3 = scanner.idx;
-                        int result = 0;
-                        //std::string s;
-
-                        
-                        for (int i = 0; i < ListProcedures.Count; i++)
-                        {
-                          
-                            if (ListProcedures[i].name == procedurename)
-                            {
-                                scanner.idx = ListProcedures[i].vidx;
-                                int pcount2 = 0;
-                                //while (scanner.NextToken() == (int)Tokens.COLON)
-                                //{
-                                //    Match((int)Tokens.COLON);
-                                //    Logovar vec_tmpvar;
-                                //    tmpvar.name = scanner.scanBuffer;
-                                //    //char myString[30];
                
-                                //    tmpvar.value = parameter[pcount2];
-                                //    Listvar.Add(tmpvar);
-                   
-                                //    pcount2++;
-                   
-                                //}
-                                //ParseLogoProgram();
-                          
-                                //ParseLogoSentence();
-                                bool inprocedure = true;
-                                while (scanner.NextToken() != (int)Tokens.END)
-                                {
-                                    ParseLogoSentence();
-                                }
-                                inprocedure = false;
-                                //Match(TOKEN_END);
-                                scanner.idx = oldidx3;
-                                //for (int i2 = 0; i2 < getvar(procedurename + "_p_a_r_a"); i2++)
-                                //{
-                                    //Listvar.RemoveAt(Listvar.Count);
-                       
-                                //}
-                                //and the counter
-                                //Listvar.RemoveAt(Listvar.Count);
+                        int pcount2 = 0;
 
-                                result = 1;
-                                break;
-                            }
+                        if (TestingParser) GD.Print("Parser: starting procedure");
+                        bool inprocedure = true;
+                        while (scanner.NextToken() != (int)Tokens.END
+                            && scanner.NextToken() != (int)Tokens.STOP 
+                            && scanner.NextToken() != (int)Tokens.EOF)
+                        {
+                            ParseG3ISentence();
                         }
-                        if (result == 0) ErrorMessage("Parser: GO: no procedure found");
-
-                        
+                        inprocedure = false;
+                        if (TestingParser) GD.Print("Parser: procedure ended");
+                        //Match(TOKEN_END);
+                        scanner.idx = oldidx3;
+                        AR = null;
+                        AR=(ActivationRecord)myStack.Pop();
+                        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+ 
                         break;
+                
                     }
 
                 case (int)Tokens.REPEAT:
@@ -1471,11 +1620,11 @@ public class LogoParser
                     {
                         scanner.idx = oldidx;
                        
-                        ParseLogoSentence();
+                        ParseG3ISentence();
               
                         while ((int)scanner.NextToken() != (int)Tokens.RBRACKET)
                         {
-                            ParseLogoSentence();
+                            ParseG3ISentence();
                         }
                         //Match(RBRACKET);
                     }
@@ -1539,16 +1688,18 @@ public partial class Godot3DInterpreter : Node3D
         FileDia = GetNode<FileDialog>("FileDialog");
         Cam = GetNode<Camera3D>("Camera3D");
 
+        Line.GrabFocus();
+        GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]");
         //GD.Print(Token.REPEAT);
         //string input = "REPEAT 4    [ FORWARD 100    LEFT 90 ] ";
 
         //DrawLine3D(new Godot.Vector3(0, 0, 0), new Godot.Vector3(10, 0, 0), 
         //    new Godot.Color(1.0f,1.0f,1.0f));
 
-        //Test LogoScanner - Success
+        //Test G3IScanner - Success
         /*
-        GD.Print("LogoScannerTest Programm: "+input);
-        var scanner = new LogoScanner(input);
+        GD.Print("G3IScannerTest Programm: "+input);
+        var scanner = new G3IScanner(input);
         var token = scanner.Scan();
         token = scanner.Scan();
         token = scanner.Scan();
@@ -1560,13 +1711,13 @@ public partial class Godot3DInterpreter : Node3D
         token = scanner.Scan();
         */
 
-        //Test LogoParser - Success
+        //Test G3IParser - Success
         //string input = "FORWARD 10   LEFT 45    UP 45   FORWARD 10 ";
-        //GD.Print("LogoParserTest Programm: " + input);
-        //var parser = new LogoParser(new LogoScanner(input));
-        //parser.ParseLogoProgram();
+        //GD.Print("G3IParserTest Programm: " + input);
+        //var parser = new G3IParser(new G3IScanner(input));
+        //parser.ParseG3IProgram();
 
-        
+
     }
 
 
@@ -1578,8 +1729,9 @@ public partial class Godot3DInterpreter : Node3D
             NewInput = false;
             GD.Print("New Line Input");
 
-            var parser = new LogoParser(new LogoScanner(NewTextInput), this);
-            parser.ParseLogoProgram();
+            var parser = new G3IParser(new G3IScanner(NewTextInput), this);
+            parser.ParseG3IProgram();
+            Line.GrabFocus();
         }
 
         //if (Input.IsActionPressed("Up"))
@@ -1755,8 +1907,10 @@ public partial class Godot3DInterpreter : Node3D
         FileDia.Visible = false;
 
         string textoffile = System.IO.File.ReadAllText(file);
-        GD.Print(textoffile);
+        //GD.Print(textoffile);
         //rawContents = "";
+        textoffile = textoffile.Replace(System.Environment.NewLine, " \n ");
+        GD.Print(textoffile);
         NewTextInput = textoffile;
         NewInput = true;
     }
