@@ -57,8 +57,8 @@ PRINT string - print
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 IF xxx ENDIF - if command   
-TO procedurename xxx END - a procedure, parameter allowed (but recursion still crashes, seeking bugs...), example TO "PROC :A PRINT :A END
-GO procedurename - start a procedure, parameter allowed, example GO "PROC 42
+TO procedurename xxx END - a procedure, parameter allowed (but recursion still crashes, seeking bugs...), example TO "PROC :A PRINT :A END    
+GO procedurename - start a procedure, parameter allowed, example GO "PROC 42     
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
 math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PRINT :X   
       
