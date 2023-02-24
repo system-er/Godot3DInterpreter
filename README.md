@@ -40,7 +40,7 @@ UP number (cause we are in 3D)
 DOWN number (cause we are in 3D)   
 PENUP    
 PENDOWN
-PENSIZE number - normal is 1
+PENSIZE number - thickness of 3d lines, normal is 1. now the lines are thin boxes MeshInstance3D.    
 HOME   
 CLEAN - clear the 3D-lines   
 PENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated    
@@ -75,7 +75,7 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
   21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2    
   22.02.2023: moved to Godot 4.0 rc3    
   23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working    
-  24.02.2023: added command PENSIZE, now the lines are thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR    
+  24.02.2023: added command PENSIZE for 3d lines, they are now thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR    
   
   
   
