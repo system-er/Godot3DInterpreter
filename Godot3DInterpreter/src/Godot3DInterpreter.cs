@@ -112,7 +112,7 @@ class Globals
     public static Godot.Vector3 TurtlePos, TurtlePosOld;
     public static int mix, miy, miz;
     public static bool penup;
-    public static int pensize;
+    public static float thickness;
     public static Godot.Color pencolor;
     public static int pendensity = 255;
     public static bool turtlevisible = true;
@@ -133,7 +133,7 @@ class Globals
         "CLEAN",
         "PENUP",
         "PENDOWN",
-        "SETPENCOLOR",
+        "PENCOLOR",
         "MAKE",
         "LOAD",
         "PRINT",
@@ -148,6 +148,7 @@ class Globals
         "SPHERE",
         "BOX",
         "STOP",
+        "PENSIZE",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -183,7 +184,7 @@ class Globals
         "CLEAN",
         "PENUP",
         "PENDOWN",
-        "SETPENCOLOR",
+        "PENCOLOR",
         "MAKE",
         "LOAD",
         "PRINT",
@@ -197,7 +198,8 @@ class Globals
         "FOR",
         "SPHERE",
         "BOX",
-        "STOP"
+        "STOP",
+        "PENSIZE"
     };
     public enum Tokens : int
     {
@@ -213,7 +215,7 @@ class Globals
         CLEAN=9,
         PENUP=10,
         PENDOWN=11,
-        SETPENCOLOR=12,
+        PENCOLOR=12,
         MAKE=13,
         LOAD=14,
         PRINT=15,
@@ -228,26 +230,27 @@ class Globals
         SPHERE=24,
         BOX=25,
         STOP=26,
-        NUMBER = 27, //from here not reserved
-        STRING = 28,
-        COMMENT = 29,
-        LBRACKET = 30,
-        RBRACKET = 31,
-        LPARENTHESIS = 32,
-        RPARENTHESIS = 33,
-        LBRACE=34,
-        RBRACE=35,
-        PLUS=36,
-        HYPHEN=37,
-        ASTERISK=38,
-        SLASH=39,
-        EQUALS=40,
-        LESS=41,
-        GREATER=42,
-        COMMA=43,
-        COLON=44,
-        ITEM=45,
-        EOF =46
+        PENSIZE=27,
+        NUMBER = 28, //from here not reserved
+        STRING = 29,
+        COMMENT = 30,
+        LBRACKET = 31,
+        RBRACKET = 32,
+        LPARENTHESIS = 33,
+        RPARENTHESIS = 34,
+        LBRACE=35,
+        RBRACE=36,
+        PLUS=37,
+        HYPHEN=38,
+        ASTERISK=39,
+        SLASH=40,
+        EQUALS=41,
+        LESS=42,
+        GREATER=43,
+        COMMA=44,
+        COLON=45,
+        ITEM=46,
+        EOF =47
     }
     public enum TokensReserved : int
     {
@@ -262,7 +265,7 @@ class Globals
         CLEAN=9,
         PENUP = 10,
         PENDOWN = 11,
-        SETPENCOLOR = 12,
+        PENCOLOR = 12,
         MAKE = 13,
         LOAD = 14,
         PRINT = 15,
@@ -276,7 +279,8 @@ class Globals
         FOR = 23,
         SPHERE = 24,
         BOX = 25,
-        STOP = 26
+        STOP = 26,
+        PENSIZE = 27
     }
 
 }
@@ -614,7 +618,7 @@ public class G3IParser
         
 
         //TurtleMoved = true;
-        if (!penup) IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor);
+        if (!penup) IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
 
     }
 
@@ -673,9 +677,9 @@ public class G3IParser
     {
         if (TestingParser) GD.Print("Parser: " + "TurtleHome");
         penup = false;
-        pensize = 1;
+        //thickness = 1.0;
         pencolor = new Godot.Color(1.0f, 1.0f, 1.0f);
-        pendensity = 255;
+        //pendensity = 255;
         anglex = 0;
         angley = 0;
         mix = 0;
@@ -896,13 +900,13 @@ public class G3IParser
             int nto = scanner.NextToken();
             if (nto == (int)Tokens.NUMBER)
             {
-                if (TestingParser) GD.Print("Parser: " + "numberor RANDMOM with NUMBER");
+                if (TestingParser) GD.Print("Parser: " + "numberor RANDOM with NUMBER");
                 Match((int)Tokens.NUMBER);
                 return (float)rnd.Next(int.Parse(scanner.scanBuffer));
             }
             else
             {
-                if (TestingParser) GD.Print("Parser: " + "numberor RANDMOM");
+                if (TestingParser) GD.Print("Parser: " + "numberor RANDOM");
                 return (float)rnd.Next(255);
             }
         }
@@ -1040,7 +1044,7 @@ public class G3IParser
                 case (int)Tokens.CLEAN:
                 case (int)Tokens.PENUP:
                 case (int)Tokens.PENDOWN:
-                case (int)Tokens.SETPENCOLOR:
+                case (int)Tokens.PENCOLOR:
                 case (int)Tokens.MAKE:
                 case (int)Tokens.LOAD:
                 case (int)Tokens.PRINT:
@@ -1052,6 +1056,7 @@ public class G3IParser
                 case (int)Tokens.SPHERE:
                 case (int)Tokens.BOX:
                 case (int)Tokens.STOP:
+                case (int)Tokens.PENSIZE:
                 case (int)Tokens.REPEAT:
                     ParseG3ISentence();
                     break;
@@ -1164,6 +1169,14 @@ public class G3IParser
                     //if (TestingParser) GD.Print("Parser: " + "found sentence DOWN+Number");
                     break;
 
+                case (int)Tokens.PENSIZE:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    thickness = numberor();
+                    
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence DOWN+Number");
+                    break;
+
                 case (int)Tokens.HOME:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
@@ -1202,7 +1215,7 @@ public class G3IParser
                     return;
                     break;
 
-                case (int)Tokens.SETPENCOLOR:
+                case (int)Tokens.PENCOLOR:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
                     n = numberor();
@@ -1802,9 +1815,9 @@ public partial class Godot3DInterpreter : Node3D
     public void TurtleInit()
     {
         penup = false;
-        pensize = 1;
+        thickness = 1.0f;
         pencolor = new Godot.Color(1.0f, 1.0f, 1.0f);
-        pendensity = 255;
+        //pendensity = 255;
         anglex = 0;
         angley = 0;
         mix = 0;
@@ -1819,11 +1832,13 @@ public partial class Godot3DInterpreter : Node3D
  
     }
 
-    public void DrawLine3D(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c)
+    public void DrawLine3D(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c, float thickness)
     {
+        /*
         MeshInstance3D mi = new MeshInstance3D();
         ImmediateMesh me = new ImmediateMesh();
         StandardMaterial3D mat = new StandardMaterial3D();
+        mat.Grow = true;
         mat.NoDepthTest= true;
         mat.ShadingMode=BaseMaterial3D.ShadingModeEnum.Unshaded;
         mat.VertexColorUseAsAlbedo= true;
@@ -1836,6 +1851,29 @@ public partial class Godot3DInterpreter : Node3D
         me.SurfaceAddVertex(end);
         me.SurfaceEnd();
         mi.Mesh = me;
+        ParentN.AddChild(mi);
+        */
+        MeshInstance3D mi = new MeshInstance3D();
+        mi.Mesh = new BoxMesh();
+        StandardMaterial3D mat = new StandardMaterial3D();
+        mat.NoDepthTest = true;
+        mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+        //mat.VertexColorUseAsAlbedo = true;
+        //mat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
+        mat.AlbedoColor = c;
+        //mat.Metallic = 0.85f;
+        //mat.Roughness = 0.4f;
+        mi.MaterialOverride = mat;
+        mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
+        //var newscale = new Godot.Vector3(scale, scale, scale);
+        var newscale = new Godot.Vector3(0.3f * thickness, 0.3f * thickness, begin.DistanceTo(end));
+        mi.Scale = newscale;
+        end.X = end.X + 1.0f;
+        mi.LookAtFromPosition((begin + end) / 2, end, Godot.Vector3.Up);
+        //mi.Translate((begin+end)/2);
+        
+
+        //mi.Translate(begin);
         ParentN.AddChild(mi);
     }
 
