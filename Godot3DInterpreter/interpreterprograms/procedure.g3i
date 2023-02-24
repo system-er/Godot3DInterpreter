@@ -1,14 +1,14 @@
 ; testprogram Godot3DInterpreter
 
-TO "CUBE
-    REPEAT 36
+TO "CUBE :N :ANGLE
+    REPEAT :N
     [
         REPEAT 4
         [
             FORWARD 30
             LEFT 90
         ]
-        LEFT 10
+        LEFT :ANGLE
     ]
 END
 
@@ -16,7 +16,7 @@ END
 ; Start Mainprogram
 PENSIZE 3
 PENCOLOR 0 0 255
-GO "CUBE
+GO "CUBE 36 10
 DOWN 10
 PENCOLOR 0 RANDOM RANDOM
-GO "CUBE
+GO "CUBE 36 10
