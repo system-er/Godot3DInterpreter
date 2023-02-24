@@ -39,10 +39,11 @@ RIGHT number
 UP number (cause we are in 3D)   
 DOWN number (cause we are in 3D)   
 PENUP    
-PENDOWN   
+PENDOWN
+PENSIZE number - normal is 1
 HOME   
 CLEAN - clear the 3D-lines   
-SETPENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated    
+PENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated    
 SPHERE number - draws a sphere (godot MeshInstance3D)   
 BOX number - draws a box (godot MeshInstance3D)
 
@@ -74,5 +75,7 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
   21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2    
   22.02.2023: moved to Godot 4.0 rc3    
   23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working    
+  24.02.2023: added command PENSIZE, now the lines are thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR    
+  
   
   
