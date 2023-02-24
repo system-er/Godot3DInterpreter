@@ -2,7 +2,7 @@
 
 WIP - work in progress
 
-a little lowlevel logo-like interpreter, very buggy, but working (working like an old steammachine, that rattles and steams). dont look to the code - some parts are chaos and spaghetti...    
+a little lowlevel logo-like interpreter, working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos, spaghetti and bugs         
 its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter now work, but recursion does not work.    
 
