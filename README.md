@@ -12,7 +12,7 @@ example interpreterprogram procedure with PENSIZE 3:
 ![Pic1](Godot3DInterpreter/firstpic.JPG)
 
    
-example interpreterprogram sheres:    
+example interpreterprogram spheres:    
 ![Pic2](Godot3DInterpreter/spheres.JPG)
 
     
