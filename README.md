@@ -32,7 +32,7 @@ LOAD and you can load one of the example-programs in the interpreterprograms-dir
    
 # Commands 3D (lowercase allowed):   
 camera3D movement with Keys WASD, Arrowkeys   
-FORWARD number - draw a line forward
+FORWARD number - draw a line forward    
 BACK number   
 LEFT number - change left in degrees   
 RIGHT number   
