@@ -8,11 +8,11 @@ and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the var
 
 - written in C# with Godot 4.0 rc3   
 
-example interpreterprogram procedure with PENSIZE 3:
+example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/firstpic.JPG)
 
    
-example interpreterprogram sheres:
+example interpreterprogram sheres:    
 ![Pic2](Godot3DInterpreter/spheres.JPG)
 
     
