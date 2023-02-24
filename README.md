@@ -70,10 +70,10 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
   
     
 # last changes:
-  21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 rc2    
-  22.02.2023: moved to Godot 4.0 rc3    
+  21.02.2023: new commands SPHERE and BOX, new example spheres.g3i, now mathematic behind = working with */+-(), moved to Godot 4.0 RC2    
+  22.02.2023: moved to Godot 4.0 RC3    
   23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working    
-  24.02.2023: added command PENSIZE for 3d lines, they are now thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR    
+  24.02.2023: added command PENSIZE for 3d lines, they are now thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR. moved to Godot 4.0 RC4    
   
   
   
