@@ -1868,7 +1868,7 @@ public partial class Godot3DInterpreter : Node3D
         //var newscale = new Godot.Vector3(scale, scale, scale);
         var newscale = new Godot.Vector3(0.3f * thickness, 0.3f * thickness, begin.DistanceTo(end));
         mi.Scale = newscale;
-        end.X = end.X + 1.0f;
+        end.X = end.X + 0.1f;
         mi.LookAtFromPosition((begin + end) / 2, end, Godot.Vector3.Up);
         //mi.Translate((begin+end)/2);
         
