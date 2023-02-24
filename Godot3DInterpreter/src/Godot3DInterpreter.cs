@@ -788,6 +788,20 @@ public class G3IParser
         return " ";
     }
 
+    public int getidx(string procedure)
+    {
+        for (int i = ListProcedures.Count - 1; i >= 0; i--)
+        {
+
+            if (ListProcedures[i].name == procedure)
+            {
+                return ListProcedures[i].idxstart;
+            }
+        }
+        ErrorMessage("Parser: getidx: no procedure found to get idx");
+        return -1;
+    }
+
     public int getprocparanr(string procedure)
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
@@ -1560,7 +1574,7 @@ public class G3IParser
                         VisitProcedureCall(procedurename);
                         setvarproc(procedurename, argumentnr);
                         if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-                       
+                          
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
 
                         if (TestingParser) GD.Print("Parser: raw: "+ scanner.rawContents);
@@ -1576,7 +1590,8 @@ public class G3IParser
                         if (regresult.Length > 0 )
                         {
                             if (TestingParser) GD.Print("Parser: " + "found procedure in raw " + procedurename);
-                            scanner.idx = Regex.Match(scanner.rawContents, regpattern).Index + regresult.Length;
+                            //scanner.idx = Regex.Match(scanner.rawContents, regpattern).Index + regresult.Length;
+                            scanner.idx = getidx(procedurename);
                         }
                         else
                         {
@@ -1834,7 +1849,7 @@ public partial class Godot3DInterpreter : Node3D
 
     public void DrawLine3D(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c, float thickness)
     {
-        /*
+        /* old code for "normal" thin 3d lines:
         MeshInstance3D mi = new MeshInstance3D();
         ImmediateMesh me = new ImmediateMesh();
         StandardMaterial3D mat = new StandardMaterial3D();
@@ -1868,12 +1883,8 @@ public partial class Godot3DInterpreter : Node3D
         //var newscale = new Godot.Vector3(scale, scale, scale);
         var newscale = new Godot.Vector3(0.3f * thickness, 0.3f * thickness, begin.DistanceTo(end));
         mi.Scale = newscale;
-        end.X = end.X + 0.1f;
+        end.X = end.X + 0.1f; //workaround error from LookAtFromPosition
         mi.LookAtFromPosition((begin + end) / 2, end, Godot.Vector3.Up);
-        //mi.Translate((begin+end)/2);
-        
-
-        //mi.Translate(begin);
         ParentN.AddChild(mi);
     }
 
