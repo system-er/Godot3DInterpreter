@@ -14,6 +14,11 @@ example interpreterprogram procedure with PENSIZE 3:
    
 example interpreterprogram spheres:    
 ![Pic2](Godot3DInterpreter/spheres.JPG)
+    
+     
+example interpreterprogram recursiontest:    
+![Pic3](Godot3DInterpreter/recursiontest.JPG)
+
 
     
 when you start you see the commander - a one line TextEditor. if you enter for example   
