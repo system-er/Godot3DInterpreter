@@ -74,6 +74,6 @@ math with */+- and parenthesis () behind a = example: MAKE "X 0  "X = :X + 7  PR
   22.02.2023: moved to Godot 4.0 RC3    
   23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working    
   24.02.2023: added command PENSIZE for 3d lines, they are now thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR. moved to Godot 4.0 RC4    
-  
+  25.02.2023: moved to Godot 4.0 RC5    
   
   
