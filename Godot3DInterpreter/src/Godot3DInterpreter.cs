@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
@@ -15,30 +16,32 @@ class ActivationRecord
 {
     public string name;
     public int type;
-    public int nestinglevel;
+    public int recursionlevel;
+    public int idx;
     public Dictionary<string, string> members = new Dictionary<string, string>();
 
-    public ActivationRecord(string n, int t, int nl)
+    public ActivationRecord(string n, int t, int nl, int i)
     {
         name = n;
         type = t;
-        nestinglevel = nl;
+        recursionlevel = nl;
+        idx = i;
     }
 
     public bool ExistItem(string key)
     {
         return members.ContainsKey(key);
     }
-    public void SetItem(string key, string value)
+    public void SetItem(string key, float value)
     {
         if (members.ContainsKey(key))
         {
-            members[key] = value;
+            members[key] = value.ToString();
         }
         else
         {
             GD.Print("new Setitem: " + key + " value: " + value);
-            members.Add(key, value);
+            members.Add(key, value.ToString());
             GD.Print("memberscount: " + members.Count.ToString());
             GD.Print("value:" + members[key]);
         }
@@ -60,7 +63,7 @@ class ActivationRecord
         string temp;
         temp = "ActivationRecord name: "+ name + "\n"; 
         temp = temp +"ActivationRecord type: "+ type.ToString()+ "\n"; 
-        temp = temp +"ActivationRecord nestinglevel: "+ nestinglevel.ToString()+ "\n";
+        temp = temp +"ActivationRecord recursionlevel: "+ recursionlevel.ToString()+ "\n";
         temp = temp + "memberscount " + members.Count + "\n";
 
         foreach (string key in members.Keys)
@@ -93,12 +96,14 @@ class Globals
     public static ActivationRecord AR = new ActivationRecord(
             "mainprogram",
        ARTypeProgram,
-            1 //nestinglevel
+            1, //recursionlevel
+            0 //idx
         );
     public static Stack myStack = new Stack();
     public static List<G3IProc> ListProcedures = new List<G3IProc>();
+    public static int recursionlevelnow = 1;
     public static float[] ArgumentArray = new float[42];
-
+    public static bool stoprecursion = false;
     public static bool TestingScanner = false;
     public static bool TestingParser = true;
     //public static bool TurtleMoved = false;
@@ -116,7 +121,6 @@ class Globals
     public static Godot.Color pencolor;
     public static int pendensity = 255;
     public static bool turtlevisible = true;
-    public static string tokenString;
     public static string SelectedFile;
 
 
@@ -468,7 +472,7 @@ public class G3IScanner
                 while (idx < rawContents.Length)
                 {
                     ch = rawContents[idx];
-                    if (char.IsDigit(ch))
+                    if (char.IsDigit(ch) || ch == '.')
                     {
                         scanBuffer += ch;
                         idx++;
@@ -577,13 +581,43 @@ public class G3IParser
    
     }
 
-    public void VisitProcedureCall(string name)
+    public void VisitProcedureCall(string name, int i)
     {
+        if (TestingParser) GD.Print("Parser: " + "VisitProcedureCall: recursionlevelnow= " + recursionlevelnow);
+        recursionlevelnow++;
+        //name = name + "_"+ recursionlevelnow.ToString();
+        AR.idx = i;
+        //name = name + "_idx";
+        //setvar(AR.name + "_idx", (float)i);
+        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        //if (TestingParser) GD.Print("idx=" + i.ToString() + "   raw idx=" + scanner.rawContents.Substring(i));
+        myStack.Push(AR);
+
         AR = new ActivationRecord(
             name,
             ARTypeProcedure,
-            2 //nestinglevel
+            recursionlevelnow, //recursionlevel
+            0
         );
+    }
+
+    public int LeaveProcedure()
+    {
+        if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: recursionlevelnow= " + recursionlevelnow);
+        recursionlevelnow--;
+        AR = null;
+        AR = (ActivationRecord)myStack.Pop();
+        //while(AR.name != "mainprogram")
+        //{
+        //    AR = null;
+        //    AR = (ActivationRecord)myStack.Pop();
+        //}
+        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        //int idx = (int)getvar(AR.name + "_idx");
+        int idx = AR.idx;
+        //if (TestingParser) GD.Print("idx=" + idx.ToString()+ "   raw idx=" + scanner.rawContents.Substring(idx));
+
+        return idx;
     }
 
     public float Deg2Rad(float deg)
@@ -625,7 +659,7 @@ public class G3IParser
 
     public void TurtleBack(float dist)
     {
-        if (TestingParser) GD.Print("Parser: "+"TurtleBack");
+        //if (TestingParser) GD.Print("Parser: "+"TurtleBack");
         TurtleForward(-dist);
     }
 
@@ -675,7 +709,7 @@ public class G3IParser
 
     public void TurtleHome()
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleHome");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleHome");
         penup = false;
         //thickness = 1.0;
         pencolor = new Godot.Color(1.0f, 1.0f, 1.0f);
@@ -696,32 +730,32 @@ public class G3IParser
 
     public void TurtleClean()
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleClean");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleClean");
         IntClass.Remove3D();
         
     }
 
     public void TurtlePenUp()
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtlePenUp");
+        //if (TestingParser) GD.Print("Parser: " + "TurtlePenUp");
         penup = true; 
     }
 
     public void TurtlePenDown()
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtlePenDown");
+        //if (TestingParser) GD.Print("Parser: " + "TurtlePenDown");
         penup = false;
     }
 
     public void TurtleSetPenColor(float c1, float c2, float c3)
     {
-        if (TestingParser) GD.Print("Parser: " + "TurtleSetPenColor");
+        //if (TestingParser) GD.Print("Parser: " + "TurtleSetPenColor");
         pencolor = new Godot.Color(c1/255, c2/255, c3/255);
     }
 
     public void LoadProgram()
     {
-        if (TestingParser) GD.Print("Parser: " + "LoadProgram");
+        //if (TestingParser) GD.Print("Parser: " + "LoadProgram");
         IntClass.FileDia.Visible = true;
     }
 
@@ -832,6 +866,7 @@ public class G3IParser
 
     public void setvarproc(string procedure, int nr)
     {
+        procedure= procedure.ToString();
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
 
@@ -847,9 +882,11 @@ public class G3IParser
         ErrorMessage("Parser: setvarproc: no procedure found to set");
     }
     public void setvar(string s, float val)
+    //public void setvar(string s, string val)
     { 
-        AR.SetItem(s, val.ToString());
-        GD.Print( AR.StrDump());
+        //AR.SetItem(s, val.ToString());
+        AR.SetItem(s, val);
+        //GD.Print( AR.StrDump());
     }
 
     public string getstrorvalue()
@@ -880,7 +917,8 @@ public class G3IParser
         {
             //GD.Print("numberor - found number: " + scanner.scanBuffer);
             Match((int)Tokens.NUMBER);
-            return float.Parse(scanner.scanBuffer);
+            GD.Print("scanbuffer:" + scanner.scanBuffer);
+            return float.Parse(scanner.scanBuffer, CultureInfo.InvariantCulture);
         }
         else if (scanner.NextToken() == (int)Tokens.HYPHEN)
         {
@@ -914,13 +952,13 @@ public class G3IParser
             int nto = scanner.NextToken();
             if (nto == (int)Tokens.NUMBER)
             {
-                if (TestingParser) GD.Print("Parser: " + "numberor RANDOM with NUMBER");
+                //if (TestingParser) GD.Print("Parser: " + "numberor RANDOM with NUMBER");
                 Match((int)Tokens.NUMBER);
                 return (float)rnd.Next(int.Parse(scanner.scanBuffer));
             }
             else
             {
-                if (TestingParser) GD.Print("Parser: " + "numberor RANDOM");
+                //if (TestingParser) GD.Print("Parser: " + "numberor RANDOM");
                 return (float)rnd.Next(255);
             }
         }
@@ -930,7 +968,7 @@ public class G3IParser
 
     float ParseExpr()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseExpr");
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseExpr");
         float op, op1;
         op = ParseFactor();
       
@@ -955,7 +993,7 @@ public class G3IParser
 
     float ParseFactor()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseFactor");
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseFactor");
         float op, op1;
         op = ParseTerm();
        
@@ -980,7 +1018,7 @@ public class G3IParser
 
     float ParseTerm()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseTerm");
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseTerm");
         float returnValue = 0;
         int nto = scanner.NextToken();
         if (nto != (int)Tokens.EOF)
@@ -1041,7 +1079,7 @@ public class G3IParser
 
     public void ParseG3IProgram()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
         ParseG3ISentence();
         while (true)
         {
@@ -1074,10 +1112,16 @@ public class G3IParser
                 case (int)Tokens.REPEAT:
                     ParseG3ISentence();
                     break;
+
                 case (int)Tokens.COMMENT:
                     Match((int)Tokens.COMMENT);
                     break;
-                //case (int)Tokens.EOF:
+
+                case (int)Tokens.END:
+                    Match((int)Tokens.END);
+                    stoprecursion = true;
+                    break;
+                case (int)Tokens.EOF:
                 default:
                     Match((int)Tokens.EOF);
                     //myStack.Pop();
@@ -1091,7 +1135,7 @@ public class G3IParser
 
     private void ParseG3ISentence()
     {
-        if (TestingParser) GD.Print("Parser: " + "Start ParseG3ISentence");
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseG3ISentence");
         bool nextbutone = false;
         switch (scanner.NextbutoneToken())
         {
@@ -1218,17 +1262,14 @@ public class G3IParser
                     TurtlePenDown();
                     if (TestingParser) GD.Print("Parser: " + "found sentence PENDOWN");
                     break;
-
+                
                 case (int)Tokens.STOP:
+                case (int)Tokens.END:
                     Match(nextToken);
-                    //if (!Match((int)Tokens.NUMBER))break;
+                    stoprecursion = true;
                     if (TestingParser) GD.Print("Parser: " + "found sentence STOP");
-                    AR = null;
-                    AR = (ActivationRecord)myStack.Pop();
-                    if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-                    return;
                     break;
-
+                
                 case (int)Tokens.PENCOLOR:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
@@ -1236,7 +1277,7 @@ public class G3IParser
                     n2 = numberor();
                     n3 = numberor();
                     TurtleSetPenColor(n, n2, n3);
-                    if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
 
                 case (int)Tokens.SPHERE:
@@ -1463,7 +1504,6 @@ public class G3IParser
                     Match(nextToken);
                     Match((int)Tokens.STRING);
                     string arrayname = scanner.scanBuffer;
-                    string varvalascii;
                
                     int nextto = scanner.NextToken();
                     if (nextto == (int)Tokens.LBRACE)//array
@@ -1475,8 +1515,11 @@ public class G3IParser
                         Match((int)Tokens.NUMBER);
 
                         if (TestingParser) GD.Print("Parser: " + "found sentence MAKE+NUMBER "+ arrayname+" "+scanner.scanBuffer);
-                   
-                        setvar(arrayname, scanner.scanBuffer.ToFloat());
+                        GD.Print("scanbuffer:" + scanner.scanBuffer);
+                        //setvar(arrayname, float.Parse(scanner.scanBuffer));
+                        setvar(arrayname, float.Parse(scanner.scanBuffer, CultureInfo.InvariantCulture));
+                        //setvar(arrayname, scanner.scanBuffer.ToFloat());
+
                         break;
                     }
                     break;
@@ -1567,24 +1610,25 @@ public class G3IParser
                             ErrorMessage("Parser: GO procedure - number formalparameter to arguments not equal");
                             break;
                         }
-                        int oldidx3 = scanner.idx;
+                        int idxold = scanner.idx;
 
-                        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-                        myStack.Push(AR);
-                        VisitProcedureCall(procedurename);
-                        setvarproc(procedurename, argumentnr);
-                        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                        // --- now old AR is on stack -----------------------------------
+                        //myStack.Push(AR);
+                        //VisitProcedureCall(procedurename);
+                        //setvarproc(procedurename, argumentnr);
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                           
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
 
-                        if (TestingParser) GD.Print("Parser: raw: "+ scanner.rawContents);
+                        //if (TestingParser) GD.Print("Parser: raw: "+ scanner.rawContents);
                         
                         string regpattern = @"\bTO\s*""";
                         regpattern = regpattern + procedurename;
-                        if (TestingParser) GD.Print("Parser: regpattern: " +regpattern);
+                        //if (TestingParser) GD.Print("Parser: regpattern: " +regpattern);
                         string regresult = Regex.Match(scanner.rawContents, regpattern).ToString();
-                        if (TestingParser) GD.Print("Parser: regresult: " + regresult+ "   length: "+regresult.Length.ToString());
-                        if (TestingParser) GD.Print("regexsearch: " + Regex.Match(scanner.rawContents, regpattern).Index.ToString());
+                        //if (TestingParser) GD.Print("Parser: regresult: " + regresult+ "   length: "+regresult.Length.ToString());
+                        //if (TestingParser) GD.Print("regexsearch: " + Regex.Match(scanner.rawContents, regpattern).Index.ToString());
 
 
                         if (regresult.Length > 0 )
@@ -1600,39 +1644,62 @@ public class G3IParser
                             if (p != " ")
                             {
                                 scanner.rawContents = scanner.rawContents.Insert(0, p);
-                                oldidx3 = oldidx3 + p.Length;
+                                idxold = idxold + p.Length;
                                 //scanner.idx = procedurename.Length+4;
                                 scanner.idx = getstartidx(procedurename);
-                                if (TestingParser) GD.Print("scanner.rawcontents: " + scanner.rawContents);
+                                //if (TestingParser) GD.Print("scanner.rawcontents: " + scanner.rawContents);
                             }
                             else
                             {
                                 ErrorMessage("Parser: GO procedure - no procedure with name "+procedurename+ " found.");
-                                AR = null;
-                                AR = (ActivationRecord)myStack.Pop();
+                                //scanner.idx = oldidx3;
+                                //AR = null;
+                                //AR = (ActivationRecord)myStack.Pop();
+                                //scanner.idx = LeaveProcedure();
                                 break;
                             }
                         }
-               
-                        int pcount2 = 0;
+
+
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                        myStack.Push(AR);
+                        // --- now old AR is pushed on stack -----------------------------------
+                        VisitProcedureCall(procedurename, idxold);
+                        setvarproc(procedurename, argumentnr);
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+
+                        /*
+                        if( AR.recursionlevel > 3)
+                        {
+                            if (TestingParser) GD.Print("Parser: STOP procedure");
+                            scanner.idx = LeaveProcedure();
+                            if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                            stopprocedure= false;
+                            return;
+                        }
+                        */
 
                         if (TestingParser) GD.Print("Parser: starting procedure");
                         bool inprocedure = true;
                         while (scanner.NextToken() != (int)Tokens.END
-                            && scanner.NextToken() != (int)Tokens.STOP 
-                            && scanner.NextToken() != (int)Tokens.EOF)
+                            && scanner.NextToken() != (int)Tokens.EOF
+                            && stoprecursion != true)
+                            //&& AR.recursionlevel < 4)
                         {
                             ParseG3ISentence();
                         }
+                        stoprecursion= false;
                         inprocedure = false;
                         if (TestingParser) GD.Print("Parser: procedure ended");
                         //Match(TOKEN_END);
-                        scanner.idx = oldidx3;
-                        AR = null;
-                        AR=(ActivationRecord)myStack.Pop();
-                        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
- 
-                        break;
+                        //scanner.idx = oldidx3;
+                        //AR = null;
+                        //AR=(ActivationRecord)myStack.Pop();
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+                        scanner.idx=LeaveProcedure();
+                        // --- now old AR is poped back from stack -----------------------------------
+                        return;
                 
                     }
 
@@ -1641,7 +1708,7 @@ public class G3IParser
                     float numberrecord = numberor();
                     //Match((int)Tokens.NUMBER);
                     Match((int)Tokens.LBRACKET);
-                    if (TestingParser) GD.Print("Parser: " + "found sentence REPEAT+LBr+Number");
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence REPEAT+LBr+Number");
 
                     int oldidx = scanner.idx;
                     for (int i = 0; i < numberrecord; i++)
@@ -1658,7 +1725,7 @@ public class G3IParser
                     }
 
                     Match((int)Tokens.RBRACKET);
-                    if (TestingParser) GD.Print("Parser: " + "found sentence REPEAT+LBr+Number+Sentence+RBr");
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence REPEAT+LBr+Number+Sentence+RBr");
                     break;
 
                 default:
@@ -1847,6 +1914,27 @@ public partial class Godot3DInterpreter : Node3D
  
     }
 
+    public void DrawLine3DThin(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c)
+    {
+        // old code for "normal" thin 3d lines:
+        MeshInstance3D mi = new MeshInstance3D();
+        ImmediateMesh me = new ImmediateMesh();
+        StandardMaterial3D mat = new StandardMaterial3D();
+        mat.NoDepthTest= true;
+        mat.ShadingMode=BaseMaterial3D.ShadingModeEnum.Unshaded;
+        mat.VertexColorUseAsAlbedo= true;
+        mat.Transparency=BaseMaterial3D.TransparencyEnum.Alpha;
+        mi.MaterialOverride= mat;
+        mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
+        me.SurfaceBegin(Mesh.PrimitiveType.Lines);
+        me.SurfaceSetColor(c);
+        me.SurfaceAddVertex(begin);
+        me.SurfaceAddVertex(end);
+        me.SurfaceEnd();
+        mi.Mesh = me;
+        ParentN.AddChild(mi);
+    }
+
     public void DrawLine3D(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c, float thickness)
     {
         /* old code for "normal" thin 3d lines:
@@ -1887,6 +1975,7 @@ public partial class Godot3DInterpreter : Node3D
         mi.LookAtFromPosition((begin + end) / 2, end, Godot.Vector3.Up);
         ParentN.AddChild(mi);
     }
+
 
     public void DrawSphere(Godot.Vector3 pos, float scale , Godot.Color c)
     {
@@ -1937,6 +2026,7 @@ public partial class Godot3DInterpreter : Node3D
             c.QueueFree();
         }
     }
+
 
     public void _on_line_edit_text_submitted(string newtext)
     {

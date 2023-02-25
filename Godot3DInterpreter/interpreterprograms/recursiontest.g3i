@@ -1,0 +1,18 @@
+
+TO "SPIRAL :N
+    IF :N < 1
+        STOP
+    ENDIF
+    FORWARD :N
+    RIGHT 20
+    "N = :N * 0.95
+    GO "SPIRAL :N
+END
+
+
+; Mainprogram
+PENCOLOR 0 0 255
+PENSIZE 10
+GO "SPIRAL 30
+
+PRINT "[END OF PROGRAM]
