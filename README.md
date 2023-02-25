@@ -17,7 +17,7 @@ example interpreterprogram spheres:
     
      
 example interpreterprogram recursiontest:    
-![Pic3](Godot3DInterpreter/recursiontest.JPG)
+![Pic3](Godot3DInterpreter/recursionstest.JPG)
 
 
     
