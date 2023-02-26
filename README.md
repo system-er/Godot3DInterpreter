@@ -65,7 +65,7 @@ IF xxx ENDIF - if command
 TO procedurename xxx END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
 GO procedurename - start a procedure, parameter allowed, example GO "PROC 42     
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
-math with */+- and parenthesis () behind a = EQUALS TOKEN. ONLY behind a EQUALS TOKEN! example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float    
+math with */+- and parenthesis () behind a = EQUALS TOKEN. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest           
       
          
          
@@ -78,6 +78,6 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. ONLY behind a EQUALS 
   23.02.2023: new variablesystem with AR and stack (good tutorial https://ruslanspivak.com/lsbasi-part18/), parameter work, AR/stack working    
   24.02.2023: added command PENSIZE for 3d lines, they are now thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR. moved to Godot 4.0 RC4    
   25.02.2023: moved to Godot 4.0 RC5, now recursion works, see example recursiontest.g3i, also numbers with dot works also in that example     
-  
+  26.02.2023: added math in procedureparameter example GO "PROC :N * 0.7    
   
   
