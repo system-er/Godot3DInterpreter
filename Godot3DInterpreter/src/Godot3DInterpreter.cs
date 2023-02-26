@@ -917,7 +917,7 @@ public class G3IParser
         {
             //GD.Print("numberor - found number: " + scanner.scanBuffer);
             Match((int)Tokens.NUMBER);
-            GD.Print("scanbuffer:" + scanner.scanBuffer);
+            //GD.Print("scanbuffer:" + scanner.scanBuffer);
             return float.Parse(scanner.scanBuffer, CultureInfo.InvariantCulture);
         }
         else if (scanner.NextToken() == (int)Tokens.HYPHEN)
@@ -1515,7 +1515,7 @@ public class G3IParser
                         Match((int)Tokens.NUMBER);
 
                         if (TestingParser) GD.Print("Parser: " + "found sentence MAKE+NUMBER "+ arrayname+" "+scanner.scanBuffer);
-                        GD.Print("scanbuffer:" + scanner.scanBuffer);
+                        //GD.Print("scanbuffer:" + scanner.scanBuffer);
                         //setvar(arrayname, float.Parse(scanner.scanBuffer));
                         setvar(arrayname, float.Parse(scanner.scanBuffer, CultureInfo.InvariantCulture));
                         //setvar(arrayname, scanner.scanBuffer.ToFloat());
@@ -1596,12 +1596,28 @@ public class G3IParser
                         nextt = (int)scanner.NextToken();
                         while (nextt == (int)Tokens.NUMBER || nextt == (int)Tokens.COLON)
                         {
-                            float erg = numberor();
-                            ArgumentArray[argumentnr] = erg;
-                            GD.Print("Parser: GO: argument "+ argumentnr.ToString()+" = "+erg);
-                            //Match(nextt);
-                            nextt = (int)scanner.NextToken();
-                            argumentnr++;
+                            if (nextt == (int)Tokens.NUMBER)
+                            {
+                                float erg = numberor();
+                                ArgumentArray[argumentnr] = erg;
+                                GD.Print("Parser: GO: argument " + argumentnr.ToString() + " = " + erg);
+                                //Match(nextt);
+                                nextt = (int)scanner.NextToken();
+                                argumentnr++;
+                            }
+                            else
+                            {
+                                if (nextt == (int)Tokens.COLON)
+                                {
+                                    float erg = ParseExpr();
+                                    ArgumentArray[argumentnr] = erg;
+                                    GD.Print("Parser: GO: argument " + argumentnr.ToString() + " = " + erg);
+                                    //Match(nextt);
+                                    nextt = (int)scanner.NextToken();
+                                    argumentnr++;
+                                }
+
+                            }
                         }
 
                         if (TestingParser) GD.Print("Parser: " + "found sentence GO name " + procedurename);
@@ -1886,6 +1902,30 @@ public partial class Godot3DInterpreter : Node3D
             CamDir -= Transform.Basis.Y;
             CamDir = CamDir.Normalized();
             Cam.RotateY(-Deg2Rad(3));
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.Right))
+        {
+            CamDir -= Transform.Basis.Y;
+            CamDir = CamDir.Normalized();
+            Cam.RotateY(Deg2Rad(3));
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.Left))
+        {
+            CamDir -= Transform.Basis.Y;
+            CamDir = CamDir.Normalized();
+            Cam.RotateY(Deg2Rad(3));
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelUp))
+        {
+            CamDir = CamDir - Transform.Basis.Z;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelDown))
+        {
+            CamDir = CamDir + Transform.Basis.Z;
+            CamDir = CamDir.Normalized();
+            Cam.Translate(CamDir);
         }
     }
 
