@@ -5,8 +5,7 @@ TO "SPIRAL :N
     ENDIF
     FORWARD :N
     RIGHT 20
-    "N = :N * 0.95
-    GO "SPIRAL :N
+    GO "SPIRAL :N * 0.95
 END
 
 
