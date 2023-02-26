@@ -2,8 +2,9 @@
 
 WIP - work in progress
 
-a lowlevel logo-like interpreter, working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos, spaghetti and bugs         
-its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
+a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
+Working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos, spaghetti and bugs.         
+Its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter now work. cause the tutorial does not contain recursion, i had to write own, now it works - a great milestone! see recursiontest.g3i    
 
 - written in C# with Godot 4.0 rc3   
