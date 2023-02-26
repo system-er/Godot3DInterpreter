@@ -24,15 +24,21 @@ example interpreterprogram recursiontest:
     
 when you start you see the commander - a one line TextEditor. if you enter for example   
 PRINT "[hello world]    
-and the string is printed to GODOT-output. or you type:    
+and the string is printed to GODOT-output.    
+
+or you type:    
 FORWARD 30    
 and enter with Return, you see a 3D-line of MeshInstance3D. Then enter   
 LEFT 90   
 and again FORWARD 30 and you see the next line. If you enter for example:   
 REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 you get a Cube.   
-If you like to get real programs, type   
-LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
+
+You can write a procedure if you type TO "X :N   PRINT :N   END    
+and can call it with GO "X 42
+and the procedure will write 42 to Godot-output.
+
+If you like to programs, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
      
     
    
