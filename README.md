@@ -65,13 +65,13 @@ IF xxx ENDIF - if command
 TO procedurename xxx END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
 GO procedurename - start a procedure, parameter allowed, example GO "PROC 42     
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
-math with */+- and parenthesis () behind a = EQUALS TOKEN. ONLY behind a EQUALS TOKEN! example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float      
+math with */+- and parenthesis () behind a = EQUALS TOKEN. ONLY behind a EQUALS TOKEN! example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float    
       
          
          
 # FAQ:   
 - why an interpreter, we have gdscript and other languages? for fun and learning c# with godot 4     
-- want contact? try email siddhartha3786-222 at yahoo dot com    
+- want contact? send me message in godot-forum. you have a nice interpreterprogram with nice results, then please send me?     
   
     
 # last changes:  
