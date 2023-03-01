@@ -37,7 +37,7 @@ REPEAT 4 [ FORWARD 30 LEFT 90 ]
 you get a Cube.   
 
 You can write a procedure if you type TO "X :N   PRINT :N   END    
-and can call it with GO "X 42
+and can call it from the commander with GO "X 42
 and the procedure will write 42 to Godot-output.
 
 If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
