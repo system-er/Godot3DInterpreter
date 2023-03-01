@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using static Globals;
 
 
-
 class ActivationRecord
 {
     public string name;
@@ -64,6 +63,7 @@ class ActivationRecord
         temp = "ActivationRecord name: "+ name + "\n"; 
         temp = temp +"ActivationRecord type: "+ type.ToString()+ "\n"; 
         temp = temp +"ActivationRecord recursionlevel: "+ recursionlevel.ToString()+ "\n";
+        temp = temp + "ActivationRecord idx: " + idx.ToString() + "\n";
         temp = temp + "memberscount " + members.Count + "\n";
 
         foreach (string key in members.Keys)
@@ -578,7 +578,6 @@ public class G3IParser
     {
         scanner = g3iScanner;
         IntClass = IC;
-   
     }
 
     public void VisitProcedureCall(string name, int i)
@@ -589,7 +588,7 @@ public class G3IParser
         AR.idx = i;
         //name = name + "_idx";
         //setvar(AR.name + "_idx", (float)i);
-        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //if (TestingParser) GD.Print("idx=" + i.ToString() + "   raw idx=" + scanner.rawContents.Substring(i));
         myStack.Push(AR);
 
@@ -606,13 +605,34 @@ public class G3IParser
         if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: recursionlevelnow= " + recursionlevelnow);
         recursionlevelnow--;
         AR = null;
+
         AR = (ActivationRecord)myStack.Pop();
         //while(AR.name != "mainprogram")
         //{
         //    AR = null;
         //    AR = (ActivationRecord)myStack.Pop();
         //}
-        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        //int idx = (int)getvar(AR.name + "_idx");
+        int idx = AR.idx;
+        //if (TestingParser) GD.Print("idx=" + idx.ToString()+ "   raw idx=" + scanner.rawContents.Substring(idx));
+
+        return idx;
+    }
+
+    public int LeaveProcedureStop()
+    {
+        if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: recursionlevelnow= " + recursionlevelnow);
+        recursionlevelnow--;
+        AR = null;
+
+        AR = (ActivationRecord)myStack.Pop();
+        while(AR.name != "mainprogram")
+        {
+            AR = null;
+            AR = (ActivationRecord)myStack.Pop();
+        }
+        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
         //if (TestingParser) GD.Print("idx=" + idx.ToString()+ "   raw idx=" + scanner.rawContents.Substring(idx));
@@ -866,7 +886,7 @@ public class G3IParser
 
     public void setvarproc(string procedure, int nr)
     {
-        procedure= procedure.ToString();
+        //procedure= procedure.ToString();
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
 
@@ -1032,27 +1052,22 @@ public class G3IParser
             {
                 return numberor();
             }
-            else if (nto == (int)Tokens.RANDOM /*||
-                     nto == (int)Tokens.ABS ||
-                     nto == (int)Tokens.NEG ||
-                     nto == (int)Tokens.ASIN ||
-                     nto == (int)Tokens.ACOS ||
-                     nto == (int)Tokens.ATAN ||
-                     nto == (int)Tokens.ATANTWO ||
-                     nto == (int)Tokens.SIN ||
-                     nto == (int)Tokens.COS ||
-                     nto == (int)Tokens.TAN ||
-                     nto == (int)Tokens.LOG ||
-                     nto == (int)Tokens.POW ||
-                     nto == (int)Tokens.SQRT ||
-                     nto == (int)Tokens.MOUSEPOSITIONX ||
-                     nto == (int)Tokens.MOUSEPOSITIONY ||
-                     nto == (int)Tokens.GETVOXEL ||
-                     nto == (int)Tokens.DSGET ||
-                     nto == (int)Tokens.ITEM*/
-                )
+            else if (nto == (int)Tokens.RANDOM)
             {
-                return 0; // mathcalc();
+                Random rnd = new Random();
+                Match((int)Tokens.RANDOM);
+                int nto2 = scanner.NextToken();
+                if (nto2 == (int)Tokens.NUMBER)
+                {
+                    //if (TestingParser) GD.Print("Parser: " + "numberor RANDOM with NUMBER");
+                    Match((int)Tokens.NUMBER);
+                    return (float)rnd.Next(int.Parse(scanner.scanBuffer));
+                }
+                else
+                {
+                    //if (TestingParser) GD.Print("Parser: " + "numberor RANDOM");
+                    return (float)rnd.Next(255);
+                }
             }
             else if (nto == (int)Tokens.LPARENTHESIS)
             {
@@ -1108,19 +1123,16 @@ public class G3IParser
                 case (int)Tokens.SPHERE:
                 case (int)Tokens.BOX:
                 case (int)Tokens.STOP:
+                case (int)Tokens.END:
                 case (int)Tokens.PENSIZE:
                 case (int)Tokens.REPEAT:
                     ParseG3ISentence();
                     break;
-
+  
                 case (int)Tokens.COMMENT:
                     Match((int)Tokens.COMMENT);
                     break;
 
-                case (int)Tokens.END:
-                    Match((int)Tokens.END);
-                    stoprecursion = true;
-                    break;
                 case (int)Tokens.EOF:
                 default:
                     Match((int)Tokens.EOF);
@@ -1162,6 +1174,7 @@ public class G3IParser
 
                     break;
                 }
+ 
             default:
                 //Match((int)Tokens.EOF);
                 //return;
@@ -1175,6 +1188,13 @@ public class G3IParser
             //if (TestingParser) GD.Print("Parser: "+"ParseG3ISentence-nextToken"+nextToken.ToString());
             switch (nextToken)
             {
+                case (int)Tokens.NUMBER:
+                    if (TestingParser) GD.Print("Parser: " + "found sentence RIGHT+Number");
+                    //Match((int)Tokens.NUMBER);
+                    float result2 = ParseExpr();
+                    GD.Print("found Expression Result=" + result2.ToString());
+                    break;
+
                 case (int)Tokens.STRING:
                     Match(nextToken);
                     break;
@@ -1182,7 +1202,8 @@ public class G3IParser
                 case (int)Tokens.FORWARD:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    //n = numberor();
+                    n = ParseExpr();
                     TurtleForward(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
@@ -1190,7 +1211,7 @@ public class G3IParser
                 case (int)Tokens.BACK:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     TurtleBack(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence BACK+Number");
                     break;
@@ -1198,7 +1219,7 @@ public class G3IParser
                 case (int)Tokens.LEFT:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     TurtleLeft(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence LEFT+Number");
                     break;
@@ -1206,7 +1227,7 @@ public class G3IParser
                 case (int)Tokens.RIGHT:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     TurtleRight(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence RIGHT+Number");
                     break;
@@ -1214,7 +1235,7 @@ public class G3IParser
                 case (int)Tokens.UP:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     TurtleUp(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence UP+Number");
                     break;
@@ -1222,7 +1243,7 @@ public class G3IParser
                 case (int)Tokens.DOWN:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     TurtleDown(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence DOWN+Number");
                     break;
@@ -1230,8 +1251,8 @@ public class G3IParser
                 case (int)Tokens.PENSIZE:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    thickness = numberor();
-                    
+                    thickness = ParseExpr();
+
                     //if (TestingParser) GD.Print("Parser: " + "found sentence DOWN+Number");
                     break;
 
@@ -1264,10 +1285,15 @@ public class G3IParser
                     break;
                 
                 case (int)Tokens.STOP:
-                case (int)Tokens.END:
                     Match(nextToken);
                     stoprecursion = true;
                     if (TestingParser) GD.Print("Parser: " + "found sentence STOP");
+                    break;
+
+                case (int)Tokens.END:
+                    Match(nextToken);
+                    stoprecursion = true;
+                    if (TestingParser) GD.Print("Parser: " + "found sentence END");
                     break;
                 
                 case (int)Tokens.PENCOLOR:
@@ -1283,7 +1309,7 @@ public class G3IParser
                 case (int)Tokens.SPHERE:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     Sphere(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
@@ -1291,7 +1317,7 @@ public class G3IParser
                 case (int)Tokens.BOX:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
+                    n = ParseExpr();
                     Box(n);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
@@ -1309,10 +1335,10 @@ public class G3IParser
                     Match((int)Tokens.STRING);
                     string varname = scanner.scanBuffer;
                     //Match(TOKEN_NUMBER);
-                    int numberstart = (int)numberor();
-                    int numberend = (int)numberor();
-                    int numberstep = (int)numberor();
-                
+                    int numberstart = (int)ParseExpr();
+                    int numberend = (int)ParseExpr();
+                    int numberstep = (int)ParseExpr();
+
                     Match((int)Tokens.LBRACKET);
 
                     //ParseG3ISentence();
@@ -1340,7 +1366,7 @@ public class G3IParser
                         int matchif = 0;
                         Match(nextToken);
                 
-                        float vecvaltmp = numberor();
+                        float vecvaltmp = ParseExpr();
                         //int found=vecvaltmp.find(".000000");
                         //if(found !=std::string::npos)
                         //{
@@ -1351,7 +1377,7 @@ public class G3IParser
                     
                             Match((int)Tokens.LESS);
                             //float vecvaltmp2=numberorvalue();
-                            float vecvaltmp2 = numberor();
+                            float vecvaltmp2 = ParseExpr();
                             //int found=vecvaltmp2.find(".000000");
                             //if(found !=std::string::npos)
                             //{
@@ -1596,15 +1622,16 @@ public class G3IParser
                         nextt = (int)scanner.NextToken();
                         while (nextt == (int)Tokens.NUMBER || nextt == (int)Tokens.COLON)
                         {
-                            if (nextt == (int)Tokens.NUMBER)
-                            {
-                                float erg = numberor();
+                            //if (nextt == (int)Tokens.NUMBER)
+                            //{
+                                float erg = ParseExpr();
                                 ArgumentArray[argumentnr] = erg;
                                 GD.Print("Parser: GO: argument " + argumentnr.ToString() + " = " + erg);
                                 //Match(nextt);
                                 nextt = (int)scanner.NextToken();
                                 argumentnr++;
-                            }
+                        /*    
+                        }
                             else
                             {
                                 if (nextt == (int)Tokens.COLON)
@@ -1618,6 +1645,7 @@ public class G3IParser
                                 }
 
                             }
+                        */
                         }
 
                         if (TestingParser) GD.Print("Parser: " + "found sentence GO name " + procedurename);
@@ -1697,12 +1725,14 @@ public class G3IParser
 
                         if (TestingParser) GD.Print("Parser: starting procedure");
                         bool inprocedure = true;
-                        while (scanner.NextToken() != (int)Tokens.END
-                            && scanner.NextToken() != (int)Tokens.EOF
+                        nextt = scanner.NextToken();
+                        while (//scanner.NextToken() != (int)Tokens.END &&
+                            nextt != (int)Tokens.EOF
                             && stoprecursion != true)
                             //&& AR.recursionlevel < 4)
                         {
                             ParseG3ISentence();
+                            nextt = scanner.NextToken();
                         }
                         stoprecursion= false;
                         inprocedure = false;
@@ -1839,9 +1869,16 @@ public partial class Godot3DInterpreter : Node3D
         {
             NewInput = false;
             GD.Print("New Line Input");
-
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
-            parser.ParseG3IProgram();
+            try
+            {
+                parser.ParseG3IProgram();
+            }
+            catch (Exception e)
+            {
+                GD.Print("exception caught: "+ e.ToString());
+            }
+            
             Line.GrabFocus();
         }
 
