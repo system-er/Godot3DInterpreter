@@ -1189,7 +1189,6 @@ public class G3IParser
             switch (nextToken)
             {
                 case (int)Tokens.NUMBER:
-                    if (TestingParser) GD.Print("Parser: " + "found sentence RIGHT+Number");
                     //Match((int)Tokens.NUMBER);
                     float result2 = ParseExpr();
                     GD.Print("found Expression Result=" + result2.ToString());
