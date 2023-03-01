@@ -83,8 +83,7 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. or behind procedurepa
 - want contact? send me message in godot-forum. you have a nice interpreterprogram with nice results, then please send me?     
   
     
-# last changes:  
-  24.02.2023: added command PENSIZE for 3d lines, they are now thin boxes, thx to Calinou's tips in internet. changed command SETPENCOLOR to PENCOLOR. moved to Godot 4.0 RC4    
+# last changes:     
   25.02.2023: moved to Godot 4.0 RC5, now recursion works, see example recursiontest.g3i, also numbers with dot works also in that example     
   26.02.2023: added math in procedureparameter example GO "PROC :N * 0.7, see example recursiontest.g3i    
   01.03.2023: moved to Godot 4.0 RC6, added expressions computed by commander direct for example type in commander 2 + 1    
