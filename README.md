@@ -10,15 +10,15 @@ and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the var
 - written in C# with Godot 4.0 rc3   
 
 example interpreterprogram procedure with PENSIZE 3:    
-![Pic1](Godot3DInterpreter/firstpic.JPG)
+![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
 
    
 example interpreterprogram spheres:    
-![Pic2](Godot3DInterpreter/spheres.JPG)
+![Pic2](Godot3DInterpreter/pics/spheres.JPG)
     
      
 example interpreterprogram recursiontest:    
-![Pic3](Godot3DInterpreter/recursionstest.JPG)
+![Pic3](Godot3DInterpreter/pics/recursionstest.JPG)
 
 
     
