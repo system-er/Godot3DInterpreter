@@ -1,18 +1,18 @@
 [gd_scene load_steps=3 format=3 uid="uid://ulue5emor5fy"]
 
-[ext_resource type="Script" path="res://src/Godot3DInterpreter.cs" id="1_qi5wj"]
+[ext_resource type="Script" path="res://src/Godot3DInterpreter.cs" id="1_v6ei3"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_ayt3f"]
 
 [node name="Node3D" type="Node3D"]
-script = ExtResource("1_qi5wj")
+script = ExtResource("1_v6ei3")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.35992, -0.133841, -0.923333, 0.928683, -0.0435145, 0.368313, -0.0894737, -0.990047, 0.108634, -32.4155, 19.0465, 15.9824)
 light_energy = 9.945
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.819146, 0.187896, -0.541937, -0.0167712, 0.952265, 0.304812, 0.57334, -0.240596, 0.783195, -42.3731, 20.7779, 65.3433)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 65.343)
 
 [node name="parent" type="MeshInstance3D" parent="."]
 

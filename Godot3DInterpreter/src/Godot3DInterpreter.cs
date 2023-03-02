@@ -1189,12 +1189,20 @@ public class G3IParser
             switch (nextToken)
             {
                 case (int)Tokens.NUMBER:
+                case (int)Tokens.COLON:
                     //Match((int)Tokens.NUMBER);
                     float result2 = ParseExpr();
                     GD.Print("found Expression Result=" + result2.ToString());
                     break;
 
+                case (int)Tokens.COMMENT:
+                    //float result2 = ParseExpr();
+                    GD.Print("found Token COMMENT=" + scanner.scanBuffer);
+                    Match((int)Tokens.COMMENT);
+                    break;
+
                 case (int)Tokens.STRING:
+                    GD.Print("found Token STRING=" + scanner.scanBuffer);
                     Match(nextToken);
                     break;
 
