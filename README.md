@@ -7,7 +7,7 @@ Working like an old steammachine, that rattles and steams. dont look to the code
 Its based on a tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter now work.     
 
-- written in C# with Godot 4.0 rc3   
+- written in C# with Godot 4.0 mono 
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
