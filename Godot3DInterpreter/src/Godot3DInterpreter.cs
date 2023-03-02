@@ -668,9 +668,9 @@ public class G3IParser
         TurtlePos.X= TurtlePos.X + x;
         TurtlePos.Y= TurtlePos.Y + y;
         TurtlePos.Z= TurtlePos.Z + z;
-        IntClass.Turtle.Translate(new Godot.Vector3(x/2, y/2, z/2));
-        
-
+        //IntClass.Turtle.Translate(new Godot.Vector3(x/2, y/2, z/2));
+        //IntClass.Turtle.Translate(new Godot.Vector3(x, y, z));
+        IntClass.Turtle.Position = TurtlePos;
         //TurtleMoved = true;
         if (!penup) IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
 
@@ -689,13 +689,19 @@ public class G3IParser
         phi = phi + angle;
         if (phi < 0) phi = 360 + phi;
         if (phi > 360) phi = phi - 360;
+
+        
+        IntClass.Turtle.RotateZ(Deg2Rad(angle));
     }
+
     public void TurtleRight(float angle)
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleDown");
         phi = phi - angle;
         if (phi < 0) phi = 360 + phi;
         if (phi > 360) phi = phi - 360;
+
+        IntClass.Turtle.RotateZ(-Deg2Rad(angle));
     }
 
     public void TurtleUp(float angle)
@@ -704,6 +710,8 @@ public class G3IParser
         theta = theta + angle;
         if (theta < 0) theta = 360 + theta;
         if (theta > 360) theta = theta - 360;
+
+        IntClass.Turtle.RotateX(Deg2Rad(angle));
     }
 
     public void TurtleDown(float angle)
@@ -712,6 +720,8 @@ public class G3IParser
         theta = theta - angle;
         if (theta < 0) theta = 360 + theta;
         if (theta > 360) theta = theta - 360;
+
+        IntClass.Turtle.RotateX(-Deg2Rad(angle));
     }
 
     public void Sphere(float s)
@@ -745,7 +755,7 @@ public class G3IParser
         TurtlePos.Z = 0;
         
         theta = 0;
-        phi = 0;
+        phi = 90;
     }
 
     public void TurtleClean()
@@ -1994,7 +2004,7 @@ public partial class Godot3DInterpreter : Node3D
         TurtlePos.Z = 0;
         //Turtle.Translate(new Godot.Vector3(TurtlePos.X, TurtlePos.Y, TurtlePos.Z));
         theta = 0;
-        phi = 0;
+        phi = 90;
  
     }
 
@@ -2021,25 +2031,6 @@ public partial class Godot3DInterpreter : Node3D
 
     public void DrawLine3D(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c, float thickness)
     {
-        /* old code for "normal" thin 3d lines:
-        MeshInstance3D mi = new MeshInstance3D();
-        ImmediateMesh me = new ImmediateMesh();
-        StandardMaterial3D mat = new StandardMaterial3D();
-        mat.Grow = true;
-        mat.NoDepthTest= true;
-        mat.ShadingMode=BaseMaterial3D.ShadingModeEnum.Unshaded;
-        mat.VertexColorUseAsAlbedo= true;
-        mat.Transparency=BaseMaterial3D.TransparencyEnum.Alpha;
-        mi.MaterialOverride= mat;
-        mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
-        me.SurfaceBegin(Mesh.PrimitiveType.Lines);
-        me.SurfaceSetColor(c);
-        me.SurfaceAddVertex(begin);
-        me.SurfaceAddVertex(end);
-        me.SurfaceEnd();
-        mi.Mesh = me;
-        ParentN.AddChild(mi);
-        */
         MeshInstance3D mi = new MeshInstance3D();
         mi.Mesh = new BoxMesh();
         StandardMaterial3D mat = new StandardMaterial3D();

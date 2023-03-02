@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://de5sbmh48nxgh"
-path="res://.godot/imported/recursionstest.JPG-6bd57dbdaa0ae0aa2d0626d1644fc7bb.ctex"
+path="res://.godot/imported/recursionstest.JPG-d2a9c4d8c14af8bd80180ddaf5ad5feb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://recursionstest.JPG"
-dest_files=["res://.godot/imported/recursionstest.JPG-6bd57dbdaa0ae0aa2d0626d1644fc7bb.ctex"]
+source_file="res://pics/recursionstest.JPG"
+dest_files=["res://.godot/imported/recursionstest.JPG-d2a9c4d8c14af8bd80180ddaf5ad5feb.ctex"]
 
 [params]
 
