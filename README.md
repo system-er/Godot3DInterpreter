@@ -86,5 +86,5 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. or behind procedurepa
 # last changes:     
   26.02.2023: added math in procedureparameter example GO "PROC :N * 0.7, see example recursiontest.g3i    
   01.03.2023: moved to Godot 4.0 RC6, added expressions computed by commander direct for example type in commander 2 + 1   
-  02.03.2023: moved to Godot 4.0    
+  02.03.2023: moved to Godot 4.0, added new mesh for turtle that looks to direction    
   
