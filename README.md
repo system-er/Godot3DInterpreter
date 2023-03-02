@@ -55,7 +55,7 @@ RIGHT number
 UP number (cause we are in 3D)   
 DOWN number (cause we are in 3D)   
 PENUP    
-PENDOWN
+PENDOWN    
 PENSIZE number - thickness of 3d lines, normal is 1. now the lines are thin boxes MeshInstance3D.    
 HOME   
 CLEAN - clear the 3D-lines   
