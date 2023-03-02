@@ -22,7 +22,9 @@ example interpreterprogram recursiontest:
 
 
     
-when you start you see the commander - a one line TextEditor. if you enter for example   
+when you start you see the commander - a one line TextEditor. in the middle of the screen you see the "turtle", the 3D-cursor that shows to where you will draw.   
+
+if you enter in the commander for example   
 PRINT "[hello world]    
 and the string is printed to GODOT-output.    
 
