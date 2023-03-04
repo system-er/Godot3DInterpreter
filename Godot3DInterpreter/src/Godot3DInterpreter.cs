@@ -651,6 +651,7 @@ public class G3IParser
             AR = null;
             AR = (ActivationRecord)myStack.Pop();
         }
+        recursionlevelnow = 2;
         if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+myStack.Count);
         if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
