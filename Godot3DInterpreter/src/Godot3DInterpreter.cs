@@ -2090,7 +2090,7 @@ public partial class Godot3DInterpreter : Node3D
         Cam = GetNode<Camera3D>("Camera3D");
 
         Line.GrabFocus();
-        GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]");
+        GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
         //GD.Print(Token.REPEAT);
         //string input = "REPEAT 4    [ FORWARD 100    LEFT 90 ] ";
 
