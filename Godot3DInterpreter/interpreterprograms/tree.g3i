@@ -1,0 +1,23 @@
+;recursive tree
+TO "TREE :SIZE
+    IF :SIZE > 5
+        PENSIZE :SIZE / 5
+        FORWARD :SIZE
+        LEFT 60
+        GO "TREE :SIZE / 2
+        RIGHT 60
+        GO "TREE :SIZE /2
+        RIGHT 60
+        GO "TREE :SIZE /2
+        LEFT 60
+        BACK :SIZE
+    ENDIF
+END
+
+PENUP
+BACK 30
+PENDOWN
+PENSIZE 5
+PENCOLOR 0 255 0
+GO "TREE 100
+PRINT "[END PROGRAM]
