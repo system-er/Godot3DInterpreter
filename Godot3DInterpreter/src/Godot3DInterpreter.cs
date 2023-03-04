@@ -104,6 +104,8 @@ class Globals
     public static int recursionlevelnow = 1;
     public static float[] ArgumentArray = new float[42];
     public static bool stoprecursion = false;
+    public static bool endrecursion = false;
+    public static bool parsestop = false;
     public static bool TestingScanner = false;
     public static bool TestingParser = true;
     //public static bool TurtleMoved = false;
@@ -513,6 +515,7 @@ public class G3IScanner
                 LexicalError();
             }
         }
+        parsestop = true;
         return (int)Tokens.EOF;
     }
 
@@ -582,6 +585,8 @@ public class G3IParser
 
     public void VisitProcedureCall(string name, int i)
     {
+        //myStack.Push(AR);
+
         if (TestingParser) GD.Print("Parser: " + "VisitProcedureCall: recursionlevelnow= " + recursionlevelnow);
         recursionlevelnow++;
         //name = name + "_"+ recursionlevelnow.ToString();
@@ -591,7 +596,7 @@ public class G3IParser
         if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //if (TestingParser) GD.Print("idx=" + i.ToString() + "   raw idx=" + scanner.rawContents.Substring(i));
         myStack.Push(AR);
-
+        AR = null;
         AR = new ActivationRecord(
             name,
             ARTypeProcedure,
@@ -602,10 +607,18 @@ public class G3IParser
 
     public int LeaveProcedure()
     {
+        if(parsestop) return scanner.scanBuffer.Length; ;
         if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: recursionlevelnow= " + recursionlevelnow);
+ 
+        //if (myStack.Count == 0)
+        //{
+        //    if (TestingParser) GD.Print("Parser: LeaveProcedure: myStack empty, leaving");
+        //    return scanner.scanBuffer.Length;
+        //}
+
         recursionlevelnow--;
         AR = null;
-
+        if (myStack.Count == 0) return scanner.scanBuffer.Length;
         AR = (ActivationRecord)myStack.Pop();
         //while(AR.name != "mainprogram")
         //{
@@ -622,16 +635,23 @@ public class G3IParser
 
     public int LeaveProcedureStop()
     {
-        if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: recursionlevelnow= " + recursionlevelnow);
+        if (TestingParser) GD.Print("Parser: " + "LeaveProcedureStop: recursionlevelnow= " + recursionlevelnow);
+        //if (myStack.Count == 0)
+        //{
+        //    if (TestingParser) GD.Print("Parser: LeaveProcedureStop: myStack empty, leaving");
+        //    return scanner.scanBuffer.Length;
+        //}
+
         recursionlevelnow--;
         AR = null;
 
         AR = (ActivationRecord)myStack.Pop();
-        while(AR.name != "mainprogram")
+        while(AR.recursionlevel > 2)
         {
             AR = null;
             AR = (ActivationRecord)myStack.Pop();
         }
+        if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+myStack.Count);
         if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
@@ -749,13 +769,16 @@ public class G3IParser
         mix = 0;
         miy = 0;
         miz = 0;
-        IntClass.Turtle.Translate(new Godot.Vector3(-TurtlePos.X/2, -TurtlePos.Y/2, -TurtlePos.Z/2));
+        //IntClass.Turtle.Translate(new Godot.Vector3(-TurtlePos.X/2, -TurtlePos.Y/2, -TurtlePos.Z/2));
         TurtlePos.X = 0;
         TurtlePos.Y = 0;
         TurtlePos.Z = 0;
         
         theta = 0;
         phi = 90;
+
+        IntClass.Turtle.Position = TurtlePos;
+        IntClass.Turtle.Rotation = Godot.Vector3.Zero;
     }
 
     public void TurtleClean()
@@ -941,6 +964,204 @@ public class G3IParser
         return "";
     }
 
+
+    /*
+    void calc(std::string stringcalc)
+    {
+        //Match(TOKEN_STRING);
+        //std::string stringcalc=scanner.scanBuffer;
+        //Match(TOKEN_EQUAL);
+        //printf("in if %s\n", scanner.scanBuffer.c_str());
+        int ntok = scanner.NextToken();
+
+        if (ntok == TOKEN_ISKEYDOWN)
+        {
+            Match(TOKEN_ISKEYDOWN);
+            int numbertmp = numberorvalue();
+            if (receiver.KeyIsDown[numbertmp])
+            {
+                vec_setvarstring(stringcalc, "true");
+            }
+            else
+            {
+                vec_setvarstring(stringcalc, "false");
+            }
+        }
+        else if (ntok == TOKEN_MOUSELEFTBUTTONDOWN)
+        {
+            Match(TOKEN_MOUSELEFTBUTTONDOWN);
+            if (receiver.MouseState.LeftButtonDown)
+            {
+                vec_setvarstring(stringcalc, "true");
+            }
+            else
+            {
+                vec_setvarstring(stringcalc, "false");
+            }
+        }
+
+        else if (ntok == TOKEN_FIRST)
+        {
+            Match(TOKEN_FIRST);
+            std::string varstr = getstrorvalue();
+            varstr = varstr[0];
+            vec_setvarstring(stringcalc, varstr);
+        }
+        else if (ntok == TOKEN_LAST)
+        {
+            Match(TOKEN_LAST);
+            std::string varstr = getstrorvalue();
+            varstr = varstr[varstr.length() - 1];
+            vec_setvarstring(stringcalc, varstr);
+        }
+        else if (ntok == TOKEN_INDEX)
+        {
+            Match(TOKEN_INDEX);
+            std::string varstr = getstrorvalue();
+            int numbervar = numberorvalue();
+            varstr = varstr[numbervar];
+            vec_setvarstring(stringcalc, varstr);
+        }
+        else if (ntok == TOKEN_APPEND)
+        {
+            Match(TOKEN_APPEND);
+            std::string varstr = getstrorvalue();
+            std::string vartmp = vec_getvarstring(stringcalc);
+            vartmp = vartmp + varstr;
+            vec_setvarstring(stringcalc, vartmp);
+        }
+        else if (ntok == TOKEN_READCHARFILE)
+        {
+            Match(scanner.NextToken());
+            int mychar = fgetc(myfile);
+            char c = (char)mychar;
+            std::string mystring(1,c);
+            vec_setvarstring(stringcalc, mystring);
+            //printf("backgroundcolor %i %i %i\n", backred, backgreen, backblue);
+        }
+        else if (ntok == TOKEN_READLIST)
+        {
+            Match(TOKEN_READLIST);
+            std::string varstr;
+            gets(line);
+            vec_setvarstring(stringcalc, line);
+        }
+        else if (ntok == TOKEN_STRING)
+        {
+            //std::string stringtmp=getstrorvalue();
+            Match(TOKEN_STRING);
+            std::string stringtmp = scanner.scanBuffer;
+            //printf("calc plus value %i\n", numbertmp);
+            vec_setvarstring(stringcalc, stringtmp);
+        }
+        else if (ntok == TOKEN_GO)
+        {
+            procedureoutput = "";
+            //std::string stringtmp=getstrorvalue();
+            Match(TOKEN_GO);
+            Match(TOKEN_STRING);
+            procedurename = scanner.scanBuffer;
+
+            //make
+            int nextt = scanner.NextToken();
+            std::string parameter[42];
+            int pcounter = 0;
+            Logovar vec_tmpvar;
+            vec_tmpvar.varname = procedurename + "_c_o_u_n_t";
+            //printf("go varname %s\n",vec_tmpvar.varname.c_str());
+            //char myString[30];
+            //sprintf(myString, "%f", 0);
+            //vec_logovar[i].varvalue=myString;
+            vec_tmpvar.varvalue = "0";
+            //vec_logovar.push_back(vec_tmpvar);
+            //procedurecounter=0;
+
+            while (nextt == TOKEN_NUMBER || nextt == TOKEN_VALUE)
+            {
+                parameter[pcounter] = getstrorvalue();
+                //printf("parameter %i value %i\n", pcounter, parameter[pcounter]);
+                pcounter++;
+                //vec_setvar(procedurename+"_c_o_u_n_t", vec_getvar(procedurename+"_c_o_u_n_t")+1);
+                //Logovar vec_tmpvar;
+                //vec_tmpvar.varname=scanner.scanBuffer;
+                //int numberrecord=numberorvalue();
+                //vec_tmpvar.varvalue=numberrecord;
+                //vec_logovar.push_back(vec_tmpvar);
+                nextt = scanner.NextToken();
+            }
+
+            vec_tmpvar.varvalue = inttoa(pcounter);
+            vec_logovar.push_back(vec_tmpvar);
+            //printf("in go pcount %f\n",vec_tmpvar.varvalue.c_str());
+            //printf("START %s\n", scanner.scanBuffer.c_str());
+            //std::string stringmake = scanner.scanBuffer;
+            //vec_startfunc(procedurename);
+
+            int oldidx = scanner.idx;
+            int result = 0;
+            //std::string s;
+            for (int i = 0; i < vec_logofunc.size(); i++)
+            {
+                //printf("varname varvalue %s %i\n", vec_logovar[i].varname.c_str(),vec_logovar[i].varvalue);
+                if (vec_logofunc[i].name == procedurename)
+                {
+                    scanner.idx = vec_logofunc[i].vidx;
+                    int pcount2 = 0;
+                    while (scanner.NextToken() == TOKEN_VALUE)
+                    {
+                        Match(TOKEN_VALUE);
+                        Logovar vec_tmpvar;
+                        vec_tmpvar.varname = scanner.scanBuffer;
+                        //char myString[30];
+                        //sprintf(myString, "%f", parameter[pcount2]);
+                        vec_tmpvar.varvalue = parameter[pcount2];
+                        vec_logovar.push_back(vec_tmpvar);
+                        //printf("varname %s value %i\n", scanner.scanBuffer.c_str(), parameter[pcount2]);
+                        pcount2++;
+                        //printf("getint %i\n", vec_getint(scanner.scanBuffer));
+                    }
+                    //ParseLogoProgram();
+                    //printf("idx %i\n", scanner.idx);
+                    //ParseLogoSentence();
+                    inprocedure = true;
+                    while (scanner.NextToken() != TOKEN_END)
+                    {
+                        ParseLogoSentence();
+                    }
+                    inprocedure = false;
+                    //Match(TOKEN_END);
+                    scanner.idx = oldidx;
+                    //printf("in go pcount %f\n",vec_getvar(procedurename+"_c_o_u_n_t"));
+                    for (int i = 0; i < vec_getvar(procedurename + "_c_o_u_n_t"); i++)
+                    {
+                        vec_logovar.pop_back();
+                        //printf("pop\n");
+                    }
+                    //and the counter
+                    vec_logovar.pop_back();
+
+                    result = 1;
+                    break;
+                }
+            }
+            if (result == 0) SyntaxError("GO: no procedure found");
+            if (result)
+            {
+                if (procedureoutput != "")
+                {
+                    vec_setvarstring(stringcalc, procedureoutput);
+                }
+                else
+                    SyntaxError("procedurecall without an output in procedure\n");
+            }
+        }
+        else
+        {
+            SyntaxError("in calc: no token found");
+        }
+    }
+    */
+
     public float numberor()
     {
         if (scanner.NextToken() == (int)Tokens.NUMBER)
@@ -1104,9 +1325,9 @@ public class G3IParser
 
     public void ParseG3IProgram()
     {
-        //if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
+        if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
         ParseG3ISentence();
-        while (true)
+        while (true && !parsestop)
         {
             switch (scanner.NextToken())
             {
@@ -1138,14 +1359,19 @@ public class G3IParser
                 case (int)Tokens.REPEAT:
                     ParseG3ISentence();
                     break;
-  
+
                 case (int)Tokens.COMMENT:
                     Match((int)Tokens.COMMENT);
                     break;
 
                 case (int)Tokens.EOF:
+                    if (TestingParser) GD.Print("Parser: found Token EOF");
+                    Match((int)Tokens.EOF);
+                    parsestop = true;
+                    return;
                 default:
                     Match((int)Tokens.EOF);
+                    parsestop = true;
                     //myStack.Pop();
                     //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                     return;
@@ -1153,10 +1379,9 @@ public class G3IParser
         }
     }
 
-
-
     private void ParseG3ISentence()
     {
+        if (parsestop) return;
         //if (TestingParser) GD.Print("Parser: " + "Start ParseG3ISentence");
         bool nextbutone = false;
         switch (scanner.NextbutoneToken())
@@ -1309,7 +1534,7 @@ public class G3IParser
 
                 case (int)Tokens.END:
                     Match(nextToken);
-                    stoprecursion = true;
+                    endrecursion = true;
                     if (TestingParser) GD.Print("Parser: " + "found sentence END");
                     break;
                 
@@ -1627,7 +1852,7 @@ public class G3IParser
                 case (int)Tokens.GO:
                     {
                         if (TestingParser) GD.Print("Parser: " + "start GO");
-                        
+                        if (parsestop) return;
                         //myStack.Push(AR);
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         Match(nextToken);
@@ -1723,7 +1948,7 @@ public class G3IParser
 
 
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-                        myStack.Push(AR);
+                        //myStack.Push(AR);
                         // --- now old AR is pushed on stack -----------------------------------
                         VisitProcedureCall(procedurename, idxold);
                         setvarproc(procedurename, argumentnr);
@@ -1745,25 +1970,42 @@ public class G3IParser
                         nextt = scanner.NextToken();
                         while (//scanner.NextToken() != (int)Tokens.END &&
                             nextt != (int)Tokens.EOF
-                            && stoprecursion != true)
+                            && stoprecursion != true
+                            && endrecursion != true
+                            && !parsestop
+                            )
                             //&& AR.recursionlevel < 4)
                         {
                             ParseG3ISentence();
                             nextt = scanner.NextToken();
                         }
-                        stoprecursion= false;
+                        
                         inprocedure = false;
-                        if (TestingParser) GD.Print("Parser: procedure ended");
+                        //if (TestingParser) GD.Print("Parser: procedure ended");
                         //Match(TOKEN_END);
                         //scanner.idx = oldidx3;
                         //AR = null;
                         //AR=(ActivationRecord)myStack.Pop();
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-                        scanner.idx=LeaveProcedure();
+    
+                        if (stoprecursion)
+                        {
+                            scanner.idx = LeaveProcedureStop();
+                            //if (TestingParser) GD.Print("Parser: procedure STOP");
+                        }
+                        else
+                        {
+                            scanner.idx = LeaveProcedure();
+                            //myStack.Clear();
+                            //if (TestingParser) GD.Print("Parser: procedure ended");
+                        }
+                        
+                        stoprecursion = false;
+                        endrecursion = false;
                         // --- now old AR is poped back from stack -----------------------------------
                         return;
-                
+                        break;
                     }
 
                 case (int)Tokens.REPEAT:
@@ -1875,7 +2117,7 @@ public partial class Godot3DInterpreter : Node3D
         //var parser = new G3IParser(new G3IScanner(input));
         //parser.ParseG3IProgram();
 
-
+        
     }
 
 
@@ -1886,6 +2128,7 @@ public partial class Godot3DInterpreter : Node3D
         {
             NewInput = false;
             GD.Print("New Line Input");
+            parsestop = false;
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
             try
             {
