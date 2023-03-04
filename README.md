@@ -85,10 +85,6 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. or behind procedurepa
 - why an interpreter, we have gdscript and other languages? for fun and learning c# with godot 4     
 - want contact? send me message in godot-forum. you have a nice interpreterprogram with nice results, then please send me?     
   
-    
-# last changes:       
-  01.03.2023: moved to Godot 4.0 RC6, added expressions computed by commander direct for example type in commander 2 + 1   
-  02.03.2023: moved to Godot 4.0, added new mesh for turtle that looks to direction    
-  04.03.2023: fixed bugs, new interpreterprogram tree.g3i    
+     
   
   
