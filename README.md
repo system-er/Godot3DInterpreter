@@ -37,7 +37,7 @@ and enter with Return, you see a 3D-line of MeshInstance3D. Then enter
 LEFT 90   
 and again FORWARD 30 and you see the next line. If you enter for example:   
 REPEAT 4 [ FORWARD 30 LEFT 90 ]   
-you get a Cube.   
+you get a Cube. you can move camera3D with keys WASD and arrowkeys.       
 
 You can write a procedure if you type TO "X :N   PRINT :N   END    
 and can call it from the commander with GO "X 42
