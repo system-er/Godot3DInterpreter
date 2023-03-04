@@ -17,7 +17,7 @@ example interpreterprogram spheres:
 ![Pic2](Godot3DInterpreter/pics/spheres.JPG)
     
      
-example interpreterprogram tree recursion:    
+example interpreterprogram recursive tree:    
 ![Pic3](Godot3DInterpreter/pics/tree.jpg)
 
 
