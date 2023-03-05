@@ -1794,7 +1794,8 @@ public class G3IParser
     
                         if (stoprecursion)
                         {
-                            scanner.idx = LeaveProcedureStop();
+                            //scanner.idx = LeaveProcedureStop();
+                            scanner.idx = LeaveProcedure();
                             //if (TestingParser) GD.Print("Parser: procedure STOP");
                         }
                         else
