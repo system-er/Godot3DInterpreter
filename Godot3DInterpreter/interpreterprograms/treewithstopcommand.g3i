@@ -1,0 +1,23 @@
+; test tree with stopcommand
+
+TO "TREE :SIZE
+    IF :SIZE < 5
+            STOP
+    ENDIF
+    FORWARD :SIZE
+    LEFT 60
+    GO "TREE :SIZE * 0.6
+    RIGHT 120
+    GO "TREE :SIZE * 0.6
+    LEFT 60
+    BACK :SIZE
+    PRINT "[END OF PROCEDURE]
+END
+
+
+; Mainprogram
+PENCOLOR 0 255 0
+PENSIZE 3
+GO "TREE 60
+
+PRINT "[END OF PROGRAM]
