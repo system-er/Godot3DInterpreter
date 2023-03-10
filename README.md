@@ -20,6 +20,8 @@ example interpreterprogram spheres:
 example interpreterprogram recursive tree:    
 ![Pic3](Godot3DInterpreter/pics/tree.jpg)
 
+example interpreterprogram treewithstopcommand.g3i:    
+![Pic4](Godot3DInterpreter/pics/treewithstopcommand.jpg)
 
     
 # Welcome back commander:    
