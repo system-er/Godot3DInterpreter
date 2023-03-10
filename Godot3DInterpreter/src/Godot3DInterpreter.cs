@@ -11,6 +11,32 @@ using System.Text.RegularExpressions;
 using static Globals;
 
 
+
+public class Stack<T>
+{
+    public int position => data.Count - 1;
+    IList<T> data = new List<T>();
+    public void Push(T obj) => data.Add(obj);
+
+    public T Pop()
+    {
+        var ret = data[position];
+        data.RemoveAt(position);
+        return ret;
+    }
+
+    public override string ToString()
+    {
+        return $"Num of elements: {data.Count}. {data}";
+    }
+
+    public int Count()
+    { 
+        return data.Count; 
+    }
+
+}
+
 class ActivationRecord
 {
     public string name;
@@ -99,7 +125,8 @@ class Globals
             1, //recursionlevel
             0 //idx
         );
-    public static Stack myStack = new Stack();
+    //public static Stack myStack = new Stack();
+    public static Stack<ActivationRecord> myStack = new Stack<ActivationRecord>();
     public static List<G3IProc> ListProcedures = new List<G3IProc>();
     public static int recursionlevelnow = 1;
     public static float[] ArgumentArray = new float[42];
@@ -603,6 +630,7 @@ public class G3IParser
             recursionlevelnow, //recursionlevel
             0
         );
+        //if (TestingParser) GD.Print("Parser: pushed the stack nr objects:" + myStack.Count);
     }
 
     public int LeaveProcedure()
@@ -618,8 +646,9 @@ public class G3IParser
 
         recursionlevelnow--;
         AR = null;
-        if (myStack.Count == 0) return scanner.scanBuffer.Length;
+        if (myStack.Count() == 0) return scanner.scanBuffer.Length;
         AR = (ActivationRecord)myStack.Pop();
+        if (TestingParser) GD.Print("Parser: popped the stack nr objects:" + myStack.Count().ToString());
         //while(AR.name != "mainprogram")
         //{
         //    AR = null;
@@ -644,14 +673,14 @@ public class G3IParser
 
         recursionlevelnow--;
         AR = null;
-
         AR = (ActivationRecord)myStack.Pop();
-        while(AR.recursionlevel > 2)
-        {
-            AR = null;
-            AR = (ActivationRecord)myStack.Pop();
-        }
-        recursionlevelnow = 2;
+
+        //while(AR.recursionlevel > 2)
+        //{
+        //    AR = null;
+        //    AR = (ActivationRecord)myStack.Pop();
+        //}
+        //recursionlevelnow = 2;
         if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+myStack.Count);
         if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
@@ -1794,8 +1823,8 @@ public class G3IParser
     
                         if (stoprecursion)
                         {
-                            //scanner.idx = LeaveProcedureStop();
-                            scanner.idx = LeaveProcedure();
+                            scanner.idx = LeaveProcedureStop();
+                            //scanner.idx = LeaveProcedure();
                             //if (TestingParser) GD.Print("Parser: procedure STOP");
                         }
                         else
@@ -1871,7 +1900,6 @@ public partial class Godot3DInterpreter : Node3D
     private string Input;
     public FileDialog FileDia;
     public Camera3D Cam;
-
     public Godot.Vector3 CamDir;
 
 
@@ -1893,6 +1921,7 @@ public partial class Godot3DInterpreter : Node3D
         Cam = GetNode<Camera3D>("Camera3D");
 
         Line.GrabFocus();
+        
         GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
         //GD.Print(Token.REPEAT);
         //string input = "REPEAT 4    [ FORWARD 100    LEFT 90 ] ";
@@ -1933,6 +1962,7 @@ public partial class Godot3DInterpreter : Node3D
             NewInput = false;
             GD.Print("New Line Input");
             parsestop = false;
+
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
             try
             {
