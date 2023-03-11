@@ -15,7 +15,7 @@ transform = Transform3D(0.35992, -0.133841, -0.923333, 0.928683, -0.0435145, 0.3
 light_energy = 9.945
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 65.343)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 146.237)
 
 [node name="parent" type="MeshInstance3D" parent="."]
 

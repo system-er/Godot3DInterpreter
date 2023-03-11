@@ -151,7 +151,7 @@ class Globals
     public static int pendensity = 255;
     public static bool turtlevisible = true;
     public static string SelectedFile;
-
+    
 
     public static readonly string[] Token = {
         "NONE",
@@ -654,7 +654,7 @@ public class G3IParser
         //    AR = null;
         //    AR = (ActivationRecord)myStack.Pop();
         //}
-        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
         //if (TestingParser) GD.Print("idx=" + idx.ToString()+ "   raw idx=" + scanner.rawContents.Substring(idx));
@@ -682,7 +682,7 @@ public class G3IParser
         //}
         //recursionlevelnow = 2;
         if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+myStack.Count);
-        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
         //if (TestingParser) GD.Print("idx=" + idx.ToString()+ "   raw idx=" + scanner.rawContents.Substring(idx));
@@ -1659,7 +1659,7 @@ public class G3IParser
                             }
                         }
                         tmpproc.idxstart = scanner.idx;
-                        GD.Print("idxstart " + tmpproc.idxstart.ToString());
+                        GD.Print("procedurename:"+tmpproc.name+ "   idxstart " + tmpproc.idxstart.ToString());
                         while (scanner.NextToken() != (int)Tokens.END && scanner.NextToken() != (int)Tokens.EOF)
                         {
                             Match(scanner.NextToken());
@@ -1672,11 +1672,13 @@ public class G3IParser
                         Match((int)Tokens.END);
                         int idxend = scanner.idx;
                         //if (TestingParser) GD.Print("Parser: " + "proc= " + scanner.rawContents.Substring(idxbegin, idxend));
-                        tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend)+" ";
+                        //GD.Print("idxbegin:"+idxbegin.ToString()+"   idxend:"+idxend.ToString());
+                        tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend-idxbegin)+" ";
+                        GD.Print("procedure:" + tmpproc.proc);
                         ListProcedures.Add(tmpproc);
                         
                         if (TestingParser) GD.Print("Parser: " + "found sentence TO name " + tmpproc.name);
-                        if (TestingParser) GD.Print("Parser: Procedure: " + getprocbody(tmpproc.name));
+                        //if (TestingParser) GD.Print("Parser: Procedure: " + getprocbody(tmpproc.name));
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
 
                         break;
