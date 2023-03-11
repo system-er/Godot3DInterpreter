@@ -85,7 +85,7 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use 
          
 # FAQ:   
 - why an interpreter, we have gdscript and other languages? for fun and learning c# with godot 4     
-- want contact? send me message in godot-forum (systemerror)    
+- want contact? send message in godot-forum (systemerror)    
   
      
   
