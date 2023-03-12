@@ -3,7 +3,7 @@
 TO "TREE :SIZE
     IF :SIZE < 5
         PENCOLOR RANDOM RANDOM RANDOM
-        SPHERE 20
+        MESH "SPHERE 20
         PENCOLOR 0 255 0
         STOP
     ENDIF
