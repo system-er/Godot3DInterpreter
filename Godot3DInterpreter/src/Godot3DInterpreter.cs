@@ -177,7 +177,6 @@ class Globals
         "IF",
         "ENDIF",
         "FOR",
-        "SPHERE",
         "MESH",
         "STOP",
         "PENSIZE",
@@ -228,7 +227,6 @@ class Globals
         "IF",
         "ENDIF",
         "FOR",
-        "SPHERE",
         "MESH",
         "STOP",
         "PENSIZE"
@@ -259,30 +257,29 @@ class Globals
         IF=21,
         ENDIF=22,
         FOR=23,
-        SPHERE=24,
-        MESH=25,
-        STOP=26,
-        PENSIZE=27,
-        NUMBER = 28, //from here not reserved
-        STRING = 29,
-        COMMENT = 30,
-        LBRACKET = 31,
-        RBRACKET = 32,
-        LPARENTHESIS = 33,
-        RPARENTHESIS = 34,
-        LBRACE=35,
-        RBRACE=36,
-        PLUS=37,
-        HYPHEN=38,
-        ASTERISK=39,
-        SLASH=40,
-        EQUALS=41,
-        LESS=42,
-        GREATER=43,
-        COMMA=44,
-        COLON=45,
-        ITEM=46,
-        EOF =47
+        MESH=24,
+        STOP=25,
+        PENSIZE=26,
+        NUMBER = 27, //from here not reserved
+        STRING = 28,
+        COMMENT = 29,
+        LBRACKET = 30,
+        RBRACKET = 31,
+        LPARENTHESIS = 32,
+        RPARENTHESIS = 33,
+        LBRACE=34,
+        RBRACE=35,
+        PLUS=36,
+        HYPHEN=37,
+        ASTERISK=38,
+        SLASH=39,
+        EQUALS=40,
+        LESS=41,
+        GREATER=42,
+        COMMA=43,
+        COLON=44,
+        ITEM=45,
+        EOF =46
     }
     public enum TokensReserved : int
     {
@@ -309,11 +306,10 @@ class Globals
         IF = 21,
         ENDIF = 22,
         FOR = 23,
-        SPHERE = 24,
-        MESH = 25,
-        STOP = 26,
-        PENSIZE = 27,
-        CAMERA = 28
+        MESH = 24,
+        STOP = 25,
+        PENSIZE = 26,
+        CAMERA = 27
     }
 
 }
@@ -1171,7 +1167,6 @@ public class G3IParser
                 case (int)Tokens.RANDOMIZE:
                 case (int)Tokens.IF:
                 case (int)Tokens.FOR:
-                case (int)Tokens.SPHERE:
                 case (int)Tokens.MESH:
                 case (int)Tokens.STOP:
                 case (int)Tokens.END:
@@ -1367,14 +1362,6 @@ public class G3IParser
                     n3 = ParseExpr();
                     TurtleSetPenColor(n, n2, n3);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
-                    break;
-
-                case (int)Tokens.SPHERE:
-                    Match(nextToken);
-                    //if (!Match((int)Tokens.NUMBER))break;
-                    n = ParseExpr();
-                    Sphere(n);
-                    //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
 
                 case (int)Tokens.MESH:
