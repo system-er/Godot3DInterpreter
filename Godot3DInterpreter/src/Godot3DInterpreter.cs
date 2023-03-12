@@ -151,7 +151,6 @@ class Globals
     public static int pendensity = 255;
     public static bool turtlevisible = true;
     public static string SelectedFile;
-    
 
     public static readonly string[] Token = {
         "NONE",
@@ -313,7 +312,8 @@ class Globals
         SPHERE = 24,
         BOX = 25,
         STOP = 26,
-        PENSIZE = 27
+        PENSIZE = 27,
+        CAMERA = 28
     }
 
 }
@@ -649,11 +649,7 @@ public class G3IParser
         if (myStack.Count() == 0) return scanner.scanBuffer.Length;
         AR = (ActivationRecord)myStack.Pop();
         if (TestingParser) GD.Print("Parser: popped the stack nr objects:" + myStack.Count().ToString());
-        //while(AR.name != "mainprogram")
-        //{
-        //    AR = null;
-        //    AR = (ActivationRecord)myStack.Pop();
-        //}
+
         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
@@ -675,13 +671,7 @@ public class G3IParser
         AR = null;
         AR = (ActivationRecord)myStack.Pop();
 
-        //while(AR.recursionlevel > 2)
-        //{
-        //    AR = null;
-        //    AR = (ActivationRecord)myStack.Pop();
-        //}
-        //recursionlevelnow = 2;
-        if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+myStack.Count);
+        if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+ myStack.Count().ToString());
         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
@@ -849,9 +839,7 @@ public class G3IParser
         if (ntok == (int)Tokens.RANDOM)
         {
             Match((int)Tokens.RANDOM);
-            //printf("in if %s\n", scanner.scanBuffer.c_str());
             int numbertmp = (int)numberor();
-            //printf("calc value %i\n", numbertmp);
             //vec_setvar(stringcalc,rand()%numbertmp);
             //float numbertmp2 = rand() % numbertmp;
             //return numbertmp2;
@@ -1373,9 +1361,9 @@ public class G3IParser
                 case (int)Tokens.PENCOLOR:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
-                    n = numberor();
-                    n2 = numberor();
-                    n3 = numberor();
+                    n = ParseExpr();
+                    n2 = ParseExpr();
+                    n3 = ParseExpr();
                     TurtleSetPenColor(n, n2, n3);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
@@ -1800,7 +1788,6 @@ public class G3IParser
                         */
 
                         if (TestingParser) GD.Print("Parser: starting procedure");
-                        bool inprocedure = true;
                         nextt = scanner.NextToken();
                         while (//scanner.NextToken() != (int)Tokens.END &&
                             nextt != (int)Tokens.EOF
@@ -1814,7 +1801,6 @@ public class G3IParser
                             nextt = scanner.NextToken();
                         }
                         
-                        inprocedure = false;
                         //if (TestingParser) GD.Print("Parser: procedure ended");
                         //Match(TOKEN_END);
                         //scanner.idx = oldidx3;
@@ -1840,7 +1826,7 @@ public class G3IParser
                         endrecursion = false;
                         // --- now old AR is poped back from stack -----------------------------------
                         return;
-                        break;
+                        //break;
                     }
 
                 case (int)Tokens.REPEAT:
