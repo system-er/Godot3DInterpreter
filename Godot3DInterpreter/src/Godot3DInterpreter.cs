@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using static Globals;
 
@@ -2204,6 +2205,8 @@ public partial class Godot3DInterpreter : Node3D
         var newscale = new Godot.Vector3(scale, scale, scale);
         mi.Scale = newscale;
         mi.Translate(pos);
+        mi.RotateX(Deg2Rad(theta));
+        mi.RotateZ(Deg2Rad(phi));
         ParentN.AddChild(mi);
     }
 
