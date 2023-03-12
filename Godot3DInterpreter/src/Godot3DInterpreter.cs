@@ -178,7 +178,7 @@ class Globals
         "ENDIF",
         "FOR",
         "SPHERE",
-        "BOX",
+        "MESH",
         "STOP",
         "PENSIZE",
         "NUMBER",
@@ -229,7 +229,7 @@ class Globals
         "ENDIF",
         "FOR",
         "SPHERE",
-        "BOX",
+        "MESH",
         "STOP",
         "PENSIZE"
     };
@@ -260,7 +260,7 @@ class Globals
         ENDIF=22,
         FOR=23,
         SPHERE=24,
-        BOX=25,
+        MESH=25,
         STOP=26,
         PENSIZE=27,
         NUMBER = 28, //from here not reserved
@@ -310,7 +310,7 @@ class Globals
         ENDIF = 22,
         FOR = 23,
         SPHERE = 24,
-        BOX = 25,
+        MESH = 25,
         STOP = 26,
         PENSIZE = 27,
         CAMERA = 28
@@ -1172,7 +1172,7 @@ public class G3IParser
                 case (int)Tokens.IF:
                 case (int)Tokens.FOR:
                 case (int)Tokens.SPHERE:
-                case (int)Tokens.BOX:
+                case (int)Tokens.MESH:
                 case (int)Tokens.STOP:
                 case (int)Tokens.END:
                 case (int)Tokens.PENSIZE:
@@ -1240,6 +1240,7 @@ public class G3IParser
         {
             var nextToken = scanner.NextToken();
             float n, n2, n3;
+            string scanstring;
             //if (TestingParser) GD.Print("Parser: "+"ParseG3ISentence-nextToken"+nextToken.ToString());
             switch (nextToken)
             {
@@ -1376,11 +1377,19 @@ public class G3IParser
                     //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
 
-                case (int)Tokens.BOX:
+                case (int)Tokens.MESH:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
+                    scanstring = "SPHERE";
+                    if (scanner.NextToken() == (int)Tokens.STRING)
+                    {
+                        Match((int)Tokens.STRING);
+                        scanstring = scanner.scanBuffer;
+                        GD.Print("Parser: found string: "+scanner.scanBuffer);
+                    }
+                    else ErrorMessage("Parser: " + "MESH: wrong parameter");
                     n = ParseExpr();
-                    Box(n);
+                    IntClass.DrawMesh(new Godot.Vector3(TurtlePos.X / n, TurtlePos.Y / n, TurtlePos.Z / n), n, pencolor, scanstring);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
 
@@ -2157,6 +2166,60 @@ public partial class Godot3DInterpreter : Node3D
         mi.Translate(pos);
         ParentN.AddChild(mi);
     }
+
+    public void DrawMesh(Godot.Vector3 pos, float scale, Godot.Color c, string meshstring)
+    {
+        MeshInstance3D mi = new MeshInstance3D();
+        meshstring = meshstring.ToUpper();
+        meshstring = meshstring.Trim();
+        GD.Print("DrawMesh:" + meshstring);
+        switch (meshstring)
+        {
+            case "CAPSULE":
+                mi.Mesh = new CapsuleMesh();
+                break;
+            case "CYLINDER":
+                mi.Mesh = new CylinderMesh();
+                break;
+            case "BOX":
+                mi.Mesh = new BoxMesh();
+                break;
+            case "QUAD":
+                mi.Mesh = new QuadMesh();
+                break;
+            case "PLANE":
+                mi.Mesh = new PlaneMesh();
+                break;
+            case "PRISM":
+                mi.Mesh = new PrismMesh();
+                break;
+            case "SPHERE":
+                mi.Mesh = new SphereMesh();
+                break;
+            case "TORUS":
+                mi.Mesh = new TorusMesh();
+                break;
+            default:
+                mi.Mesh = new SphereMesh();
+                break;
+        }
+
+        StandardMaterial3D mat = new StandardMaterial3D();
+        //mat.NoDepthTest = true;
+        //mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
+        //mat.VertexColorUseAsAlbedo = true;
+        //mat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
+        mat.AlbedoColor = c;
+        mat.Metallic = 0.85f;
+        mat.Roughness = 0.4f;
+        mi.MaterialOverride = mat;
+        mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
+        var newscale = new Godot.Vector3(scale, scale, scale);
+        mi.Scale = newscale;
+        mi.Translate(pos);
+        ParentN.AddChild(mi);
+    }
+
 
     public void Remove3D()
     {
