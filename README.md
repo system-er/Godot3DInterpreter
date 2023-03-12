@@ -63,8 +63,9 @@ PENSIZE number - thickness of 3d lines, normal is 1. now the lines are thin boxe
 HOME   
 CLEAN - clear the 3D-lines   
 PENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated    
-SPHERE number - draws a sphere (godot MeshInstance3D)   
-BOX number - draws a box (godot MeshInstance3D)
+SPHERE number - draws a sphere (godot MeshInstance3D) obsolete command will be deleted...     
+MESH meshnamestring number - draws a mesh (godot MeshInstance3D), example MESH "BOX 30    
+   possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
 
    
 # Commands interpreter "language" (lowercase allowed):   
