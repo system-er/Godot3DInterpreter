@@ -67,7 +67,9 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D), example MESH "
    possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
 
    
-# Commands interpreter "language" (lowercase allowed):   
+# Commands interpreter "language" (lowercase allowed): 
+7 - a number    
+0.7 - a floatnumber   
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world]   
