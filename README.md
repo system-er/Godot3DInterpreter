@@ -13,8 +13,8 @@ example interpreterprogram procedure with PENSIZE 3:
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
 
    
-example interpreterprogram spheres:    
-![Pic2](Godot3DInterpreter/pics/spheres.JPG)
+example interpreterprogram meshes:    
+![Pic2](Godot3DInterpreter/pics/meshes.JPG)
     
      
 example interpreterprogram recursive tree:    
@@ -62,13 +62,14 @@ PENDOWN
 PENSIZE number - thickness of 3d lines, normal is 1. now the lines are thin boxes MeshInstance3D.    
 HOME   
 CLEAN - clear the 3D-lines   
-PENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated       
+PENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated     
+CAMERA number number number - move the camera relativ, CAMERA 0 0 100 moves the camera +100 Z     
 MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, example MESH "SPHERE 30    
    possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
 
    
 # Commands interpreter "language" (lowercase allowed): 
-7 - a number    
+7 - a number, -7 is a minus seven        
 0.7 - a floatnumber   
 ; xxx - a comment   
 "X - a string   
