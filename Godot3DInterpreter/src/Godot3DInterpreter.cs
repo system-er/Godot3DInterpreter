@@ -181,6 +181,7 @@ class Globals
         "MESH",
         "STOP",
         "PENSIZE",
+        "CAMERA",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -230,7 +231,8 @@ class Globals
         "FOR",
         "MESH",
         "STOP",
-        "PENSIZE"
+        "PENSIZE",
+        "CAMERA"
     };
     public enum Tokens : int
     {
@@ -261,26 +263,27 @@ class Globals
         MESH=24,
         STOP=25,
         PENSIZE=26,
-        NUMBER = 27, //from here not reserved
-        STRING = 28,
-        COMMENT = 29,
-        LBRACKET = 30,
-        RBRACKET = 31,
-        LPARENTHESIS = 32,
-        RPARENTHESIS = 33,
-        LBRACE=34,
-        RBRACE=35,
-        PLUS=36,
-        HYPHEN=37,
-        ASTERISK=38,
-        SLASH=39,
-        EQUALS=40,
-        LESS=41,
-        GREATER=42,
-        COMMA=43,
-        COLON=44,
-        ITEM=45,
-        EOF =46
+        CAMERA=27,
+        NUMBER = 28, //from here not reserved
+        STRING = 29,
+        COMMENT = 30,
+        LBRACKET = 31,
+        RBRACKET = 32,
+        LPARENTHESIS = 33,
+        RPARENTHESIS = 34,
+        LBRACE=35,
+        RBRACE=36,
+        PLUS=37,
+        HYPHEN=38,
+        ASTERISK=39,
+        SLASH=40,
+        EQUALS=41,
+        LESS=42,
+        GREATER=43,
+        COMMA=44,
+        COLON=45,
+        ITEM=46,
+        EOF =47
     }
     public enum TokensReserved : int
     {
@@ -321,7 +324,7 @@ public class G3IScanner
     public string rawContents;
     public string scanBuffer;
     public int idx, lookup;
-    public char ch;
+    public char ch, nextch;
 
     public G3IScanner(string input)
     {
@@ -335,6 +338,8 @@ public class G3IScanner
         while (idx < rawContents.Length)
         {
             ch = rawContents[idx];
+            if (idx+1 < rawContents.Length) nextch = rawContents[idx+1];
+
             if (ch == '[')
             {
                 idx++;
@@ -377,7 +382,7 @@ public class G3IScanner
                 if (TestingScanner) GD.Print("Scanner: found PLUS");
                 return (int)Tokens.PLUS;
             }
-            else if (ch == '-')
+            else if (ch == '-' && !char.IsDigit(nextch))
             {
                 idx++;
                 if (TestingScanner) GD.Print("Scanner: found HYPHEN");
@@ -491,7 +496,7 @@ public class G3IScanner
                 if (TestingScanner) GD.Print("Scanner: found STRING");
                 return (int)Tokens.STRING;
             }
-            else if (char.IsDigit(ch))
+            else if (char.IsDigit(ch) || ch == '-')
             {
                 scanBuffer = ch.ToString();
                 idx++;
@@ -1173,6 +1178,7 @@ public class G3IParser
                 case (int)Tokens.END:
                 case (int)Tokens.PENSIZE:
                 case (int)Tokens.REPEAT:
+                case (int)Tokens.CAMERA:
                     ParseG3ISentence();
                     break;
 
@@ -1362,6 +1368,21 @@ public class G3IParser
                     n2 = ParseExpr();
                     n3 = ParseExpr();
                     TurtleSetPenColor(n, n2, n3);
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
+                    break;
+
+                case (int)Tokens.CAMERA:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    n = ParseExpr();
+                    n2 = ParseExpr();
+                    n3 = ParseExpr();
+
+                    Godot.Vector3 campos = IntClass.Cam.Position;
+                    campos.X = n;
+                    campos.Y = n2;
+                    campos.Z = n3;
+                    IntClass.Cam.Translate(campos);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
 
@@ -1934,8 +1955,10 @@ public partial class Godot3DInterpreter : Node3D
         //GD.Print("G3IParserTest Programm: " + input);
         //var parser = new G3IParser(new G3IScanner(input));
         //parser.ParseG3IProgram();
-
         
+        //Godot.Vector3 campos = Cam.Position;
+        //campos.X = campos.X + 100;
+        //Cam.Translate(campos);
     }
 
 
