@@ -1,6 +1,6 @@
 # Godot3DInterpreter
 
-v0.1
+v0.11
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
 Working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos and bugs.         
