@@ -91,7 +91,7 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use 
 - want contact? send message in godot-forum (systemerror)    
   
 # Last changes:    
-- added example meshes.g3i and pic, minusnumbers possible, new command CAMERA to move camera3d relative     
+- added example meshes.g3i and pic, negative numbers possible, new command CAMERA to move camera3d relative     
 
   
   
