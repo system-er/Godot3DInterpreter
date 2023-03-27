@@ -14,7 +14,7 @@ example interpreterprogram procedure with PENSIZE 3:
 
    
 example interpreterprogram meshes:    
-![Pic2](Godot3DInterpreter/pics/meshes.JPG)
+![Pic2](Godot3DInterpreter/pics/meshes.jpg)
     
      
 example interpreterprogram recursive tree:    
