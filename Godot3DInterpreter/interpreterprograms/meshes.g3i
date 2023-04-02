@@ -1,0 +1,32 @@
+
+MAKE "ANGLE 0
+MAKE "R 0
+CAMERA 0 0 200
+
+PENUP
+REPEAT 20 
+[
+    FORWARD 40
+    RIGHT :ANGLE
+    "ANGLE = :ANGLE + 7
+    PENCOLOR RANDOM RANDOM RANDOM
+    "R = RANDOM 6
+    IF :R = 0
+        MESH "SPHERE 40
+    ENDIF
+    IF :R = 1
+        MESH "BOX 40
+    ENDIF
+    IF :R = 2
+        MESH "CAPSULE 40
+    ENDIF
+    IF :R = 3
+        MESH "CYLINDER 40
+    ENDIF
+    IF :R = 4
+        MESH "PRISM 40
+    ENDIF
+    IF :R = 5
+        MESH "TORUS 40
+    ENDIF
+]
