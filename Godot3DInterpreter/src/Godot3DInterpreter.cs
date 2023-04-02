@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using static Globals;
 
 
-
 public class Stack<T>
 {
     public int position => data.Count - 1;
@@ -533,7 +532,7 @@ public class G3IScanner
                     if (TestingScanner) GD.Print("Scanner: found TokenReserved: " + TokenReserved[lookup]);
                     return lookup;
                 }
-            LexicalError();
+                LexicalError();
             }
             else if (char.IsWhiteSpace(ch))
             {
