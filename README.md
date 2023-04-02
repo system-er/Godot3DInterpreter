@@ -1,6 +1,4 @@
-# Godot3DInterpreter
-
-v0.11
+# Godot3DInterpreter WIP - work in progress     
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
 Working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos and bugs.         
