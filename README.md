@@ -92,7 +92,7 @@ ERASE string - erases a procedure or with "ALL it erases all procedures.
 - want contact? send message in godot-forum (systemerror)    
   
 # Last changes:    
-- added new command PRINTOUT and ERASE    
+- added new commands PRINTOUT and ERASE    
 
 
   
