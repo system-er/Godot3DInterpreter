@@ -1,4 +1,5 @@
 ; testprogram Godot3DInterpreter
+; and action !
 
 TO "CUBE :N :ANGLE
     REPEAT :N
@@ -15,12 +16,18 @@ END
 
 ; Start Mainprogram
 PENSIZE 3
-PENCOLOR 0 0 255
-GO "CUBE 36 10
+CAMERA -50 0 0
 
-DOWN 10
-PENCOLOR 0 RANDOM 255 RANDOM 255
-GO "CUBE 36 10
+REPEAT 20
+[
+    PENCOLOR RANDOM RANDOM RANDOM
+    SLEEP 100
+    GO "CUBE 36 10
+    SLEEP 100
+    CAMERA 5 0 -3
+    SLEEP 300
+    CLEAN
+]
 
 PRINT "[END OF PROGRAM]
 
