@@ -184,6 +184,7 @@ class Globals
         "CAMERA",
         "PRINTOUT",
         "ERASE",
+        "SLEEP",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -236,7 +237,8 @@ class Globals
         "PENSIZE",
         "CAMERA",
         "PRINTOUT",
-        "ERASE"
+        "ERASE",
+        "SLEEP"
     };
     public enum Tokens : int
     {
@@ -270,26 +272,27 @@ class Globals
         CAMERA=27,
         PRINTOUT=28,
         ERASE=29,
-        NUMBER = 30, //from here not reserved
-        STRING = 31,
-        COMMENT = 32,
-        LBRACKET = 33,
-        RBRACKET = 34,
-        LPARENTHESIS = 35,
-        RPARENTHESIS = 36,
-        LBRACE=37,
-        RBRACE=38,
-        PLUS=39,
-        HYPHEN=40,
-        ASTERISK=41,
-        SLASH=42,
-        EQUALS=43,
-        LESS=44,
-        GREATER=45,
-        COMMA=46,
-        COLON=47,
-        ITEM=48,
-        EOF =49
+        SLEEP=30,
+        NUMBER = 31, //from here not reserved
+        STRING = 32,
+        COMMENT = 33,
+        LBRACKET = 34,
+        RBRACKET = 35,
+        LPARENTHESIS = 36,
+        RPARENTHESIS = 37,
+        LBRACE=38,
+        RBRACE=39,
+        PLUS=40,
+        HYPHEN=41,
+        ASTERISK=42,
+        SLASH=43,
+        EQUALS=44,
+        LESS=45,
+        GREATER=46,
+        COMMA=47,
+        COLON=48,
+        ITEM=49,
+        EOF =50
     }
     public enum TokensReserved : int
     {
@@ -321,7 +324,8 @@ class Globals
         PENSIZE = 26,
         CAMERA = 27,
         PRINTOUT = 28,
-        ERASE = 29
+        ERASE = 29,
+        SLEEP = 30
     }
 
 }
@@ -1214,6 +1218,7 @@ public class G3IParser
                 case (int)Tokens.CAMERA:
                 case (int)Tokens.PRINTOUT:
                 case (int)Tokens.ERASE:
+                case (int)Tokens.SLEEP:
                     ParseG3ISentence();
                     break;
 
@@ -1461,6 +1466,12 @@ public class G3IParser
                         removeproc(scanstring);
                         GD.Print("Parser: Erased procedure " + scanstring);
                     }
+                    break;
+
+                case (int)Tokens.SLEEP:
+                    Match(nextToken);
+                    n = ParseExpr();
+                    Thread.Sleep( Convert.ToInt32(n));
                     break;
 
                 case (int)Tokens.MESH:
@@ -2051,7 +2062,9 @@ public partial class Godot3DInterpreter : Node3D
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
             try
             {
-                parser.ParseG3IProgram();
+                Thread t = new Thread(delegate () { parser.ParseG3IProgram(); });
+                t.Start();
+                //parser.ParseG3IProgram();
             }
             catch (Exception e)
             {
