@@ -185,6 +185,7 @@ class Globals
         "PRINTOUT",
         "ERASE",
         "SLEEP",
+        "BACKGROUND",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -238,7 +239,8 @@ class Globals
         "CAMERA",
         "PRINTOUT",
         "ERASE",
-        "SLEEP"
+        "SLEEP",
+        "BACKGROUND"
     };
     public enum Tokens : int
     {
@@ -273,26 +275,27 @@ class Globals
         PRINTOUT=28,
         ERASE=29,
         SLEEP=30,
-        NUMBER = 31, //from here not reserved
-        STRING = 32,
-        COMMENT = 33,
-        LBRACKET = 34,
-        RBRACKET = 35,
-        LPARENTHESIS = 36,
-        RPARENTHESIS = 37,
-        LBRACE=38,
-        RBRACE=39,
-        PLUS=40,
-        HYPHEN=41,
-        ASTERISK=42,
-        SLASH=43,
-        EQUALS=44,
-        LESS=45,
-        GREATER=46,
-        COMMA=47,
-        COLON=48,
-        ITEM=49,
-        EOF =50
+        BACKGROUND=31,
+        NUMBER = 32, //from here not reserved
+        STRING = 33,
+        COMMENT = 34,
+        LBRACKET = 35,
+        RBRACKET = 36,
+        LPARENTHESIS = 37,
+        RPARENTHESIS = 38,
+        LBRACE=39,
+        RBRACE=40,
+        PLUS=41,
+        HYPHEN=42,
+        ASTERISK=43,
+        SLASH=44,
+        EQUALS=45,
+        LESS=46,
+        GREATER=47,
+        COMMA=48,
+        COLON=49,
+        ITEM=50,
+        EOF =51
     }
     public enum TokensReserved : int
     {
@@ -325,7 +328,8 @@ class Globals
         CAMERA = 27,
         PRINTOUT = 28,
         ERASE = 29,
-        SLEEP = 30
+        SLEEP = 30,
+        BACKGROUND = 31
     }
 
 }
@@ -1219,6 +1223,7 @@ public class G3IParser
                 case (int)Tokens.PRINTOUT:
                 case (int)Tokens.ERASE:
                 case (int)Tokens.SLEEP:
+                case (int)Tokens.BACKGROUND:
                     ParseG3ISentence();
                     break;
 
@@ -1408,6 +1413,16 @@ public class G3IParser
                     n2 = ParseExpr();
                     n3 = ParseExpr();
                     TurtleSetPenColor(n, n2, n3);
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
+                    break;
+
+                case (int)Tokens.BACKGROUND:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    n = ParseExpr();
+                    n2 = ParseExpr();
+                    n3 = ParseExpr();
+                    IntClass.setbackgroundcolor(Godot.Color.Color8((byte)n, (byte)n2, (byte)n3));
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
 
@@ -2358,6 +2373,11 @@ public partial class Godot3DInterpreter : Node3D
         GD.Print(textoffile);
         NewTextInput = textoffile;
         NewInput = true;
+    }
+
+    public void setbackgroundcolor(Godot.Color color)
+    {
+        RenderingServer.SetDefaultClearColor(color);
     }
 
 }
