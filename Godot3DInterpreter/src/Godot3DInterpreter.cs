@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
+using System.Threading;
 using static Globals;
 
 
@@ -181,6 +182,8 @@ class Globals
         "STOP",
         "PENSIZE",
         "CAMERA",
+        "PRINTOUT",
+        "ERASE",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -231,7 +234,9 @@ class Globals
         "MESH",
         "STOP",
         "PENSIZE",
-        "CAMERA"
+        "CAMERA",
+        "PRINTOUT",
+        "ERASE"
     };
     public enum Tokens : int
     {
@@ -263,26 +268,28 @@ class Globals
         STOP=25,
         PENSIZE=26,
         CAMERA=27,
-        NUMBER = 28, //from here not reserved
-        STRING = 29,
-        COMMENT = 30,
-        LBRACKET = 31,
-        RBRACKET = 32,
-        LPARENTHESIS = 33,
-        RPARENTHESIS = 34,
-        LBRACE=35,
-        RBRACE=36,
-        PLUS=37,
-        HYPHEN=38,
-        ASTERISK=39,
-        SLASH=40,
-        EQUALS=41,
-        LESS=42,
-        GREATER=43,
-        COMMA=44,
-        COLON=45,
-        ITEM=46,
-        EOF =47
+        PRINTOUT=28,
+        ERASE=29,
+        NUMBER = 30, //from here not reserved
+        STRING = 31,
+        COMMENT = 32,
+        LBRACKET = 33,
+        RBRACKET = 34,
+        LPARENTHESIS = 35,
+        RPARENTHESIS = 36,
+        LBRACE=37,
+        RBRACE=38,
+        PLUS=39,
+        HYPHEN=40,
+        ASTERISK=41,
+        SLASH=42,
+        EQUALS=43,
+        LESS=44,
+        GREATER=45,
+        COMMA=46,
+        COLON=47,
+        ITEM=48,
+        EOF =49
     }
     public enum TokensReserved : int
     {
@@ -312,7 +319,9 @@ class Globals
         MESH = 24,
         STOP = 25,
         PENSIZE = 26,
-        CAMERA = 27
+        CAMERA = 27,
+        PRINTOUT = 28,
+        ERASE = 29
     }
 
 }
@@ -477,7 +486,7 @@ public class G3IScanner
                     }
                     if (idx == rawContents.Length) GD.Print("ERROR - list: closing ] not found\n");
                     idx++;
-                    if (TestingScanner) GD.Print("Scanner: found STRING");
+                    //if (TestingScanner) GD.Print("Scanner: found STRING");
                 }
                 else
                 {
@@ -492,7 +501,7 @@ public class G3IScanner
                         else break;
                     }
                 }
-                if (TestingScanner) GD.Print("Scanner: found STRING");
+                //if (TestingScanner) GD.Print("Scanner: found STRING");
                 return (int)Tokens.STRING;
             }
             else if (char.IsDigit(ch) || ch == '-')
@@ -894,6 +903,31 @@ public class G3IParser
         return " ";
     }
 
+    public void removeproc(string procedure)
+    {
+        for (int i = ListProcedures.Count - 1; i >= 0; i--)
+        {
+
+            if (ListProcedures[i].name == procedure)
+            {
+                ListProcedures.RemoveAt(i);
+                return;
+            }
+        }
+        ErrorMessage("Parser: removeproc: no procedure found to get body");
+    }
+
+    public string getallprocbody()
+    {
+        string tmp = "";
+        for (int i=0; i < ListProcedures.Count; i++)
+        {
+            tmp=tmp + ListProcedures[i].proc +"\n";
+        }
+        return tmp;
+    }
+
+
     public int getidx(string procedure)
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
@@ -1178,6 +1212,8 @@ public class G3IParser
                 case (int)Tokens.PENSIZE:
                 case (int)Tokens.REPEAT:
                 case (int)Tokens.CAMERA:
+                case (int)Tokens.PRINTOUT:
+                case (int)Tokens.ERASE:
                     ParseG3ISentence();
                     break;
 
@@ -1186,7 +1222,7 @@ public class G3IParser
                     break;
 
                 case (int)Tokens.EOF:
-                    if (TestingParser) GD.Print("Parser: found Token EOF");
+                    //if (TestingParser) GD.Print("Parser: found Token EOF");
                     Match((int)Tokens.EOF);
                     parsestop = true;
                     return;
@@ -1383,6 +1419,48 @@ public class G3IParser
                     campos.Z = n3;
                     IntClass.Cam.Translate(campos);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
+                    break;
+
+                case (int)Tokens.PRINTOUT:
+                    Match(nextToken);
+                    scanstring = "ALL";
+                    if (scanner.NextToken() == (int)Tokens.STRING)
+                    {
+                        Match((int)Tokens.STRING);
+                        scanstring = scanner.scanBuffer;
+                        //GD.Print("Parser: found string: " + scanner.scanBuffer);
+                    }
+                    else ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
+                    if (scanstring == "ALL")
+                    {
+                        GD.Print(getallprocbody());
+                    }
+                    else
+                    {
+                        GD.Print(getprocbody(scanstring));
+                    }
+                    break;
+
+                case (int)Tokens.ERASE:
+                    Match(nextToken);
+                    scanstring = "ALL";
+                    if (scanner.NextToken() == (int)Tokens.STRING)
+                    {
+                        Match((int)Tokens.STRING);
+                        scanstring = scanner.scanBuffer;
+                        //GD.Print("Parser: found string: " + scanner.scanBuffer);
+                    }
+                    else ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
+                    if (scanstring == "ALL")
+                    {
+                        ListProcedures.Clear();
+                        GD.Print("Parser: Erased all procedures.");
+                    }
+                    else
+                    {
+                        removeproc(scanstring);
+                        GD.Print("Parser: Erased procedure " + scanstring);
+                    }
                     break;
 
                 case (int)Tokens.MESH:
