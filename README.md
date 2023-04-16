@@ -84,7 +84,7 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use 
 LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
 PRINTOUT string - prints a procedure or with "ALL it prints all procedures.    
 ERASE string - erases a procedure or with "ALL it erases all procedures.    
-SLEEP number - sleep n milliseconds (see example procedures.g3i)   
+SLEEP number - sleep n milliseconds (see example procedure.g3i)   
       
          
          
@@ -94,7 +94,7 @@ SLEEP number - sleep n milliseconds (see example procedures.g3i)
   
 # Last changes:    
 - added new commands PRINTOUT and ERASE    
-- start parser as thread, now movement is possible. new command SLEEP    
+- start parser as thread, now movement is possible. new command SLEEP, see changed example procedure.g3i        
 
 
   
