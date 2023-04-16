@@ -59,7 +59,7 @@ PENUP
 PENDOWN    
 PENSIZE number - thickness of 3d lines, normal is 1. now the lines are thin boxes MeshInstance3D.    
 HOME   
-CLEAN - clear the 3D-lines   
+CLEAN - clear all       
 PENCOLOR number number number - the numbers should be 0-255, also you can type RANDOM then a random number is generated     
 CAMERA number number number - move the camera relativ, CAMERA 0 0 100 moves the camera +100 Z     
 MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, example MESH "SPHERE 30    
