@@ -95,7 +95,9 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
   
 # Last changes:    
 - added new commands PRINTOUT and ERASE    
-- start parser as thread, now movement is possible. new command SLEEP, see changed example procedure.g3i        
+- start parser as thread, now movement is possible. new command SLEEP, see changed example procedure.g3i      
+- new command BACKGROUND, for example BACKGROUND RANDOM RANDOM RANDOM    
+
 
 
   
