@@ -1,0 +1,15 @@
+BACKGROUND 0 0 0
+PENSIZE 6
+REPEAT 30
+[
+    REPEAT 12
+    [
+        HOME
+        LEFT RANDOM 360
+        UP RANDOM 360
+        PENCOLOR RANDOM RANDOM RANDOM
+        FORWARD 150
+    ]
+    SLEEP 700
+    CLEAN
+]
