@@ -18,8 +18,8 @@ example interpreterprogram meshes:
 example interpreterprogram recursive tree:    
 ![Pic3](Godot3DInterpreter/pics/tree.jpg)
 
-example interpreterprogram snowflake.g3i:    
-![Pic4](Godot3DInterpreter/pics/snowflake.jpg)
+example interpreterprogram lasershow.g3i:    
+![Pic4](Godot3DInterpreter/pics/lasershow.jpg)
 
     
 # Welcome back commander:    
@@ -97,7 +97,7 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 - start parser as thread, now changing scene is possible. new command SLEEP, see changed example procedure.g3i      
 - new command BACKGROUND, for example BACKGROUND RANDOM RANDOM RANDOM    
 - fixed bug in command GO    
-
+- new example lasershow.g3i    
 
 
   
