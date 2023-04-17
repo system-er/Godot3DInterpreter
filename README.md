@@ -90,7 +90,7 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
          
          
 # FAQ:   
-- why an interpreter, we have gdscript and other languages? for fun and learning c# with godot 4     
+- why this interpreter? for fun and learning c# with godot 4     
 - want contact? send message in godot-forum (systemerror)    
   
 # Last changes:    
