@@ -33,7 +33,7 @@ if you type an expression like 2 * 2, the result will be printed to Godotoutput.
 
 or you type:    
 FORWARD 30    
-and enter with Return, you see a 3D-line of MeshInstance3D. Then enter   
+and enter with Return, you see the turtle moves and draws a line - a 3D-line of MeshInstance3D. Then enter   
 LEFT 90   
 and again FORWARD 30 and you see the next line. If you enter for example:   
 REPEAT 4 [ FORWARD 30 LEFT 90 ]   
