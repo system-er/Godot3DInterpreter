@@ -943,10 +943,10 @@ public class G3IParser
 
             if (ListProcedures[i].name == procedure)
             {
-                return ListProcedures[i].idxstart;
+                return ListProcedures[i].vidx;
             }
         }
-        ErrorMessage("Parser: getidx: no procedure found to get idx");
+        ErrorMessage("Parser: getidx: no procedure found to get vidx");
         return -1;
     }
 
@@ -974,7 +974,7 @@ public class G3IParser
                 return ListProcedures[i].idxstart;
             }
         }
-        ErrorMessage("Parser: getstartidx: no procedure found to get startidx");
+        ErrorMessage("Parser: getstartidx: no procedure found to get idxstart");
         return -1;
     }
 
@@ -1706,7 +1706,7 @@ public class G3IParser
                         else ErrorMessage("Parser: "+"PRINT: wrong parameter");
                         nextt = scanner.NextToken();
                     }
-                    GD.Print("\n");
+                    //GD.Print("\n");
                     break;
 
                 case (int)Tokens.MAKE:
@@ -1870,12 +1870,16 @@ public class G3IParser
                         {
                             if (TestingParser) GD.Print("Parser: " + "found no procedure in raw " + procedurename);
                             string p = getprocbody(procedurename);
+                            if (TestingParser) GD.Print("Parser: procbody: " + p);
                             if (p != " ")
                             {
                                 scanner.rawContents = scanner.rawContents.Insert(0, p);
                                 idxold = idxold + p.Length;
                                 //scanner.idx = procedurename.Length+4;
                                 scanner.idx = getstartidx(procedurename);
+                                //scanner.idx = getidx(procedurename);
+                                if (TestingParser) GD.Print("Parser: idx=" + scanner.idx);
+                                
                                 //if (TestingParser) GD.Print("scanner.rawcontents: " + scanner.rawContents);
                             }
                             else
@@ -1888,10 +1892,11 @@ public class G3IParser
                                 break;
                             }
                         }
-
+                        parsestop = false;
 
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         //myStack.Push(AR);
+
                         // --- now old AR is pushed on stack -----------------------------------
                         VisitProcedureCall(procedurename, idxold);
                         setvarproc(procedurename, argumentnr);
@@ -1908,8 +1913,10 @@ public class G3IParser
                         }
                         */
 
-                        if (TestingParser) GD.Print("Parser: starting procedure");
+                        //if (TestingParser) GD.Print("Parser: starting procedure");
                         nextt = scanner.NextToken();
+                        //if (TestingParser) GD.Print("Parser: nextt: "+nextt);
+                        //if (TestingParser) GD.Print("Parser: "+stoprecursion.ToString()+" "+endrecursion.ToString()+" "+parsestop.ToString());
                         while (//scanner.NextToken() != (int)Tokens.END &&
                             nextt != (int)Tokens.EOF
                             && stoprecursion != true
@@ -1918,9 +1925,12 @@ public class G3IParser
                             )
                             //&& AR.recursionlevel < 4)
                         {
+                            //if (TestingParser) GD.Print("Parser: starting ParseG3ISentence");
                             ParseG3ISentence();
                             nextt = scanner.NextToken();
                         }
+                        //if (TestingParser) GD.Print("Parser: ending procedure");
+                        
                         
                         //if (TestingParser) GD.Print("Parser: procedure ended");
                         //Match(TOKEN_END);
