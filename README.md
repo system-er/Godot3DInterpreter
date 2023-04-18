@@ -73,13 +73,13 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world]   
-MAKE "variablename number - declare a variable, NO GLOBAL variables, get the value with :variablename, change with "X = 7, example: MAKE "X 7    PRINT :X   
+MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with "X = 7, example: MAKE "X 7    PRINT :X   
 PRINT string - print   
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 IF xxx ENDIF - if command   
-TO procedurename xxx END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
-GO procedurename - start a procedure, parameter allowed, NO nested procedures(proc in proc), example GO "PROC 42. for recursion the STOP-command now works, see example treewithstopcommand.g3i             
+TO procedurename xxx formalparameters END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
+GO procedurename arguments - start a procedure, parameter allowed, NO nested procedures(proc in proc), example GO "PROC 42. for recursion the STOP-command now works, see example treewithstopcommand.g3i             
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
 math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest           
 LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
