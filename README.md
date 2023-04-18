@@ -94,7 +94,7 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 - want contact? send message in godot-forum (systemerror)    
   
 # Last changes:    
-- start parser as thread, now changing scene is possible. new command SLEEP, see changed example lasershow.g3i      
+- start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i      
 - new command BACKGROUND, for example BACKGROUND RANDOM RANDOM RANDOM    
 - fixed bug in command GO    
 
