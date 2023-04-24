@@ -202,7 +202,8 @@ class Globals
         "ERASE",
         "SLEEP",
         "BACKGROUND",
-        "REQUEST",
+        "HELP",
+        "QUIT",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -258,7 +259,8 @@ class Globals
         "ERASE",
         "SLEEP",
         "BACKGROUND",
-        "REQUEST"
+        "HELP",
+        "QUIT"
     };
     public enum Tokens : int
     {
@@ -294,27 +296,28 @@ class Globals
         ERASE=29,
         SLEEP=30,
         BACKGROUND=31,
-        REQUEST=32,
-        NUMBER = 33, //from here not reserved
-        STRING = 34,
-        COMMENT = 35,
-        LBRACKET = 36,
-        RBRACKET = 37,
-        LPARENTHESIS = 38,
-        RPARENTHESIS = 39,
-        LBRACE=40,
-        RBRACE=41,
-        PLUS=42,
-        HYPHEN=43,
-        ASTERISK=44,
-        SLASH=45,
-        EQUALS=46,
-        LESS=47,
-        GREATER=48,
-        COMMA=49,
-        COLON=50,
-        ITEM=51,
-        EOF =52
+        HELP=32,
+        QUIT=33,
+        NUMBER = 34, //from here not reserved
+        STRING = 35,
+        COMMENT = 36,
+        LBRACKET = 37,
+        RBRACKET = 38,
+        LPARENTHESIS = 39,
+        RPARENTHESIS = 40,
+        LBRACE=41,
+        RBRACE=42,
+        PLUS=43,
+        HYPHEN=44,
+        ASTERISK=45,
+        SLASH=46,
+        EQUALS=47,
+        LESS=48,
+        GREATER=49,
+        COMMA=50,
+        COLON=51,
+        ITEM=52,
+        EOF =53
     }
     public enum TokensReserved : int
     {
@@ -349,7 +352,8 @@ class Globals
         ERASE = 29,
         SLEEP = 30,
         BACKGROUND = 31,
-        REQUEST=32
+        HELP=32,
+        QUIT=33
     }
 
 }
@@ -1252,7 +1256,8 @@ public class G3IParser
                 case (int)Tokens.ERASE:
                 case (int)Tokens.SLEEP:
                 case (int)Tokens.BACKGROUND:
-                case (int)Tokens.REQUEST:
+                case (int)Tokens.HELP:
+                case (int)Tokens.QUIT:
                     ParseG3ISentence();
                     break;
 
@@ -1690,38 +1695,30 @@ public class G3IParser
                         break;
                     }
 
-                case (int)Tokens.REQUEST:
+                case (int)Tokens.HELP:
                     Match(nextToken);
-                    int nextt = scanner.NextToken();
-                    if (nextt == (int)Tokens.COLON)
-                    {
-                        Match((int)Tokens.COLON);
-                        //GD.Print(AR.StrDump());
-                        GD.Print("PRINT COLON: " + scanner.scanBuffer);
-                        string stringvar = getvarstring(scanner.scanBuffer);
-                        InputRequest = true;
-                        while(!NewInput)
-                        {
-                            Thread.Sleep(200);
-                        }
-                        InputRequest = false;
-                        
-                        
-                        //GD.Print(NewTextInput);
-                        setvarstring(stringvar, NewTextInput);
-                    }
-                    else
-                    {
-                        ErrorMessage("Parser: " + "REQUEST: wrong parameter");
-                    }
+                    //if (!Match((int)Tokens.STRING)) break;
+                    GD.Print("HELP: commander-commands:");
+                    GD.Print("HELP: LOAD //load an interpreterprogram *.g3i");
+                    GD.Print("HELP: HELP //show this helpmessages");
+                    GD.Print("HELP: QUIT //quit program");
+                    GD.Print("HELP: Godot3Dinterpretercommands like REPEAT //look readme.md https://github.com/system-er/Godot3DInterpreter");
                     
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence LOAD");
+                    break;
+
+                case (int)Tokens.QUIT:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.STRING)) break;
+                    IntClass.GetTree().Quit();
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence LOAD");
                     break;
 
                 case (int)Tokens.PRINT:
               
                     Match(nextToken);
 
-                    nextt = scanner.NextToken();
+                    var nextt = scanner.NextToken();
                     while (nextt == (int)Tokens.COMMA || nextt == (int)Tokens.COLON || nextt == (int)Tokens.STRING) //|| nextt == (int)Tokens.ITEM
                     {
                         if (nextt == (int)Tokens.COMMA)
