@@ -95,7 +95,7 @@ QUIT - quit program
          
 # FAQ:   
 - why this interpreter? for fun and learning c# with godot 4     
-- want contact? send message in godot-forum (systemerror)    
+- want contact? send message in godot-forum https://godotforums.org/d/32849-godot3dinterpreter-logolike-project    
   
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
