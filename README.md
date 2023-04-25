@@ -98,8 +98,8 @@ QUIT - quit program
 - want contact? send message in godot-forum (systemerror)    
   
 # Last changes:    
-- start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i      
-- new command BACKGROUND, for example BACKGROUND RANDOM RANDOM RANDOM    
+- start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
+- new command BACKGROUND, for example BACKGROUND 0 0 150 for a blue background.        
 - variables, procedures now work with strings too, example MAKE "X "hello  PRINT :X    
    -or other example: TO "PROC :X PRINT :X END  GO "PROC "[hello world]    
 - new commander-commands HELP and QUIT    
