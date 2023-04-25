@@ -1,6 +1,7 @@
 # Godot3DInterpreter - new version 0.QUIT    
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
+in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project    
 Working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos and bugs.         
 Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter now work.     
@@ -95,7 +96,7 @@ QUIT - quit program
          
 # FAQ:   
 - why this interpreter? for fun and learning c# with godot 4     
-- want contact? send message in godot-forum https://godotforums.org/d/32849-godot3dinterpreter-logolike-project    
+ 
   
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
