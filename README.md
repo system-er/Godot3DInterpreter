@@ -45,7 +45,15 @@ and can call it from the commander with GO "X 42
 and the procedure will write 42 to Godot-output.
 
 If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
-     
+   
+
+  
+# Commands commander (lowercase allowed):    
+LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
+HELP - print helpmessages   
+QUIT - quit program    
+
+   
     
    
 # Commands 3D (lowercase allowed):   
@@ -87,13 +95,7 @@ PRINTOUT string - prints a procedure or with "ALL it prints all procedures.
 ERASE string - erases a procedure or with "ALL it erases all procedures.    
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
       
-  
-# Commands commander (lowercase allowed):    
-LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
-HELP - print helpmessages   
-QUIT - quit program    
-
-         
+      
   
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
