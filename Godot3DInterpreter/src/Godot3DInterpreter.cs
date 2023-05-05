@@ -10,13 +10,15 @@ using System.Numerics;
 using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading;
-using static Globals;
 
+namespace Godot3DInterpreter;
+
+using static Globals;
 
 public class Stack<T>
 {
     public int position => data.Count - 1;
-    IList<T> data = new List<T>();
+    readonly IList<T> data = new List<T>();
     public void Push(T obj) => data.Add(obj);
 
     public T Pop()
@@ -44,7 +46,7 @@ class ActivationRecord
     public int type;
     public int recursionlevel;
     public int idx;
-    public Dictionary<string, string> members = new Dictionary<string, string>();
+    public readonly Dictionary<string, string> members = new();
 
     public ActivationRecord(string n, int t, int nl, int i)
     {
@@ -135,17 +137,17 @@ class Globals
     public static int ARTypeProcedure = 2;
 
     // ActivationRecord for the mainprogram
-    public static ActivationRecord AR = new ActivationRecord(
+    public static ActivationRecord AR = new(
             "mainprogram",
        ARTypeProgram,
             1, //recursionlevel
             0 //idx
         );
     //public static Stack myStack = new Stack();
-    public static Stack<ActivationRecord> myStack = new Stack<ActivationRecord>();
-    public static List<G3IProc> ListProcedures = new List<G3IProc>();
+    public static readonly Stack<ActivationRecord> myStack = new();
+    public static readonly List<G3IProc> ListProcedures = new();
     public static int recursionlevelnow = 1;
-    public static string[] ArgumentArray = new string[42];
+    public static readonly string[] ArgumentArray = new string[42];
     public static bool stoprecursion = false;
     public static bool endrecursion = false;
     public static bool parsestop = false;
@@ -503,7 +505,7 @@ public class G3IScanner
                 scanBuffer = "";
                 idx++;
                 ch = rawContents[idx];
-                if (ch == '[' && ch != '\n')
+                if (ch is '[' and not '\n')
                 {
                     idx++;
                     while (idx < rawContents.Length)
@@ -596,8 +598,8 @@ public class G3IScanner
             //GD.Print(TokenReserved[i]);
             if (String.Equals(TokenReserved[i], s)) return i;
         }
-        if (TestingScanner) GD.Print("LookupReserved: count " + ListProcedures.Count().ToString());
-        for (int j = 0; j < ListProcedures.Count(); j++)
+        if (TestingScanner) GD.Print("LookupReserved: count " + ListProcedures.Count.ToString());
+        for (int j = 0; j < ListProcedures.Count; j++)
         {
             if (TestingScanner) GD.Print("LookupReserved: name "+ ListProcedures[j].name);
             if (String.Equals(ListProcedures[j].name, s)) return 777;
@@ -624,19 +626,11 @@ public class G3IScanner
         return result;
     }
 
-    private void LexicalError()
-    {
-        GD.Print("Scanner: " + "Lexical error at " + ch +" "+ scanBuffer);
-    }
+    private void LexicalError() => 
+        GD.Print("Scanner: " + "Lexical error at " + ch + " " + scanBuffer);
 
-    private void SyntaxError(string s)
-    {
-        GD.Print("Scanner: " + "SyntaxError: " + s);
-    }
-    private void Error(string s)
-    {
-        GD.Print("Scanner: "+"ERROR: "+s);
-    }
+    private void SyntaxError(string s) => GD.Print("Scanner: " + "SyntaxError: " + s);
+    private void Error(string s) => GD.Print("Scanner: " + "ERROR: " + s);
 }
 
 
@@ -747,12 +741,12 @@ public class G3IParser
         y = dist * (float)Math.Sin(Deg2Rad(phi)) * (float)Math.Cos(Deg2Rad(theta));
         z = dist * (float)(Math.Sin(Deg2Rad(theta)));
 
-        TurtlePos.X= TurtlePos.X + x;
-        TurtlePos.Y= TurtlePos.Y + y;
-        TurtlePos.Z= TurtlePos.Z + z;
+        TurtlePos.X+= x;
+        TurtlePos.Y+= y;
+        TurtlePos.Z+= z;
         //IntClass.Turtle.Translate(new Godot.Vector3(x/2, y/2, z/2));
         //IntClass.Turtle.Translate(new Godot.Vector3(x, y, z));
-        IntClass.Turtle.Position = TurtlePos;
+        IntClass.turtle.Position = TurtlePos;
         //TurtleMoved = true;
         if (!penup) IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
 
@@ -768,42 +762,42 @@ public class G3IParser
     public void TurtleLeft(float angle)
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleUp");
-        phi = phi + angle;
+        phi += angle;
         if (phi < 0) phi = 360 + phi;
-        if (phi > 360) phi = phi - 360;
+        if (phi > 360) phi -= 360;
 
         
-        IntClass.Turtle.RotateZ(Deg2Rad(angle));
+        IntClass.turtle.RotateZ(Deg2Rad(angle));
     }
 
     public void TurtleRight(float angle)
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleDown");
-        phi = phi - angle;
+        phi -= angle;
         if (phi < 0) phi = 360 + phi;
-        if (phi > 360) phi = phi - 360;
+        if (phi > 360) phi -= 360;
 
-        IntClass.Turtle.RotateZ(-Deg2Rad(angle));
+        IntClass.turtle.RotateZ(-Deg2Rad(angle));
     }
 
     public void TurtleUp(float angle)
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleLeft");
-        theta = theta + angle;
+        theta += angle;
         if (theta < 0) theta = 360 + theta;
-        if (theta > 360) theta = theta - 360;
+        if (theta > 360) theta -= 360;
 
-        IntClass.Turtle.RotateX(Deg2Rad(angle));
+        IntClass.turtle.RotateX(Deg2Rad(angle));
     }
 
     public void TurtleDown(float angle)
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
-        theta = theta - angle;
+        theta -= angle;
         if (theta < 0) theta = 360 + theta;
-        if (theta > 360) theta = theta - 360;
+        if (theta > 360) theta -= 360;
 
-        IntClass.Turtle.RotateX(-Deg2Rad(angle));
+        IntClass.turtle.RotateX(-Deg2Rad(angle));
     }
 
     public void Sphere(float s)
@@ -839,8 +833,8 @@ public class G3IParser
         theta = 0;
         phi = 90;
 
-        IntClass.Turtle.Position = TurtlePos;
-        IntClass.Turtle.Rotation = Godot.Vector3.Zero;
+        IntClass.turtle.Position = TurtlePos;
+        IntClass.turtle.Rotation = Godot.Vector3.Zero;
     }
 
     public void TurtleClean()
@@ -871,7 +865,7 @@ public class G3IParser
     public void LoadProgram()
     {
         //if (TestingParser) GD.Print("Parser: " + "LoadProgram");
-        IntClass.FileDia.Visible = true;
+        IntClass.fileDia.Visible = true;
     }
 
 
@@ -1038,7 +1032,7 @@ public class G3IParser
     public string getstrorvalue()
     {
         int ntok = scanner.NextToken();
-        if (ntok == (int)Tokens.STRING || ntok == (int)Tokens.NUMBER)
+        if (ntok is (int)Tokens.STRING or (int)Tokens.NUMBER)
         {
             Match(ntok);
             return scanner.scanBuffer;
@@ -1093,7 +1087,7 @@ public class G3IParser
         }
         else if (scanner.NextToken() == (int)Tokens.RANDOM)
         {
-            Random rnd = new Random();
+            Random rnd = new();
             Match((int)Tokens.RANDOM);
             int nto = scanner.NextToken();
             if (nto == (int)Tokens.NUMBER)
@@ -1125,13 +1119,13 @@ public class G3IParser
             {
                 Match((int)Tokens.PLUS);
                 op1 = ParseExpr();
-                op = op + op1;
+                op += op1;
             }
             else if (nto == (int)Tokens.HYPHEN)
             {
                 Match((int)Tokens.HYPHEN);
                 op1 = ParseExpr();
-                op = op - op1;
+                op -= op1;
             }
         }
         return op;
@@ -1150,13 +1144,13 @@ public class G3IParser
             {
                 Match((int)Tokens.ASTERISK);
                 op1 = ParseFactor();
-                op = op * op1;
+                op *= op1;
             }
             else if (nto == (int)Tokens.SLASH)
             {
                 Match((int)Tokens.SLASH);
                 op1 = ParseFactor();
-                op = op / op1;
+                op /= op1;
             }
         }
         return op;
@@ -1174,13 +1168,13 @@ public class G3IParser
             //	Match(nto);
             //	return ParseExpr();
             //}
-            if (nto == (int)Tokens.NUMBER  || nto == (int)Tokens.COLON)
+            if (nto is ((int)Tokens.NUMBER) or ((int)Tokens.COLON))
             {
                 return numberor();
             }
             else if (nto == (int)Tokens.RANDOM)
             {
-                Random rnd = new Random();
+                Random rnd = new();
                 Match((int)Tokens.RANDOM);
                 int nto2 = scanner.NextToken();
                 if (nto2 == (int)Tokens.NUMBER)
@@ -1467,11 +1461,11 @@ public class G3IParser
                     n2 = ParseExpr();
                     n3 = ParseExpr();
 
-                    Godot.Vector3 campos = IntClass.Cam.Position;
+                    Godot.Vector3 campos = IntClass.cam.Position;
                     campos.X = n;
                     campos.Y = n2;
                     campos.Z = n3;
-                    IntClass.Cam.Translate(campos);
+                    IntClass.cam.Translate(campos);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
 
@@ -1561,7 +1555,7 @@ public class G3IParser
                     //ParseG3ISentence();
                     int oldidx2 = scanner.idx;
 
-                    for (int i = numberstart; i < numberend + 1; i = i + numberstep)
+                    for (int i = numberstart; i < numberend + 1; i += numberstep)
                     {
                         setvar(varname, i);
                         scanner.idx = oldidx2;
@@ -1719,7 +1713,7 @@ public class G3IParser
                     Match(nextToken);
 
                     var nextt = scanner.NextToken();
-                    while (nextt == (int)Tokens.COMMA || nextt == (int)Tokens.COLON || nextt == (int)Tokens.STRING) //|| nextt == (int)Tokens.ITEM
+                    while (nextt is ((int)Tokens.COMMA) or ((int)Tokens.COLON) or ((int)Tokens.STRING)) //|| nextt == (int)Tokens.ITEM
                     {
                         if (nextt == (int)Tokens.COMMA)
                         {
@@ -1818,7 +1812,7 @@ public class G3IParser
                             //{
                             //Match((int)Tokens.STRING);
                             if (TestingParser) GD.Print("Parser: TO: found COLON and variable: " + scanner.scanBuffer);
-                            tmpproc.numberparameter = tmpproc.numberparameter + 1;
+                            tmpproc.numberparameter++;
                             tmpproc.formalparameter.Add(scanner.scanBuffer);
                             //}
                             Match((int)Tokens.COLON);
@@ -1834,7 +1828,7 @@ public class G3IParser
                         }
                         tmpproc.idxstart = scanner.idx;
                         GD.Print("procedurename:"+tmpproc.name+ "   idxstart " + tmpproc.idxstart.ToString());
-                        while (scanner.NextToken() != (int)Tokens.END && scanner.NextToken() != (int)Tokens.EOF)
+                        while (scanner.NextToken() is not (int)Tokens.END and not (int)Tokens.EOF)
                         {
                             Match(scanner.NextToken());
                             //ParseG3ISentence();
@@ -1870,7 +1864,7 @@ public class G3IParser
                         
                         int argumentnr = 0;
                         nextt = (int)scanner.NextToken();
-                        while (nextt == (int)Tokens.NUMBER || nextt == (int)Tokens.COLON || nextt == (int)Tokens.STRING)
+                        while (nextt is ((int)Tokens.NUMBER) or ((int)Tokens.COLON) or ((int)Tokens.STRING))
                         {
                             if (nextt == (int)Tokens.NUMBER)
                             {
@@ -1931,7 +1925,7 @@ public class G3IParser
                         //if (TestingParser) GD.Print("Parser: raw: "+ scanner.rawContents);
                         
                         string regpattern = @"\bTO\s*""";
-                        regpattern = regpattern + procedurename;
+                        regpattern += procedurename;
                         //if (TestingParser) GD.Print("Parser: regpattern: " +regpattern);
                         string regresult = Regex.Match(scanner.rawContents, regpattern).ToString();
                         //if (TestingParser) GD.Print("Parser: regresult: " + regresult+ "   length: "+regresult.Length.ToString());
@@ -1952,7 +1946,7 @@ public class G3IParser
                             if (p != " ")
                             {
                                 scanner.rawContents = scanner.rawContents.Insert(0, p);
-                                idxold = idxold + p.Length;
+                                idxold += p.Length;
                                 //scanner.idx = procedurename.Length+4;
                                 scanner.idx = getstartidx(procedurename);
                                 //scanner.idx = getidx(procedurename);
@@ -2089,15 +2083,15 @@ public class G3IParser
 
 public partial class Godot3DInterpreter : Node3D
 {
-    private Window Win1;
-	private LineEdit Line;
-    public MeshInstance3D Turtle;
-    private MeshInstance3D ParentN;
-    private MeshInstance3D LineMeshInstance;
-    private string Input;
-    public FileDialog FileDia;
-    public Camera3D Cam;
-    public Godot.Vector3 CamDir;
+    private Window win1;
+    private LineEdit line;
+    public MeshInstance3D turtle;
+    private MeshInstance3D parentN;
+    private MeshInstance3D lineMeshInstance;
+    private string input;
+    public FileDialog fileDia;
+    public Camera3D cam;
+    public Godot.Vector3 camDir;
 
 
     public float Deg2Rad(float deg)
@@ -2107,17 +2101,17 @@ public partial class Godot3DInterpreter : Node3D
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
-	{
+    {
   
         TurtleInit();
-        Win1 = GetNode<Window>("Window");
-		Line = Win1.GetNode<LineEdit>("TextLineEdit");
-        ParentN = GetNode<MeshInstance3D>("parent");
-        Turtle = GetNode<MeshInstance3D>("Turtle");
-        FileDia = GetNode<FileDialog>("FileDialog");
-        Cam = GetNode<Camera3D>("Camera3D");
+        win1 = GetNode<Window>("Window");
+        line = win1.GetNode<LineEdit>("TextLineEdit");
+        parentN = GetNode<MeshInstance3D>("parent");
+        turtle = GetNode<MeshInstance3D>("Turtle");
+        fileDia = GetNode<FileDialog>("FileDialog");
+        cam = GetNode<Camera3D>("Camera3D");
 
-        Line.GrabFocus();
+        line.GrabFocus();
         
         GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
         //GD.Print(Token.REPEAT);
@@ -2155,7 +2149,7 @@ public partial class Godot3DInterpreter : Node3D
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
-	{
+    {
         if (NewInput)
         {
             NewInput = false;
@@ -2165,7 +2159,7 @@ public partial class Godot3DInterpreter : Node3D
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
             try
             {
-                Thread t = new Thread(delegate () { parser.ParseG3IProgram(); });
+                var t = new Thread(delegate () { parser.ParseG3IProgram(); });
                 t.Start();
                 //parser.ParseG3IProgram();
             }
@@ -2174,7 +2168,7 @@ public partial class Godot3DInterpreter : Node3D
                 GD.Print("exception caught: "+ e.ToString());
             }
             
-            Line.GrabFocus();
+            line.GrabFocus();
         }
 
         //if (Input.IsActionPressed("Up"))
@@ -2189,75 +2183,75 @@ public partial class Godot3DInterpreter : Node3D
     {
         if (Godot.Input.IsKeyPressed(Key.W))
         {
-            CamDir -= Transform.Basis.Z;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir -= Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsKeyPressed(Key.S))
         {
-            CamDir += Transform.Basis.Z;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir += Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsKeyPressed(Key.A))
         {
-            CamDir -= Transform.Basis.X;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir -= Transform.Basis.X;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsKeyPressed(Key.D))
         {
-            CamDir += Transform.Basis.X;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir += Transform.Basis.X;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsKeyPressed(Key.Up))
         {
-            CamDir += Transform.Basis.Y;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir += Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsKeyPressed(Key.Down))
         {
-            CamDir -= Transform.Basis.Y;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsKeyPressed(Key.Left))
         {
-            CamDir -= Transform.Basis.Y;
-            CamDir = CamDir.Normalized();
-            Cam.RotateY(Deg2Rad(3));
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(Deg2Rad(3));
         }
         if (Godot.Input.IsKeyPressed(Key.Right))
         {
-            CamDir -= Transform.Basis.Y;
-            CamDir = CamDir.Normalized();
-            Cam.RotateY(-Deg2Rad(3));
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(-Deg2Rad(3));
         }
         if (Godot.Input.IsMouseButtonPressed(MouseButton.Right))
         {
-            CamDir -= Transform.Basis.Y;
-            CamDir = CamDir.Normalized();
-            Cam.RotateY(Deg2Rad(3));
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(Deg2Rad(3));
         }
         if (Godot.Input.IsMouseButtonPressed(MouseButton.Left))
         {
-            CamDir -= Transform.Basis.Y;
-            CamDir = CamDir.Normalized();
-            Cam.RotateY(Deg2Rad(3));
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(Deg2Rad(3));
         }
         if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelUp))
         {
-            CamDir = CamDir - Transform.Basis.Z;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir -= Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
         if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelDown))
         {
-            CamDir = CamDir + Transform.Basis.Z;
-            CamDir = CamDir.Normalized();
-            Cam.Translate(CamDir);
+            camDir += Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
         }
     }
 
@@ -2289,13 +2283,15 @@ public partial class Godot3DInterpreter : Node3D
     public void DrawLine3DThin(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c)
     {
         // old code for "normal" thin 3d lines:
-        MeshInstance3D mi = new MeshInstance3D();
-        ImmediateMesh me = new ImmediateMesh();
-        StandardMaterial3D mat = new StandardMaterial3D();
-        mat.NoDepthTest= true;
-        mat.ShadingMode=BaseMaterial3D.ShadingModeEnum.Unshaded;
-        mat.VertexColorUseAsAlbedo= true;
-        mat.Transparency=BaseMaterial3D.TransparencyEnum.Alpha;
+        MeshInstance3D mi = new();
+        ImmediateMesh me = new();
+        StandardMaterial3D mat = new()
+        {
+            NoDepthTest = true,
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            VertexColorUseAsAlbedo = true,
+            Transparency = BaseMaterial3D.TransparencyEnum.Alpha
+        };
         mi.MaterialOverride= mat;
         mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
         me.SurfaceBegin(Mesh.PrimitiveType.Lines);
@@ -2304,37 +2300,48 @@ public partial class Godot3DInterpreter : Node3D
         me.SurfaceAddVertex(end);
         me.SurfaceEnd();
         mi.Mesh = me;
-        ParentN.AddChild(mi);
+        parentN.AddChild(mi);
     }
 
     public void DrawLine3D(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c, float thickness)
     {
-        MeshInstance3D mi = new MeshInstance3D();
-        mi.Mesh = new BoxMesh();
-        StandardMaterial3D mat = new StandardMaterial3D();
-        mat.NoDepthTest = true;
-        mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
-        //mat.VertexColorUseAsAlbedo = true;
-        //mat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
-        mat.AlbedoColor = c;
-        //mat.Metallic = 0.85f;
-        //mat.Roughness = 0.4f;
+        MeshInstance3D mi = new()
+        {
+            Mesh = new BoxMesh()
+        };
+        StandardMaterial3D mat = new()
+        {
+            NoDepthTest = true,
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            AlbedoColor = c
+            //VertexColorUseAsAlbedo = true,
+            //Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
+            //Metallic = 0.85f,
+            //Roughness = 0.4f
+    };
+
+        //mat.
+        //mat.
+        //mat.
+        //mat.
         mi.MaterialOverride = mat;
         mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
         //var newscale = new Godot.Vector3(scale, scale, scale);
         var newscale = new Godot.Vector3(0.3f * thickness, 0.3f * thickness, begin.DistanceTo(end));
         mi.Scale = newscale;
-        end.X = end.X + 0.1f; //workaround error from LookAtFromPosition
+        end.X += 0.1f; //workaround error from LookAtFromPosition
         mi.LookAtFromPosition((begin + end) / 2, end, Godot.Vector3.Up);
-        ParentN.AddChild(mi);
+        parentN.AddChild(mi);
     }
 
 
     public void DrawSphere(Godot.Vector3 pos, float scale , Godot.Color c)
     {
-        MeshInstance3D mi = new MeshInstance3D();
-        mi.Mesh = new SphereMesh();
-        StandardMaterial3D mat = new StandardMaterial3D();
+        MeshInstance3D mi = new()
+        {
+            Mesh = new SphereMesh()
+        };
+        StandardMaterial3D mat = new();
         //mat.NoDepthTest = true;
         //mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
         //mat.VertexColorUseAsAlbedo = true;
@@ -2347,15 +2354,15 @@ public partial class Godot3DInterpreter : Node3D
         var newscale = new Godot.Vector3(scale, scale, scale);
         mi.Scale = newscale;
         mi.Translate(pos);
-        ParentN.AddChild(mi);
+        parentN.AddChild(mi);
     }
 
 
     public void DrawBox(Godot.Vector3 pos, float scale, Godot.Color c)
     {
-        MeshInstance3D mi = new MeshInstance3D();
+        MeshInstance3D mi = new();
         mi.Mesh = new BoxMesh();
-        StandardMaterial3D mat = new StandardMaterial3D();
+        StandardMaterial3D mat = new();
         //mat.NoDepthTest = true;
         //mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
         //mat.VertexColorUseAsAlbedo = true;
@@ -2368,47 +2375,28 @@ public partial class Godot3DInterpreter : Node3D
         var newscale = new Godot.Vector3(scale, scale, scale);
         mi.Scale = newscale;
         mi.Translate(pos);
-        ParentN.AddChild(mi);
+        parentN.AddChild(mi);
     }
 
     public void DrawMesh(Godot.Vector3 pos, float scale, Godot.Color c, string meshstring)
     {
-        MeshInstance3D mi = new MeshInstance3D();
+        MeshInstance3D mi = new();
         meshstring = meshstring.ToUpper();
         meshstring = meshstring.Trim();
         GD.Print("DrawMesh:" + meshstring);
-        switch (meshstring)
+        mi.Mesh = meshstring switch
         {
-            case "CAPSULE":
-                mi.Mesh = new CapsuleMesh();
-                break;
-            case "CYLINDER":
-                mi.Mesh = new CylinderMesh();
-                break;
-            case "BOX":
-                mi.Mesh = new BoxMesh();
-                break;
-            case "QUAD":
-                mi.Mesh = new QuadMesh();
-                break;
-            case "PLANE":
-                mi.Mesh = new PlaneMesh();
-                break;
-            case "PRISM":
-                mi.Mesh = new PrismMesh();
-                break;
-            case "SPHERE":
-                mi.Mesh = new SphereMesh();
-                break;
-            case "TORUS":
-                mi.Mesh = new TorusMesh();
-                break;
-            default:
-                mi.Mesh = new SphereMesh();
-                break;
-        }
-
-        StandardMaterial3D mat = new StandardMaterial3D();
+            "CAPSULE" => new CapsuleMesh(),
+            "CYLINDER" => new CylinderMesh(),
+            "BOX" => new BoxMesh(),
+            "QUAD" => new QuadMesh(),
+            "PLANE" => new PlaneMesh(),
+            "PRISM" => new PrismMesh(),
+            "SPHERE" => new SphereMesh(),
+            "TORUS" => new TorusMesh(),
+            _ => new SphereMesh(),
+        };
+        StandardMaterial3D mat = new();
         //mat.NoDepthTest = true;
         //mat.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
         //mat.VertexColorUseAsAlbedo = true;
@@ -2423,13 +2411,13 @@ public partial class Godot3DInterpreter : Node3D
         mi.Translate(pos);
         mi.RotateX(Deg2Rad(theta));
         mi.RotateZ(Deg2Rad(phi));
-        ParentN.AddChild(mi);
+        parentN.AddChild(mi);
     }
 
 
     public void Remove3D()
     {
-        var Childs = ParentN.GetChildren();
+        var Childs = parentN.GetChildren();
         foreach (var c in Childs)
         {
             c.QueueFree();
@@ -2440,20 +2428,20 @@ public partial class Godot3DInterpreter : Node3D
     public void _on_line_edit_text_submitted(string newtext)
     {
         OldTextInput = NewTextInput;
-        Input = newtext;
-        GD.Print(Input);
+        input = newtext;
+        GD.Print(input);
 
         NewInput = true;
-        NewTextInput = Input;
+        NewTextInput = input;
         //NewTextInput = Input.ToUpper();
-        Line.Text = "";
+        line.Text = "";
     }
 
     public void _on_file_dialog_file_selected(string file)
     {
         GD.Print("selected files is: " + file);
         SelectedFile = file;
-        FileDia.Visible = false;
+        fileDia.Visible = false;
 
         string textoffile = System.IO.File.ReadAllText(file);
         //GD.Print(textoffile);
@@ -2464,9 +2452,6 @@ public partial class Godot3DInterpreter : Node3D
         NewInput = true;
     }
 
-    public void setbackgroundcolor(Godot.Color color)
-    {
+    public void setbackgroundcolor(Godot.Color color) =>
         RenderingServer.SetDefaultClearColor(color);
-    }
-
 }
