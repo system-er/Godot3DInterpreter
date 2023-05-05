@@ -1,10 +1,9 @@
 # Godot3DInterpreter - new version 0.QUIT    
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
-in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project    
-Working like an old steammachine, that rattles and steams. dont look to the code - some parts are chaos and bugs.         
+in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
 Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
-and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter now work.     
+and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
 
 - written in C# with Godot 4.0 mono 
 
