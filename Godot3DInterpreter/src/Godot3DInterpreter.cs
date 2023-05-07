@@ -130,7 +130,6 @@ struct G3IProc
 };
 
 
-
 class Globals
 {
     public static int ARTypeProgram = 1;
@@ -158,7 +157,7 @@ class Globals
     public static bool InputRequest = false;
     public static string NewTextInput = "";
     public static string OldTextInput = "";
-
+    public static string inprocedure = "";
 
     public static int anglex, angley;
     public static float theta, phi;
@@ -638,12 +637,189 @@ public class G3IParser
 {
     public G3IScanner scanner;
     public Godot3DInterpreter IntClass;
+    public readonly Dictionary<string, string> symbols = new();
     //private ActivationRecord AR;
 
     public G3IParser(G3IScanner g3iScanner, Godot3DInterpreter IC)
     {
         scanner = g3iScanner;
         IntClass = IC;
+        SemanticAnalyser();
+        scanner.idx = 0;
+    }
+
+    public void SemanticAnalyser()
+    {
+        GD.Print("SemanticAnalyer: started");
+
+        int nexttoken;
+        
+        //variable declarations
+        nexttoken = (int)scanner.NextToken();
+        while (nexttoken != (int)Tokens.EOF)
+        {
+            switch (nexttoken)
+            {
+                case (int)Tokens.MAKE:
+                    Match((int)Tokens.MAKE);
+                    if (scanner.NextToken() == (int)Tokens.STRING)
+                    {
+                        Match((int)Tokens.STRING);
+                        string foundstring = scanner.scanBuffer;
+                        //GD.Print("variablename:" + foundstring);
+                        SetSymbol(foundstring, "VARIABLE");
+                    }
+                    else ErrorMessage("SemanticAnalyer: " + "MAKE: wrong parameter");
+                    //nexttoken = (int)scanner.NextToken();
+                    //Match(nexttoken);
+                    break;
+                case (int)Tokens.TO:
+                    {
+                        Match((int)Tokens.TO);
+                        string procedurename;
+                        string foundstring;
+                        nexttoken = (int)scanner.NextToken();
+                        if (nexttoken == (int)Tokens.STRING)
+                        {
+                            Match((int)Tokens.STRING);
+                            procedurename = scanner.scanBuffer;
+                            //GD.Print("procedurename:" + foundstring);
+                            SetSymbol(procedurename, "PROCEDURE");
+
+                            while ((int)scanner.NextToken() == (int)Tokens.COLON)
+                            {
+
+                                //if (TestingParser) GD.Print("SemanticAnalyer: TO: found COLON and variable: " + scanner.scanBuffer);
+                                SetSymbol(procedurename + "." + scanner.scanBuffer, "VARIABLE");
+                                Match((int)Tokens.COLON);
+
+                            }
+                        }
+                        else ErrorMessage("SemanticAnalyer: " + "TO: wrong parameter");
+
+                       
+                        while ((int)scanner.NextToken() != (int)Tokens.END)
+                        {
+                            Match(nexttoken);
+                            nexttoken = (int)scanner.NextToken();
+                        }
+                        Match((int)Tokens.END);
+                        break;
+                    }
+                default:
+                    Match(nexttoken);
+                    break;
+            }
+            nexttoken = (int)scanner.NextToken();
+            //GD.Print("\n");
+        }
+
+
+
+        //variable references
+        scanner.idx = 0;
+        nexttoken = (int)scanner.NextToken();
+        while (nexttoken != (int)Tokens.EOF)
+        {
+            inprocedure = "";
+            switch (nexttoken)
+            {
+                case (int)Tokens.COLON:
+                    Match((int)Tokens.COLON);
+                    
+                    string foundstring = scanner.scanBuffer;
+                    //GD.Print("variablename:" + foundstring);
+                    string result = GetSymbol(foundstring);
+                    //nexttoken = (int)scanner.NextToken();
+                    //Match(nexttoken);
+                    
+                    break;
+                    
+                case (int)Tokens.TO:
+                    {
+                        Match((int)Tokens.TO);
+                        nexttoken = (int)scanner.NextToken();
+                        if (nexttoken == (int)Tokens.STRING)
+                        {
+                            Match((int)Tokens.STRING);
+                            inprocedure = scanner.scanBuffer;
+                            //GD.Print("procedurename:" + foundstring);
+                            //GetSymbol(procedurename, "PROCEDURE");
+
+                            while ((int)scanner.NextToken() == (int)Tokens.COLON)
+                            {
+
+                                //if (TestingParser) GD.Print("SemanticAnalyer: TO: found COLON and variable: " + scanner.scanBuffer);
+                                //SetSymbol(procedurename + "." + scanner.scanBuffer, "VARIABLE");
+                                Match((int)Tokens.COLON);
+
+                            }
+                        }
+                        else ErrorMessage("SemanticAnalyer: " + "TO: wrong parameter");
+
+
+                        while ((int)scanner.NextToken() != (int)Tokens.END)
+                        {
+                            //Match(nexttoken);
+
+                            switch (nexttoken)
+                            {
+                                case (int)Tokens.COLON:
+                                    Match((int)Tokens.COLON);
+
+                                    string foundstring2 = scanner.scanBuffer;
+                                    //GD.Print("variablename:" + foundstring);
+                                    GetSymbol(inprocedure+"."+foundstring2);
+                                    //nexttoken = (int)scanner.NextToken();
+                                    //Match(nexttoken);
+
+                                    break;
+                                default:
+                                    Match(nexttoken);
+                                    break;
+                            }
+                            nexttoken = (int)scanner.NextToken();
+                        }
+                        Match((int)Tokens.END);
+                        break;
+                    }
+
+
+                default:
+                    Match(nexttoken);
+                    break;
+            }
+            nexttoken = (int)scanner.NextToken();
+            //GD.Print("\n");
+        }
+    }
+
+    public void SetSymbol(string key, string value)
+    {
+        if (symbols.ContainsKey(key))
+        {
+            symbols[key] = value.ToString();
+        }
+        else
+        {
+            GD.Print("new SetSymbols: " + key + " value: " + value);
+            symbols.Add(key, value.ToString());
+            GD.Print("symbolscount: " + symbols.Count.ToString());
+            //GD.Print("value:" + symbols[key]);
+        }
+    }
+
+    public string GetSymbol(string key)
+    {
+        if (symbols.ContainsKey(key))
+        {
+            return symbols[key];
+        }
+        else
+        {
+            ErrorMessage("SemanticAnalyer: " + "missing variabledeclaraion variable: " + key);
+            return null;
+        }
     }
 
     public void VisitProcedureCall(string name, int i)
@@ -1694,6 +1870,8 @@ public class G3IParser
                     //if (!Match((int)Tokens.STRING)) break;
                     GD.Print("HELP: commander-commands:");
                     GD.Print("HELP: LOAD //load an interpreterprogram *.g3i");
+                    GD.Print("HELP: PRINTOUT string //prints a procedure or with \"ALL it prints all procedures.");
+                    GD.Print("HELP: ERASE string //erases a procedure or with \"ALL it erases all procedures.");
                     GD.Print("HELP: HELP //show this helpmessages");
                     GD.Print("HELP: QUIT //quit program");
                     GD.Print("HELP: Godot3Dinterpretercommands like REPEAT //look readme.md https://github.com/system-er/Godot3DInterpreter");
@@ -2114,36 +2292,7 @@ public partial class Godot3DInterpreter : Node3D
         line.GrabFocus();
         
         GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
-        //GD.Print(Token.REPEAT);
-        //string input = "REPEAT 4    [ FORWARD 100    LEFT 90 ] ";
-
-        //DrawLine3D(new Godot.Vector3(0, 0, 0), new Godot.Vector3(10, 0, 0), 
-        //    new Godot.Color(1.0f,1.0f,1.0f));
-
-        //Test G3IScanner - Success
-        /*
-        GD.Print("G3IScannerTest Programm: "+input);
-        var scanner = new G3IScanner(input);
-        var token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        token = scanner.Scan();
-        */
-
-        //Test G3IParser - Success
-        //string input = "FORWARD 10   LEFT 45    UP 45   FORWARD 10 ";
-        //GD.Print("G3IParserTest Programm: " + input);
-        //var parser = new G3IParser(new G3IScanner(input));
-        //parser.ParseG3IProgram();
-        
-        //Godot.Vector3 campos = Cam.Position;
-        //campos.X = campos.X + 100;
-        //Cam.Translate(campos);
+       
     }
 
 
