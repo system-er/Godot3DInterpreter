@@ -669,7 +669,7 @@ public class G3IParser
                         //GD.Print("variablename:" + foundstring);
                         SetSymbol(foundstring, "VARIABLE");
                     }
-                    else ErrorMessage("SemanticAnalyer: " + "MAKE: wrong parameter");
+                    else GD.Print("SemanticAnalyer: ERROR: " + "MAKE: wrong parameter");
                     //nexttoken = (int)scanner.NextToken();
                     //Match(nexttoken);
                     break;
@@ -695,7 +695,7 @@ public class G3IParser
 
                             }
                         }
-                        else ErrorMessage("SemanticAnalyer: " + "TO: wrong parameter");
+                        else GD.Print("SemanticAnalyer: ERROR: " + "TO: wrong parameter");
 
                        
                         while ((int)scanner.NextToken() != (int)Tokens.END)
@@ -755,7 +755,7 @@ public class G3IParser
 
                             }
                         }
-                        else ErrorMessage("SemanticAnalyer: " + "TO: wrong parameter");
+                        else GD.Print("SemanticAnalyer: ERROR: " + "TO: wrong parameter");
 
 
                         while ((int)scanner.NextToken() != (int)Tokens.END)
@@ -817,7 +817,7 @@ public class G3IParser
         }
         else
         {
-            ErrorMessage("SemanticAnalyer: " + "missing variabledeclaraion variable: " + key);
+            GD.Print("SemanticAnalyer: ERROR: " + "missing variabledeclaraion variable: " + key);
             return null;
         }
     }
