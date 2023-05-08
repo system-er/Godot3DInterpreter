@@ -644,8 +644,7 @@ public class G3IParser
     {
         scanner = g3iScanner;
         IntClass = IC;
-        SemanticAnalyser();
-        scanner.idx = 0;
+        //SemanticAnalyser();
     }
 
     public void SemanticAnalyser()
@@ -1391,6 +1390,7 @@ public class G3IParser
     public void ParseG3IProgram()
     {
         if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
+        //IntClass.PrintLabel("Parser: " + "Start ParseG3IProgram");
         ParseG3ISentence();
         while (true && !parsestop)
         {
@@ -1459,7 +1459,7 @@ public class G3IParser
         {
             case (int)Tokens.EQUALS:
                 {
-                    if (TestingParser) GD.Print("Parser: " + "found Token EQUALS");
+                    //if (TestingParser) GD.Print("Parser: " + "found Token EQUALS");
                     Match((int)Tokens.STRING);
                     string varname = scanner.scanBuffer;
                     Match((int)Tokens.EQUALS);
@@ -1499,17 +1499,17 @@ public class G3IParser
                 case (int)Tokens.COLON:
                     //Match((int)Tokens.NUMBER);
                     float result2 = ParseExpr();
-                    GD.Print("found Expression Result=" + result2.ToString());
+                    IntClass.PrintLabel("found Expression Result=" + result2.ToString());
                     break;
 
                 case (int)Tokens.COMMENT:
                     //float result2 = ParseExpr();
-                    GD.Print("found Token COMMENT=" + scanner.scanBuffer);
+                    IntClass.PrintLabel("found Token COMMENT=" + scanner.scanBuffer);
                     Match((int)Tokens.COMMENT);
                     break;
 
                 case (int)Tokens.STRING:
-                    GD.Print("found Token STRING=" + scanner.scanBuffer);
+                    IntClass.PrintLabel("found Token STRING=" + scanner.scanBuffer);
                     Match(nextToken);
                     break;
 
@@ -1904,7 +1904,7 @@ public class G3IParser
                             float erg = numberor();
                             //if (erg == floor(erg))
                             //{
-                                GD.Print(erg);
+                            IntClass.PrintLabel(erg.ToString());
                             //}
                             //else
                             //{
@@ -1915,17 +1915,18 @@ public class G3IParser
                         {
                             Match((int)Tokens.COLON);
                             //GD.Print(AR.StrDump());
-                            GD.Print("PRINT COLON: " + scanner.scanBuffer);
+                            IntClass.PrintLabel("PRINT COLON: " + scanner.scanBuffer);
                             string stringvar = getvarstring(scanner.scanBuffer);
-                 
-                            GD.Print(stringvar);
+
+                            IntClass.PrintLabel(stringvar);
                     
                         }
                         else if (scanner.NextToken() == (int)Tokens.STRING)
                         {
                         
                             Match((int)Tokens.STRING);
-                            GD.Print(scanner.scanBuffer);
+                            //GD.Print(scanner.scanBuffer);
+                            IntClass.PrintLabel(scanner.scanBuffer);
                       
                         }
                         else ErrorMessage("Parser: "+"PRINT: wrong parameter");
@@ -2262,7 +2263,9 @@ public class G3IParser
 public partial class Godot3DInterpreter : Node3D
 {
     private Window win1;
+    private Window winoutput;
     private LineEdit line;
+    private RichTextLabel outputlabel;
     public MeshInstance3D turtle;
     private MeshInstance3D parentN;
     private MeshInstance3D lineMeshInstance;
@@ -2270,6 +2273,7 @@ public partial class Godot3DInterpreter : Node3D
     public FileDialog fileDia;
     public Camera3D cam;
     public Godot.Vector3 camDir;
+
 
 
     public float Deg2Rad(float deg)
@@ -2283,7 +2287,9 @@ public partial class Godot3DInterpreter : Node3D
   
         TurtleInit();
         win1 = GetNode<Window>("Window");
+        winoutput = GetNode<Window>("Output");
         line = win1.GetNode<LineEdit>("TextLineEdit");
+        outputlabel = winoutput.GetNode<RichTextLabel>("RichTextLabel");
         parentN = GetNode<MeshInstance3D>("parent");
         turtle = GetNode<MeshInstance3D>("Turtle");
         fileDia = GetNode<FileDialog>("FileDialog");
@@ -2291,8 +2297,9 @@ public partial class Godot3DInterpreter : Node3D
 
         line.GrabFocus();
         
-        GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
-       
+        //GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
+        PrintLabel( "\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
+
     }
 
 
@@ -2302,7 +2309,8 @@ public partial class Godot3DInterpreter : Node3D
         if (NewInput)
         {
             NewInput = false;
-            GD.Print("New Line Input");
+            //GD.Print("New Line Input");
+            PrintLabel("New Line Input");
             parsestop = false;
             NewTextInput = NewTextInput.ToUpper();
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
@@ -2578,7 +2586,8 @@ public partial class Godot3DInterpreter : Node3D
     {
         OldTextInput = NewTextInput;
         input = newtext;
-        GD.Print(input);
+        //GD.Print(input);
+        PrintLabel(input);
 
         NewInput = true;
         NewTextInput = input;
@@ -2588,7 +2597,8 @@ public partial class Godot3DInterpreter : Node3D
 
     public void _on_file_dialog_file_selected(string file)
     {
-        GD.Print("selected files is: " + file);
+        //GD.Print("selected files is: " + file);
+        PrintLabel("selected files is: " + file+ "\n");
         SelectedFile = file;
         fileDia.Visible = false;
 
@@ -2596,11 +2606,19 @@ public partial class Godot3DInterpreter : Node3D
         //GD.Print(textoffile);
         //rawContents = "";
         textoffile = textoffile.Replace(System.Environment.NewLine, " \n ");
-        GD.Print(textoffile);
+        //GD.Print(textoffile);
+        PrintLabel(textoffile);
         NewTextInput = textoffile;
         NewInput = true;
     }
 
-    public void setbackgroundcolor(Godot.Color color) =>
+    public void setbackgroundcolor(Godot.Color color)
+    {
         RenderingServer.SetDefaultClearColor(color);
+    }
+
+    public void PrintLabel(string s)
+    {
+        outputlabel.Text = outputlabel.Text + s +"\n";
+    }
 }
