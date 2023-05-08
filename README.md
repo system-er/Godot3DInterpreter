@@ -99,6 +99,5 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
-- added a semanticanalyser that scans at start for missing variabledeclarations (should be tested...)    
-    example: PRINT :X -> semanticanalyser: ERROR: missing variabledeclaration variable: X    
+- added a window for commanderoutput     
   
