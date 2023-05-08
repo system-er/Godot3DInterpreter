@@ -23,7 +23,7 @@ example interpreterprogram lasershow.g3i:
 
     
 # Welcome back commander:    
-when you start you see the commander - a one line TextEditor. in the middle of the screen you see the "turtle", the 3D-cursor that shows to the direction, you will draw.   
+when you start you see the commander below - a one line TextEditor. and in the top left corner the output window of the commander. in the middle of the screen you see the "turtle", the 3D-cursor that shows to the direction, you will draw.   
 
 if you enter in the commander for example   
 PRINT "[hello world]    
