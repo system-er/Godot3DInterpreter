@@ -12,7 +12,9 @@ script = ExtResource("1_v6ei3")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.35992, -0.133841, -0.923333, 0.928683, -0.0435145, 0.368313, -0.0894737, -0.990047, 0.108634, -32.4155, 19.0465, 15.9824)
-light_energy = 9.945
+light_energy = 10.317
+shadow_bias = 1.0
+shadow_normal_bias = 1.0
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
@@ -43,6 +45,22 @@ filters = PackedStringArray("*.g3i")
 [node name="Turtle" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_f82pw")
 mesh = ExtResource("2_d5q7n")
+
+[node name="Output" type="Window" parent="."]
+title = "Commander Output"
+position = Vector2i(30, 40)
+size = Vector2i(800, 150)
+unresizable = true
+transparent = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Output"]
+offset_right = 800.0
+offset_bottom = 150.0
+theme_override_colors/default_color = Color(0.784314, 0.784314, 0.784314, 1)
+text = "
+
+"
+scroll_following = true
 
 [connection signal="text_submitted" from="Window/TextLineEdit" to="." method="_on_line_edit_text_submitted"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
