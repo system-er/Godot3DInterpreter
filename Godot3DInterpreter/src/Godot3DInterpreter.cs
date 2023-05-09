@@ -2310,26 +2310,25 @@ public partial class Godot3DInterpreter : Node3D
     {
   
         TurtleInit();
-        win1 = GetNode<Window>("Window");
         winoutput = GetNode<Window>("Output");
-        line = win1.GetNode<LineEdit>("TextLineEdit");
+        win1 = GetNode<Window>("Window");
         outputlabel = winoutput.GetNode<RichTextLabel>("RichTextLabel");
+        line = win1.GetNode<LineEdit>("TextLineEdit");
         parentN = GetNode<MeshInstance3D>("parent");
         turtle = GetNode<MeshInstance3D>("Turtle");
         fileDia = GetNode<FileDialog>("FileDialog");
         cam = GetNode<Camera3D>("Camera3D");
-
-        line.GrabFocus();
         
         //GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
         PrintLabel( "\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
-
+        line.GrabFocus();
     }
 
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+        line.GrabFocus();
         if (NewInput)
         {
             NewInput = false;
