@@ -2649,9 +2649,10 @@ public partial class Godot3DInterpreter : Node3D
     {
         if (Godot.Input.IsKeyPressed(Key.Up))
         {
-            NewTextInput = OldTextInput;
-            NewInput = true;
-            PrintLabel(NewTextInput);
+            //NewTextInput = OldTextInput;
+            //NewInput = true;
+            //PrintLabel(NewTextInput);
+            line.Text = OldTextInput;    
         }
     }
 
