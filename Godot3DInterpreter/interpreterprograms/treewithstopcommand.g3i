@@ -14,7 +14,6 @@ TO "TREE :SIZE
     GO "TREE :SIZE * 0.6
     LEFT 60
     BACK :SIZE
-    PRINT "[END OF PROCEDURE]
 END
 
 
