@@ -2359,8 +2359,9 @@ public partial class Godot3DInterpreter : Node3D
                 GD.Print("exception caught: "+ e.ToString());
             }
             line.GrabFocus();
+            OldTextInput = NewTextInput;
         }
-
+       
         //if (Input.IsActionPressed("Up"))
         //{
         //    GD.Print("Up Arrow pressed");
@@ -2617,7 +2618,6 @@ public partial class Godot3DInterpreter : Node3D
 
     public void _on_line_edit_text_submitted(string newtext)
     {
-        OldTextInput = NewTextInput;
         input = newtext;
         //GD.Print(input);
         PrintLabel(input);
@@ -2643,6 +2643,16 @@ public partial class Godot3DInterpreter : Node3D
         PrintLabel(textoffile);
         NewTextInput = textoffile;
         NewInput = true;
+    }
+
+    public void _on_text_line_edit_gui_input(InputEvent inpevent)
+    {
+        if (Godot.Input.IsKeyPressed(Key.Up))
+        {
+            NewTextInput = OldTextInput;
+            NewInput = true;
+            PrintLabel(NewTextInput);
+        }
     }
 
     public void setbackgroundcolor(Godot.Color color)
