@@ -29,8 +29,6 @@ if you enter in the commander for example
 PRINT "[hello world]    
 and the string is printed to GODOT-output.    
 
-if you type an expression like 2 * 2, the result will be printed to Godotoutput.
-
 or you type:    
 FORWARD 30    
 and enter with Return, you see the turtle moves and draws a line - a 3D-line of MeshInstance3D. Then enter   
