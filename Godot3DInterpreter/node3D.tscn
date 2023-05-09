@@ -62,5 +62,6 @@ filters = PackedStringArray("*.g3i")
 material_override = SubResource("StandardMaterial3D_f82pw")
 mesh = ExtResource("2_d5q7n")
 
+[connection signal="gui_input" from="Window/TextLineEdit" to="." method="_on_text_line_edit_gui_input"]
 [connection signal="text_submitted" from="Window/TextLineEdit" to="." method="_on_line_edit_text_submitted"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
