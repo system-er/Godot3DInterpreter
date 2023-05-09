@@ -99,5 +99,5 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
-- added a window for commanderoutput     
+- added a window for commanderoutput and a semanticanalyser at start         
   
