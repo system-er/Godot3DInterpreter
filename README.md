@@ -45,7 +45,8 @@ If you want interpreterprograms, type LOAD and you can load one of the example-p
    
 
   
-# Commands commander (lowercase allowed):    
+# Commands commander (lowercase allowed):   
+arrow-up pressed in commander repeats last command    
 LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
 PRINTOUT string - prints a procedure or with "ALL it prints all procedures.    
 ERASE string - erases a procedure or with "ALL it erases all procedures.    
@@ -97,5 +98,5 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
-- added a window for commanderoutput and a semanticanalyser at start         
+- added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start         
   
