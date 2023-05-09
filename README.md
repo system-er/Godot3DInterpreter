@@ -1,4 +1,4 @@
-# Godot3DInterpreter - new version 0.cleaned    
+# Godot3DInterpreter - new version 0.analysed      
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
 in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
