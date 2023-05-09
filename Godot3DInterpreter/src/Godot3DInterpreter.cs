@@ -147,6 +147,7 @@ class Globals
     public static readonly List<G3IProc> ListProcedures = new();
     public static int recursionlevelnow = 1;
     public static readonly string[] ArgumentArray = new string[42];
+    public static bool interpreterrunning = false;
     public static bool stoprecursion = false;
     public static bool endrecursion = false;
     public static bool parsestop = false;
@@ -1413,6 +1414,7 @@ public class G3IParser
     public void ParseG3IProgram()
     {
         if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
+        
         GD.Print(scanner.rawContents);
         //IntClass.PrintLabel("Parser: " + "Start ParseG3IProgram");
         ParseG3ISentence();
@@ -1523,17 +1525,17 @@ public class G3IParser
                 case (int)Tokens.COLON:
                     //Match((int)Tokens.NUMBER);
                     float result2 = ParseExpr();
-                    IntClass.PrintLabel("found Expression Result=" + result2.ToString());
+                    //IntClass.PrintLabel("found Expression Result=" + result2.ToString());
                     break;
 
                 case (int)Tokens.COMMENT:
                     //float result2 = ParseExpr();
-                    IntClass.PrintLabel("found Token COMMENT=" + scanner.scanBuffer);
+                    //IntClass.PrintLabel("found Token COMMENT=" + scanner.scanBuffer);
                     Match((int)Tokens.COMMENT);
                     break;
 
                 case (int)Tokens.STRING:
-                    IntClass.PrintLabel("found Token STRING=" + scanner.scanBuffer);
+                    //IntClass.PrintLabel("found Token STRING=" + scanner.scanBuffer);
                     Match(nextToken);
                     break;
 
@@ -2328,7 +2330,6 @@ public partial class Godot3DInterpreter : Node3D
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-        line.GrabFocus();
         if (NewInput)
         {
             NewInput = false;
@@ -2345,6 +2346,7 @@ public partial class Godot3DInterpreter : Node3D
             stoprecursion = false;
             endrecursion = false;
             parsestop = false;
+ 
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
             try
             {
@@ -2356,7 +2358,6 @@ public partial class Godot3DInterpreter : Node3D
             {
                 GD.Print("exception caught: "+ e.ToString());
             }
-            
             line.GrabFocus();
         }
 
