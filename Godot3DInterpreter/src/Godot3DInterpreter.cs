@@ -206,6 +206,7 @@ class Globals
         "BACKGROUND",
         "HELP",
         "QUIT",
+        "WHILE",
         "NUMBER",
         "STRING",
         "COMMENT",
@@ -262,7 +263,8 @@ class Globals
         "SLEEP",
         "BACKGROUND",
         "HELP",
-        "QUIT"
+        "QUIT",
+        "WHILE"
     };
     public enum Tokens : int
     {
@@ -300,26 +302,27 @@ class Globals
         BACKGROUND=31,
         HELP=32,
         QUIT=33,
-        NUMBER = 34, //from here not reserved
-        STRING = 35,
-        COMMENT = 36,
-        LBRACKET = 37,
-        RBRACKET = 38,
-        LPARENTHESIS = 39,
-        RPARENTHESIS = 40,
-        LBRACE=41,
-        RBRACE=42,
-        PLUS=43,
-        HYPHEN=44,
-        ASTERISK=45,
-        SLASH=46,
-        EQUALS=47,
-        LESS=48,
-        GREATER=49,
-        COMMA=50,
-        COLON=51,
-        ITEM=52,
-        EOF =53
+        WHILE=34,
+        NUMBER = 35, //from here not reserved
+        STRING = 36,
+        COMMENT = 37,
+        LBRACKET = 38,
+        RBRACKET = 39,
+        LPARENTHESIS = 40,
+        RPARENTHESIS = 41,
+        LBRACE=42,
+        RBRACE=43,
+        PLUS=44,
+        HYPHEN=45,
+        ASTERISK=46,
+        SLASH=47,
+        EQUALS=48,
+        LESS=49,
+        GREATER=50,
+        COMMA=51,
+        COLON=52,
+        ITEM=53,
+        EOF =54
     }
     public enum TokensReserved : int
     {
@@ -355,7 +358,8 @@ class Globals
         SLEEP = 30,
         BACKGROUND = 31,
         HELP=32,
-        QUIT=33
+        QUIT=33,
+        WHILE=34
     }
 
 }
@@ -1096,7 +1100,7 @@ public class G3IParser
             return AR.GetItem(s).ToFloat();
         }
         //}
-        ErrorMessage("Parser: getvar: no variable found to get value");
+        ErrorMessage("Parser: getvar: no value found for variable: "+s);
         return -1;
     }
 
@@ -1110,7 +1114,7 @@ public class G3IParser
             return AR.GetItem(s);
         }
         //}
-        ErrorMessage("Parser: getvarstring: no variable found to get value");
+        ErrorMessage("Parser: getvar: no value found for variable: " + s);
         return "0";
     }
 
@@ -1326,6 +1330,62 @@ public class G3IParser
                 op1 = ParseExpr();
                 op -= op1;
             }
+            
+        }
+        return op;
+    }
+
+
+    float ParseExpr2()
+    {
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseExpr");
+        float op, op1;
+        op = ParseFactor2();
+
+        int nto = scanner.NextToken();
+        if (nto != (int)Tokens.EOF)
+        {
+            if (nto == (int)Tokens.PLUS)
+            {
+                Match((int)Tokens.PLUS);
+                op1 = ParseExpr2();
+                op += op1;
+            }
+            else if (nto == (int)Tokens.HYPHEN)
+            {
+                Match((int)Tokens.HYPHEN);
+                op1 = ParseExpr2();
+                op -= op1;
+            }
+            /*
+            else if (nto == (int)Tokens.EQUALS)
+            {
+                Match((int)Tokens.EQUALS);
+                op1 = ParseExpr();
+                if (op == op1)
+                    op = 1.0f;
+                else
+                    op = 0.0f;
+            }
+            else if (nto == (int)Tokens.LESS)
+            {
+                Match((int)Tokens.LESS);
+                op1 = ParseExpr();
+                if (op < op1)
+                    op = 1.0f;
+                else
+                    op = 0.0f;
+            }
+            else if (nto == (int)Tokens.GREATER)
+            {
+                Match((int)Tokens.GREATER);
+                op1 = ParseExpr();
+                if (op > op1)
+                    op = 1.0f;
+                else
+                    op = 0.0f;
+            }
+            */
         }
         return op;
     }
@@ -1350,6 +1410,60 @@ public class G3IParser
                 Match((int)Tokens.SLASH);
                 op1 = ParseFactor();
                 op /= op1;
+            }
+        }
+        return op;
+    }
+
+
+
+    float ParseFactor2()
+    {
+        //if (TestingParser) GD.Print("Parser: " + "Start ParseFactor");
+        float op, op1;
+        op = ParseTerm();
+
+        int nto = scanner.NextToken();
+        if (nto != (int)Tokens.EOF)
+        {
+            if (nto == (int)Tokens.ASTERISK)
+            {
+                Match((int)Tokens.ASTERISK);
+                op1 = ParseFactor2();
+                op *= op1;
+            }
+            else if (nto == (int)Tokens.SLASH)
+            {
+                Match((int)Tokens.SLASH);
+                op1 = ParseFactor2();
+                op /= op1;
+            }
+            else if (nto == (int)Tokens.EQUALS)
+            {
+                Match((int)Tokens.EQUALS);
+                op1 = ParseFactor2();
+                if (op == op1)
+                    op = 1.0f;
+                else
+                    op = 0.0f;
+            }
+            else if (nto == (int)Tokens.LESS)
+            {
+                Match((int)Tokens.LESS);
+                op1 = ParseFactor2();
+                if (op < op1)
+                    op = 1.0f;
+                else
+                    op = 0.0f;
+            }
+            else if (nto == (int)Tokens.GREATER)
+            {
+                Match((int)Tokens.GREATER);
+                op1 = ParseFactor2();
+                if (op > op1)
+                    op = 1.0f;
+                else
+                    op = 0.0f;
             }
         }
         return op;
@@ -1454,6 +1568,7 @@ public class G3IParser
                 case (int)Tokens.BACKGROUND:
                 case (int)Tokens.HELP:
                 case (int)Tokens.QUIT:
+                case (int)Tokens.WHILE:
                     ParseG3ISentence();
                     break;
 
@@ -1499,7 +1614,7 @@ public class G3IParser
                     //else
                     //{
 
-                    float result = ParseExpr();
+                    float result = ParseExpr2();
                     setvar(varname, result);
                     //}
                     nextbutone = true;
@@ -1771,20 +1886,67 @@ public class G3IParser
                     }
                     Match((int)Tokens.RBRACKET);
                     break;
-                    
+
+                case (int)Tokens.WHILE:
+                    //if (TestingParser) GD.Print("Parser: " + "found sentence WHILE");
+                    Match(nextToken);
+                    int whileidxold = scanner.idx;
+
+                    float whiletmp = ParseExpr2();
+                    //if (TestingParser) GD.Print("Parser: " + "result of ParseExpr: "+whiletmp.ToString());
+                    Match((int)Tokens.LBRACKET);
+
+                    while (whiletmp > 0.0f)
+                    {
+                  
+                        ParseG3ISentence();
+                        while (scanner.NextToken() != (int)Tokens.RBRACKET)
+                        {
+                            ParseG3ISentence();
+                        }
+                        Match((int)Tokens.RBRACKET);
+                        int whiletmp2 =scanner.idx;
+                        scanner.idx = whileidxold;
+                        whiletmp = ParseExpr2();
+                        //if (TestingParser) GD.Print("Parser: " + "inwhile result of ParseExpr: " + whiletmp.ToString());
+                        if (whiletmp > 0.0f)
+                        {
+                            Match((int)Tokens.LBRACKET);
+                        }
+                        else
+                        {
+                            scanner.idx = whiletmp2;
+                            break;
+                        }
+                    }
+                    break;
+
                 case (int)Tokens.IF:
                     //if (TestingParser) GD.Print("Parser: " + "found sentence IF");
                     {
                         int countif = 1;
                         int matchif = 0;
+
                         Match(nextToken);
                 
                         float vecvaltmp = ParseExpr();
-                        //int found=vecvaltmp.find(".000000");
-                        //if(found !=std::string::npos)
-                        //{
-                        //	vecvaltmp=vecvaltmp.substr(0,found);
-                        //}
+
+                        /*
+                        if (TestingParser) GD.Print("Parser: " + "result of ParseExpr: "+vecvaltmp.ToString());
+                        
+                        if (vecvaltmp > 0.0f)
+                        {
+                            ParseG3ISentence();
+                            while (scanner.NextToken() != (int)Tokens.ENDIF)
+                            {
+                                ParseG3ISentence();
+                            }
+                            Match((int)Tokens.ENDIF);
+                            break;
+                        }
+                        */
+
+                        
                         if (scanner.NextToken() == (int)Tokens.LESS)
                         {
                     
@@ -1886,6 +2048,7 @@ public class G3IParser
                                 }
                             }
                         }
+                        
                  
                         //Match(TOKEN_RBRACKET);
                         break;
@@ -1941,7 +2104,7 @@ public class G3IParser
                         {
                             Match((int)Tokens.COLON);
                             //GD.Print(AR.StrDump());
-                            IntClass.PrintLabel("PRINT COLON: " + scanner.scanBuffer);
+                            //IntClass.PrintLabel("PRINT COLON: " + scanner.scanBuffer);
                             string stringvar = getvarstring(scanner.scanBuffer);
 
                             IntClass.PrintLabel(stringvar);
