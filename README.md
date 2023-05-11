@@ -86,6 +86,8 @@ MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get 
 PRINT string - print   
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
+WHILE expression [ dosomething ] - example MAKE "X 0 WHILE :X < 7 [ "X = :X + 1  PRINT :X ]
+    cause expression works with float, for example 2<1 + 3<1 works cause 2<1 is 0.0float and the results could be added...    
 IF condition dosomething ENDIF - if command, example IF :N > 7 PRINT :N ENDIF       
 TO procedurename xxx formalparameters END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
 GO procedurename arguments - start a procedure, parameter allowed, NO nested procedures(proc in proc), example GO "PROC 42. for recursion the STOP-command now works, see example treewithstopcommand.g3i             
@@ -98,5 +100,6 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
-- added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables             
+- added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
+- WHILE command that works til expression greater 0           
   
