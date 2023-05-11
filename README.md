@@ -94,6 +94,8 @@ GO procedurename arguments - start a procedure, parameter allowed, NO nested pro
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
 math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest             
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
+GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable MAKE "K "A  "K = GETKEY  PRINT :K    
+    the focus must be in the drawingwindow (click with mouse)
       
       
   
@@ -101,5 +103,5 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
-- WHILE command that works til expression greater 0           
+- WHILE command that works til expression greater 0 and GETKEY command     
   
