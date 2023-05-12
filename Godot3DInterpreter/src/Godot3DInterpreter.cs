@@ -211,6 +211,7 @@ class Globals
         "GETKEY",
         "ITEM",
         "COUNT",
+        "SETITEM",
         //---
         "NUMBER",
         "STRING",
@@ -271,7 +272,8 @@ class Globals
         "WHILE",
         "GETKEY",
         "ITEM",
-        "COUNT"
+        "COUNT",
+        "SETITEM"
     };
     public enum Tokens : int
     {
@@ -313,26 +315,27 @@ class Globals
         GETKEY=35,
         ITEM=36,
         COUNT=37,
+        SETITEM=38,
         //from here not reserved
-        NUMBER = 38, 
-        STRING = 39,
-        COMMENT = 40,
-        LBRACKET = 41,
-        RBRACKET = 42,
-        LPARENTHESIS = 43,
-        RPARENTHESIS = 44,
-        LBRACE=45,
-        RBRACE=46,
-        PLUS=47,
-        HYPHEN=48,
-        ASTERISK=49,
-        SLASH=50,
-        EQUALS=51,
-        LESS=52,
-        GREATER=53,
-        COMMA=54,
-        COLON=55,
-        EOF =56
+        NUMBER = 39, 
+        STRING = 40,
+        COMMENT = 41,
+        LBRACKET = 42,
+        RBRACKET = 43,
+        LPARENTHESIS = 44,
+        RPARENTHESIS = 45,
+        LBRACE=46,
+        RBRACE=47,
+        PLUS=48,
+        HYPHEN=49,
+        ASTERISK=50,
+        SLASH=51,
+        EQUALS=52,
+        LESS=53,
+        GREATER=54,
+        COMMA=55,
+        COLON=56,
+        EOF =57
     }
     public enum TokensReserved : int
     {
@@ -372,7 +375,8 @@ class Globals
         WHILE=34,
         GETKEY=35,
         ITEM = 36,
-        COUNT = 37
+        COUNT = 37,
+        SETITEM= 38
     }
 
 }
@@ -1593,6 +1597,7 @@ public class G3IParser
                 case (int)Tokens.GETKEY:
                 case (int)Tokens.ITEM:
                 case (int)Tokens.COUNT:
+                case (int)Tokens.SETITEM:
                     ParseG3ISentence();
                     break;
 
@@ -1643,6 +1648,7 @@ public class G3IParser
                     {
                         Match((int)Tokens.ITEM);
                         float itemtmp = numberor();
+
                         if (scanner.NextToken() == (int)Tokens.COLON)
                         {
                             Match((int)Tokens.COLON);
@@ -1674,6 +1680,48 @@ public class G3IParser
                             }
                         }
 
+                    }
+                    else if (scanner.NextToken() == (int)Tokens.SETITEM)
+                    {
+                        Match((int)Tokens.SETITEM);
+                        float setitemn = ParseExpr();
+
+                        if (scanner.NextToken() == (int)Tokens.STRING)
+                        {
+                            Match((int)Tokens.STRING);
+                            string itemstr = scanner.scanBuffer;
+
+                            string[] itemsubs = getvarstring(varname).Split(' ');
+                            if (itemsubs.Length - 1 < (int)setitemn) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + varname);
+                            else
+                            {
+                                itemsubs[(int)setitemn] = itemstr;
+                                string newtmp = "";
+                                for (int i = 0; i < itemsubs.Length; i++)
+                                {
+                                    newtmp = newtmp + " " + itemsubs[i];
+                                }
+                                setvarstring(varname, newtmp);
+                            }
+                        }
+                        else if (scanner.NextToken() == (int)Tokens.COLON)
+                        {
+                            Match((int)Tokens.COLON);
+                            string itemvar = getvarstring(scanner.scanBuffer);
+
+                            string[] itemsubs = getvarstring(varname).Split(' ');
+                            if (itemsubs.Length - 1 < (int)setitemn) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + varname);
+                            else
+                            {
+                                itemsubs[(int)setitemn] = itemvar;
+                                string newtmp = "";
+                                for (int i = 0; i < itemsubs.Length; i++)
+                                {
+                                    newtmp = newtmp + " " + itemsubs[i];
+                                }
+                                setvarstring(varname, newtmp);
+                            }
+                        }
                     }
                     else if (scanner.NextToken() == (int)Tokens.COUNT)
                     {
@@ -1824,7 +1872,8 @@ public class G3IParser
                     endrecursion = true;
                     if (TestingParser) GD.Print("Parser: " + "found sentence END");
                     break;
-                
+
+
                 case (int)Tokens.PENCOLOR:
                     Match(nextToken);
                     //if (!Match((int)Tokens.NUMBER))break;
