@@ -96,10 +96,11 @@ math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use 
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
 GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable MAKE "K "A  "K = GETKEY  PRINT :K    
     the focus must be in the drawingwindow (click with mouse)    
-ITEM - get or set an item of a list    
+ITEM - get an item of a list    
     example print item:  MAKE "B "[ONE TWO THREE]  PRINT ITEM 1 :B prints TWO    
-    example get item: MAKE "B "[ONE TWO THREE]  "A = ITEM 0 :B gets the first item of list "B in this case variable "A is set to ONE      
-    example set item: MAKE "B "[ONE TWO THREE] "B = ITEM 1 "TEST  PRINT :B prints ONE TEST THREE   
+    example get item: MAKE "B "[ONE TWO THREE]  "A = ITEM 0 :B gets the first item of list "B in this case variable "A is set to ONE    
+SETITEM - set an item of a list
+    example set item: MAKE "B "[ONE TWO THREE] "B = SETITEM 1 "TEST  PRINT :B prints ONE TEST THREE   
 COUNT - get length of words in a list, example "X = COUNT :A    
       
       
@@ -108,5 +109,5 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
-- WHILE command that works til expression greater 0, GETKEY command and Lists         
+- WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT             
   
