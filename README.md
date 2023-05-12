@@ -99,7 +99,7 @@ GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ 
 ITEM - get an item of a list    
     example print item:  MAKE "B "[ONE TWO THREE]  PRINT ITEM 1 :B prints TWO    
     example get item: MAKE "B "[ONE TWO THREE]  "A = ITEM 0 :B gets the first item of list "B in this case variable "A is set to ONE    
-SETITEM - set an item of a list
+SETITEM - set an item of a list    
     example set item: MAKE "B "[ONE TWO THREE] "B = SETITEM 1 "TEST  PRINT :B prints ONE TEST THREE   
 COUNT - get length of words in a list, example "X = COUNT :A    
       
