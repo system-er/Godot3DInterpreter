@@ -81,9 +81,9 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
 0.7 - a floatnumber   
 ; xxx - a comment   
 "X - a string   
-"[xx xx] - a string with spaces, for example "[hello world]   
+"[xx xx] - a string with spaces, for example "[hello world], its a list of words   
 MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with "X = 7, example: MAKE "X 7    PRINT :X   
-PRINT string - print   
+PRINT string - examples: PRINT "hello or PRINT :X    
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: FOR "I 1 3 1 [ PRINT :I ]   
 WHILE expression [ dosomething ] - works til expression greater 0 - example MAKE "X 0 WHILE :X < 7 [ "X = :X + 1  PRINT :X ]    
@@ -95,7 +95,12 @@ RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for ex
 math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest             
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
 GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable MAKE "K "A  "K = GETKEY  PRINT :K    
-    the focus must be in the drawingwindow (click with mouse)
+    the focus must be in the drawingwindow (click with mouse)    
+ITEM - get or set an item of a list
+    example print item:  MAKE "B "[ONE TWO THREE]  PRINT ITEM 1 :B prints TWO    
+    example get item: MAKE "B "[ONE TWO THREE]  "A = ITEM 0 :B gets the first item of list "B in this case variable "A is set to ONE      
+    example set item: MAKE "B "[ONE TWO THREE] "B = ITEM 1 "TEST  PRINT :B prints ONE TEST THREE   
+COUNT - get length of words in a list, example "X = COUNT :A    
       
       
   
@@ -103,5 +108,5 @@ GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ 
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - Valk made changes, thank you for the work!    
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
-- WHILE command that works til expression greater 0 and GETKEY command     
+- WHILE command that works til expression greater 0, GETKEY command and Lists         
   
