@@ -1,11 +1,6 @@
 # Godot3DInterpreter - new version 0.analysed      
 
-a lowlevel logo-like interpreter to produce 3D-graphics with Godot.    
-in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
-Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
-and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
-
-- written in C# with Godot 4.0 mono 
+a lowlevel logo-like interpreter to produce 3D-graphics with Godot. written in C# with Godot 4.0 mono    
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
@@ -110,4 +105,15 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - Valk made changes, thank you for the work!    
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT             
+
+
+
+# the program
+it works like an old steam machine. Full of bugs and chaos in the code.    
+in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
+Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
+and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
+now i programmed an own interpreter. and some days ago i awoke on a graveyard in mexico    
+with a t-shirt with the text "i wrote an interpreter - and all i got was this stupid t-shirt."    
+
   
