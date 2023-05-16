@@ -113,7 +113,6 @@ it works like an old steam machine. Full of bugs and chaos in the code.
 in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
 Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
-now i programmed an own interpreter. and some days ago i awoke on a graveyard in mexico    
-with a t-shirt with the text "i wrote an interpreter - and all i got was this stupid t-shirt."    
+now i programmed an own interpreter. i wear a t-shirt with the text "i wrote an interpreter - and all i got was this stupid t-shirt."    
 
   
