@@ -102,7 +102,6 @@ COUNT - get length of words in a list, example "X = COUNT :A
   
 # Last changes:    
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
-- Valk made changes, thank you for the work!    
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT             
 
