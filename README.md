@@ -21,7 +21,7 @@ example interpreterprogram lasershow.g3i:
 when you start you see the commander below - a one line TextEditor. and in the top left corner the output window of the commander. in the middle of the screen you see the "turtle", the 3D-cursor that shows to the direction, you will draw.   
 
 if you enter in the commander for example   
-PRINT "[hello world]    
+PRINT "[hello world] ;    
 and the string is printed to GODOT-output.    
 
 or you type:    
@@ -32,7 +32,7 @@ and again FORWARD 30 and you see the next line. If you enter for example:
 REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 you get a square. you can move camera3D with keys WASD and arrowkeys.       
 
-You can write a procedure if you type TO "X :N   PRINT :N   END    
+You can write a procedure if you type TO "X :N   PRINT :N ;  END    
 and can call it from the commander with GO "X 42
 and the procedure will write 42 to Godot-output.
 
