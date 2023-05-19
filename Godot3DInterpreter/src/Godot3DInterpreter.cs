@@ -231,6 +231,7 @@ class Globals
         "GREATER",
         "COMMA",
         "COLON",
+        "NOTEQUAL",
         "EOF"
     };
 
@@ -335,7 +336,8 @@ class Globals
         GREATER=54,
         COMMA=55,
         COLON=56,
-        EOF =57
+        NOTEQUAL=57,
+        EOF =58
     }
     public enum TokensReserved : int
     {
@@ -669,6 +671,13 @@ public class G3IScanner
             else if (ch == '<')
             {
                 idx++;
+                ch = rawContents[idx];
+                if (ch == '>')
+                {
+                    idx++;
+                    if (TestingScanner) GD.Print("Scanner: found NOTEQUAL");
+                    return (int)Tokens.NOTEQUAL;
+                }
                 if (TestingScanner) GD.Print("Scanner: found LESS");
                 return (int)Tokens.LESS;
             }
@@ -1652,6 +1661,7 @@ public class G3IParser
                     {
                         string tmppkey = getpressedkey();
                         if (tmppkey != "") setvarstring(varname, tmppkey);
+                        //GD.Print("pressedkey=" + tmppkey);
                         Match((int)Tokens.GETKEY);
                     }
                     else if (scanner.NextToken() == (int)Tokens.ITEM)
@@ -2135,6 +2145,38 @@ public class G3IParser
                             if (vecvaltmp > vecvaltmp2)
                             {
                
+                                ParseG3ISentence();
+                                while (scanner.NextToken() != (int)Tokens.ENDIF)
+                                {
+                                    ParseG3ISentence();
+                                }
+                                Match((int)Tokens.ENDIF);
+                                break;
+                            }
+                            else
+                            {
+                                while (countif > matchif)
+                                {
+                                    while (scanner.NextToken() != (int)Tokens.ENDIF)
+                                    {
+                                        if (scanner.NextToken() == (int)Tokens.IF) countif++;
+                                        Match(scanner.NextToken());
+                                    }
+                                    Match((int)Tokens.ENDIF);
+                                    matchif++;
+                                }
+                            }
+                        }
+                        else if (scanner.NextToken() == (int)Tokens.NOTEQUAL)
+                        {
+
+                            Match((int)Tokens.NOTEQUAL);
+                            //float vecvaltmp2=numberorvalue();
+                            float vecvaltmp2 = numberor();
+
+                            if (vecvaltmp != vecvaltmp2)
+                            {
+
                                 ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
                                 {
@@ -2983,7 +3025,7 @@ public partial class Godot3DInterpreter : Node3D
         //rawContents = "";
         textoffile = textoffile.Replace(System.Environment.NewLine, " \n ");
         //GD.Print(textoffile);
-        PrintLabel(textoffile+ "\n");
+        //PrintLabel(textoffile+ "\n");
         NewTextInput = textoffile;
         NewInput = true;
     }
