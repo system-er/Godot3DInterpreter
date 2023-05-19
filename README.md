@@ -40,7 +40,7 @@ If you want interpreterprograms, type LOAD and you can load one of the example-p
    
 
   
-# Commands commander (lowercase allowed):   
+# Commands commander:   
 arrow-up pressed in commander repeats last command    
 LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
 PRINTOUT string - prints a procedure or with "ALL it prints all procedures.    
@@ -51,7 +51,7 @@ QUIT - quit program
    
     
    
-# Commands 3D (lowercase allowed):   
+# Commands 3D:   
 camera3D movement with Keys WASD, Arrowkeys   
 FORWARD number - draw a line forward    
 BACK number   
@@ -71,7 +71,7 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
    possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
 
    
-# Commands interpreter "language" (lowercase allowed): 
+# Commands interpreter "language": 
 7 - a number, -7 is a minus seven        
 0.7 - a floatnumber   
 ; xxx - a comment   
