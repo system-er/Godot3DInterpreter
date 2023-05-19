@@ -2712,7 +2712,7 @@ public partial class Godot3DInterpreter : Node3D
             //GD.Print("New Line Input");
             //PrintLabel("New Line Input");
 
-            NewTextInput = NewTextInput.ToUpper();
+            //NewTextInput = NewTextInput.ToUpper();
 
             var scanner = new G3IScanner(NewTextInput);
             var analyser = new SemanticAnalyser(scanner);
@@ -2957,7 +2957,7 @@ public partial class Godot3DInterpreter : Node3D
     public void DrawMesh(Godot.Vector3 pos, float scale, Godot.Color c, string meshstring)
     {
         MeshInstance3D mi = new();
-        meshstring = meshstring.ToUpper();
+        //meshstring = meshstring.ToUpper();
         meshstring = meshstring.Trim();
         GD.Print("DrawMesh:" + meshstring);
         mi.Mesh = meshstring switch
@@ -3005,7 +3005,7 @@ public partial class Godot3DInterpreter : Node3D
     {
         input = newtext;
         //GD.Print(input);
-        PrintLabel(input);
+        PrintLabel(input+"\n");
 
         NewInput = true;
         NewTextInput = input;
