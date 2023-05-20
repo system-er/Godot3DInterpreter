@@ -77,9 +77,11 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world], its a list of words   
-MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with "X = 7, example: 
+MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with "X = 7, example:   
+```
    MAKE "X 7    
    PRINT :X   
+```
 PRINT string ; - print more separated with COMMA, end with ; examples: PRINT "hello ; or PRINT :X ;    
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: 
