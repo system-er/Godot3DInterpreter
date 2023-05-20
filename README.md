@@ -164,6 +164,4 @@ Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-par
 and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
 i programmed an own interpreter. and now i wear a t-shirt with the text "i wrote an interpreter - and all i got was this stupid t-shirt."    
 
-
-git status
   
