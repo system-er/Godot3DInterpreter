@@ -87,8 +87,8 @@ FOR varname number number number [ xxx ] - for loop, example:
    [     
       PRINT :I     
    ]      
-WHILE expression [ dosomething ] - works til expression greater 0 - example 
-   MAKE "X 0     
+WHILE expression [ dosomething ] - works til expression greater 0 - example    
+   MAKE "X 0    
    WHILE :X < 7     
    [     
       "X = :X + 1     
@@ -101,7 +101,7 @@ GO procedurename arguments - start a procedure, parameter allowed, NO nested pro
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
 math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest             
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
-GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable 
+GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable    
    MAKE "K "A    
    "K = GETKEY    
    IF :K = "Key1    
