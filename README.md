@@ -85,17 +85,21 @@ MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get 
 PRINT string ; - print more separated with COMMA, end with ; examples: PRINT "hello ; or PRINT :X ;    
 REPEAT number [ xxx ] - repeat something example: REPEAT 4 [ FORWARD 30 LEFT 90 ]   
 FOR varname number number number [ xxx ] - for loop, example: 
+```
    FOR "I 1 3 1    
    [     
       PRINT :I     
    ]      
-WHILE expression [ dosomething ] - works til expression greater 0 - example    
+```
+WHILE expression [ dosomething ] - works til expression greater 0 - example:    
+```
    MAKE "X 0    
    WHILE :X < 7     
    [     
       "X = :X + 1     
       PRINT :X    
-   ]        
+   ]
+```
     cause expression works with float, for example 2<1 + 3<1 works cause 2<1 is 0.0float and the results could be added...    
 IF condition dosomething ENDIF - if command with EQUAL = NOTEQUAL <> LESS < GREATER >, example IF :N > 7 PRINT :N ENDIF       
 TO procedurename xxx formalparameters END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
@@ -104,11 +108,13 @@ RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for ex
 math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest             
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
 GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable    
+```
    MAKE "K "A    
    "K = GETKEY    
    IF :K = "Key1    
       PRINT :K     
    ENDIF    
+```
    the focus must be in the drawingwindow (click with mouse)    
 ITEM - get an item of a list    
     example print item:  MAKE "B "[ONE TWO THREE]  PRINT ITEM 1 :B prints TWO    
