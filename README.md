@@ -126,7 +126,18 @@ IF condition dosomething ENDIF - if command with EQUAL = NOTEQUAL <> LESS < GREA
 TO procedurename xxx formalparameters END - a procedure, parameter allowed ( recursion now works, see example ), example TO "PROC :A PRINT :A END    
 GO procedurename arguments - start a procedure, parameter allowed, NO nested procedures(proc in proc), example GO "PROC 42. for recursion the STOP-command now works, see example treewithstopcommand.g3i             
 RANDOM as parameter, if RANDOM alone means 0-255, or RANDOM n for number, for example FORWARD RANDOM 50 means forward 0-49   
-math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: TO "PROC :N   PRINT :N   END ->call-> MAKE "A 2   GO "PROC :A + 1, see also example recursiontest             
+math with */+- and parenthesis () behind a = EQUALS TOKEN. for floatnumbers use dot as comma. or behind procedureparamtervariable example: MAKE "X 0  "X = :X + 7  PRINT :X, now also with float. or math in procedureparameter example: 
+```
+   TO "PROC :N   
+      PRINT :N   
+   END
+```
+   ->call-> 
+```
+   MAKE "A 2
+   GO "PROC :A + 1
+```
+   see also example recursiontest             
 SLEEP number - sleep n milliseconds (see example procedure.g3i)   
 GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable    
 ```
@@ -141,10 +152,23 @@ GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ 
 ```
    the focus must be in the drawingwindow (click with mouse)    
 ITEM - get an item of a list    
-    example print item:  MAKE "B "[ONE TWO THREE]  PRINT ITEM 1 :B prints TWO    
-    example get item: MAKE "B "[ONE TWO THREE]  "A = ITEM 0 :B gets the first item of list "B in this case variable "A is set to ONE    
+    example print item:  
+```
+    MAKE "B "[ONE TWO THREE]  
+    PRINT ITEM 1 :B ; prints TWO    
+```
+    example get item: 
+```
+    MAKE "B "[ONE TWO THREE]  
+    "A = ITEM 0 :B ;gets the first item of list "B in this case variable "A is set to ONE    
+```
 SETITEM - set an item of a list    
-    example set item: MAKE "B "[ONE TWO THREE] "B = SETITEM 1 "TEST  PRINT :B prints ONE TEST THREE   
+    example set item: 
+```
+    MAKE "B "[ONE TWO THREE] 
+    "B = SETITEM 1 "TEST
+    PRINT :B ; prints ONE TEST THREE   
+```
 COUNT - get length of words in a list, example "X = COUNT :A    
       
       
