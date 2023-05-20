@@ -131,10 +131,13 @@ SLEEP number - sleep n milliseconds (see example procedure.g3i)
 GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ PRINT GETKEY ] or get in variable    
 ```
    MAKE "K "A    
-   "K = GETKEY    
-   IF :K = "Key1    
-      PRINT :K     
-   ENDIF    
+   WHILE :K <> "Escape    
+   [    
+      "K = GETKEY    
+      IF :K = "Key1    
+         PRINT "Found_Key1     
+      ENDIF    
+   ]    
 ```
    the focus must be in the drawingwindow (click with mouse)    
 ITEM - get an item of a list    
