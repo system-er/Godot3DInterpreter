@@ -4,11 +4,6 @@ a lowlevel logo-like interpreter to produce 3D-graphics with Godot. written in C
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
-
-   
-example interpreterprogram meshes:    
-![Pic2](Godot3DInterpreter/pics/meshes.jpg)
-    
      
 example interpreterprogram recursive tree:    
 ![Pic3](Godot3DInterpreter/pics/tree.jpg)
