@@ -17,7 +17,7 @@ when you start you see the commander below - a one line TextEditor. and in the t
 
 if you enter in the commander for example   
 ```
-PRINT "[hello world] ;
+PRINT "[hello world]    
 ```
 and the string is printed to GODOT-output.    
 
@@ -37,7 +37,7 @@ you get a square. you can move camera3D with keys WASD and arrowkeys.
 
 You can write a procedure if you type
 ```
-TO "X :N   PRINT :N ;  END    
+TO "X :N   PRINT :N  END    
 ```
 and can call it from the commander with 
 ```
@@ -92,7 +92,7 @@ MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get 
    PRINT :X   
    MAKE "X = :X + 7    
 ```
-PRINT string ; - print more separated with COMMA, end with ; examples: PRINT "hello ; or PRINT :X ;    
+PRINT string - print more separated with COMMA, examples: PRINT "hello or PRINT :X    
 REPEAT number [ xxx ] - repeat something example: 
 ```
    REPEAT 4 
