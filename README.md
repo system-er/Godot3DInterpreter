@@ -91,10 +91,11 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world], its a list of words   
-MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with "X = 7, example:   
+MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with MAKE "varname = ... example:   
 ```
    MAKE "X 7    
    PRINT :X   
+   MAKE "X = :X + 7    
 ```
 PRINT string ; - print more separated with COMMA, end with ; examples: PRINT "hello ; or PRINT :X ;    
 REPEAT number [ xxx ] - repeat something example: 
@@ -117,7 +118,7 @@ WHILE expression [ dosomething ] - works til expression greater 0 - example:
    MAKE "X 0    
    WHILE :X < 7     
    [     
-      "X = :X + 1     
+      MAKE "X = :X + 1     
       PRINT :X    
    ]
 ```
@@ -144,7 +145,7 @@ GETKEY - input command, get the key as string. example MAKE "A "KEY WHILE 1=1 [ 
    MAKE "K "A    
    WHILE :K <> "Escape    
    [    
-      "K = GETKEY    
+      MAKE "K = GETKEY    
       IF :K = "Key1    
          PRINT "Found_Key1     
       ENDIF    
@@ -160,13 +161,13 @@ ITEM - get an item of a list
     example get item: 
 ```
     MAKE "B "[ONE TWO THREE]  
-    "A = ITEM 0 :B ;gets the first item of list "B in this case variable "A is set to ONE    
+    MAKE "A = ITEM 0 :B ;gets the first item of list "B in this case variable "A is set to ONE    
 ```
 SETITEM - set an item of a list    
     example set item: 
 ```
     MAKE "B "[ONE TWO THREE] 
-    "B = SETITEM 1 "TEST
+    MAKE "B = SETITEM 1 "TEST
     PRINT :B ; prints ONE TEST THREE   
 ```
 COUNT - get length of words in a list, example "X = COUNT :A    
@@ -177,7 +178,7 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - start parser as thread, now changing scene is possible. new command SLEEP, see example lasershow.g3i.      
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT     
-- new Token NOTEQUAL <>            
+- new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...                
 
 
 
