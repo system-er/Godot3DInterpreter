@@ -154,7 +154,7 @@ class Globals
     public static bool endrecursion = false;
     public static bool parsestop = false;
     public static bool TestingScanner = false;
-    public static bool TestingParser = true;
+    public static bool TestingParser = false;
     //public static bool TurtleMoved = false;
     public static bool NewInput = false;
     public static bool InputRequest = false;
@@ -2377,7 +2377,8 @@ public class G3IParser
                         Match((int)Tokens.STRING);
 
                         //if (TestingParser) GD.Print("Parser: " + "found sentence MAKE+STRING " + arrayname + " " + scanner.scanBuffer);
-                        //GD.Print("scanbuffer:" + scanner.scanBuffer);
+                        //GD.Print("MAKE: " + "found sentence MAKE+STRING " + arrayname + " " + scanner.scanBuffer);
+                        //GD.Print("MAKE: scanbuffer:" + scanner.scanBuffer);
                         //setvar(arrayname, float.Parse(scanner.scanBuffer));
                         setvarstring(arrayname, scanner.scanBuffer);
                         //setvar(arrayname, scanner.scanBuffer.ToFloat());
@@ -2500,6 +2501,12 @@ public class G3IParser
                             string[] itemsubs = itemvar.Split(' ');
                             GD.Print("itemsubs:" + itemsubs);
                             setvar(arrayname, (float)itemsubs.Length);
+                        }
+                        else if (scanner.NextToken() == (int)Tokens.STRING)
+                        {
+                            Match((int)Tokens.STRING);
+                            setvarstring(arrayname, scanner.scanBuffer);
+                            GD.Print("MAKE = " + scanner.scanBuffer);
                         }
                         else
                         {
@@ -3115,7 +3122,7 @@ public partial class Godot3DInterpreter : Node3D
         MeshInstance3D mi = new();
         //meshstring = meshstring.ToUpper();
         meshstring = meshstring.Trim();
-        GD.Print("DrawMesh:" + meshstring);
+        //GD.Print("DrawMesh:" + meshstring);
         mi.Mesh = meshstring switch
         {
             "CAPSULE" => new CapsuleMesh(),
