@@ -153,7 +153,9 @@ ITEM - get an item of a list
     MAKE "B "[ONE TWO THREE]  
     PRINT ITEM 1 :B ; prints TWO    
 ```
-    example get item: 
+
+example get item: 
+
 ```
     MAKE "B "[ONE TWO THREE]  
     MAKE "A = ITEM 0 :B ;gets the first item of list "B in this case variable "A is set to ONE    
