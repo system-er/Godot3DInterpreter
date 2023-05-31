@@ -1,0 +1,293 @@
+; codebreaker 
+
+TO "COL :C
+    IF :C = 1
+        PENCOLOR 255 0 0
+    ENDIF
+    IF :C = 2
+        PENCOLOR 0 255 0
+    ENDIF
+    IF :C = 3
+        PENCOLOR 0 0 255
+    ENDIF
+    IF :C = 4
+        PENCOLOR 255 255 0
+    ENDIF
+    IF :C = 5
+        PENCOLOR 255 128 0
+    ENDIF
+    IF :C = 6
+        PENCOLOR 255 0 255
+    ENDIF
+    IF :C > 0
+        MESH "SPHERE 5
+    ENDIF
+END
+
+
+TO "BO :C
+    IF :C = 1
+        PENCOLOR 255 0 0
+    ENDIF
+    IF :C = 2
+        PENCOLOR 0 255 0
+    ENDIF
+    IF :C = 3
+        PENCOLOR 0 0 255
+    ENDIF
+    IF :C = 4
+        PENCOLOR 255 255 0
+    ENDIF
+    IF :C = 5
+        PENCOLOR 255 128 0
+    ENDIF
+    IF :C = 6
+        PENCOLOR 255 0 255
+    ENDIF
+    IF :C = 7
+        PENCOLOR 255 255 255
+    ENDIF
+    IF :C > 0
+        MESH "BOX 5
+    ENDIF
+END
+
+
+TO "POINTS :Y :L
+    MAKE "Q 0
+    HOME
+    PENUP
+    FORWARD :Y
+    LEFT 90
+    FORWARD 35
+    RIGHT 180
+
+    MAKE "Q = ITEM 0 :L
+    GO "COL :Q
+    FORWARD 10
+
+    MAKE "Q = ITEM 1 :L
+    GO "COL :Q
+    FORWARD 10
+
+    MAKE "Q = ITEM 2 :L
+    GO "COL :Q
+    FORWARD 10
+    
+    MAKE "Q = ITEM 3 :L
+    GO "COL :Q
+    PENDOWN
+END
+
+
+TO "RESULT :L :Y :X
+    MAKE "Q 0
+    MAKE "Z 0
+    MAKE "WIN 0
+    HOME
+    PENUP
+    FORWARD :L
+    RIGHT 90
+    FORWARD 10
+
+    FOR "I 0 3 1    
+    [
+        MAKE "Q = ITEM :I :X ;color of guess
+
+        ;at the correct place?
+        MAKE "Z = ITEM :I :Y
+        IF :Q = :Z
+            GO "BO 7 ; place white box
+            MAKE "WIN = :WIN + 1
+            IF :WIN = 4
+                PRINT "[You break the code! You win!]
+                WHILE 1 = 1 
+                [
+                ]
+            ENDIF
+        ENDIF
+
+        ;not at correct place
+        IF :Q <> :Z
+            FOR "J 0 3 1
+            [
+                MAKE "Z = ITEM :J :Y ;color of secret 
+                IF :Q = :Z
+                    GO "BO 5 ;place orange box
+                ENDIF
+            ]
+        ENDIF
+
+        FORWARD 10
+    ]  
+END
+
+
+PENSIZE 3
+CAMERA 0 55 0
+MAKE "X 10
+
+; paint the gameboard
+REPEAT 5
+[
+    PENCOLOR 100 100 100
+    FORWARD 120
+    HOME
+    PENUP
+    LEFT 90
+    FORWARD :X
+    MAKE "X = :X + 10
+    RIGHT 90
+    PENDOWN
+]
+
+HOME
+LEFT 90
+MAKE "X = 0
+
+REPEAT 14
+[
+    PENCOLOR 100 100 100
+    FORWARD 40
+    HOME
+    LEFT 90
+    PENUP
+    RIGHT 90
+    FORWARD :X
+    MAKE "X = :X + 10
+    LEFT 90
+    PENDOWN
+]
+
+; present colors for user
+HOME
+PENUP
+BACK 10
+LEFT 90
+FORWARD 90
+RIGHT 180
+FORWARD 30
+; red
+PENCOLOR 255 0 0
+MESH "BOX 10
+FORWARD 15
+; green
+PENCOLOR 0 255 0
+MESH "BOX 10
+FORWARD 15
+; blue
+PENCOLOR 0 0 255
+MESH "BOX 10
+FORWARD 15
+; yellow
+PENCOLOR 255 255 0
+MESH "BOX 10
+FORWARD 15
+; orange
+PENCOLOR 255 128 0
+MESH "BOX 10
+FORWARD 15
+; pink
+PENCOLOR 255 0 255
+MESH "BOX 10
+FORWARD 15
+
+
+MAKE "A "[0 1 2 3]
+MAKE "B "[0 0 0 0]
+MAKE "R 0
+PRINT :A ;
+
+MAKE "R = RANDOM 6
+MAKE "R = :R + 1
+MAKE "A = SETITEM 0 :R
+MAKE "R = RANDOM 6
+MAKE "R = :R + 1
+MAKE "A = SETITEM 1 :R
+MAKE "R = RANDOM 6
+MAKE "R = :R + 1
+MAKE "A = SETITEM 2 :R
+MAKE "R = RANDOM 6
+MAKE "R = :R + 1
+MAKE "A = SETITEM 3 :R
+
+; show the secret above - uncomment for testing
+;GO "POINTS 125 :A
+
+MAKE "LOOP 1
+MAKE "K 0
+MAKE "KOLD 0
+MAKE "GUESS 0
+MAKE "COLOR 0
+MAKE "H 5
+MAKE "P 1
+
+; mainloop
+PRINT "MAINLOOP
+PRINT "[Please click to the drawwindow for focus to get keys!]
+PRINT "[Press Escape for quit]
+
+WHILE :LOOP = 1 
+[
+    MAKE "KOLD = :K
+    MAKE "K = GETKEY
+    IF :K <> :KOLD
+        ;RINT :K ;
+        IF :K = "Key1
+            MAKE "B = SETITEM :GUESS "1
+            MAKE "GUESS = :GUESS + 1
+            MAKE "K = "0
+            MAKE "KOLD = "0
+        ENDIF
+        IF :K = "Key2
+            MAKE "B = SETITEM :GUESS "2
+            MAKE "GUESS = :GUESS + 1
+            MAKE "K = "0
+            MAKE "KOLD = "0
+        ENDIF
+        IF :K = "Key3
+            MAKE "B = SETITEM :GUESS "3
+            MAKE "GUESS = :GUESS + 1
+            MAKE "K = "0
+            MAKE "KOLD = "0
+        ENDIF
+        IF :K = "Key4
+            MAKE "B = SETITEM :GUESS "4
+            MAKE "GUESS = :GUESS + 1
+            MAKE "K = "0
+            MAKE "KOLD = "0
+        ENDIF
+        IF :K = "Key5
+            MAKE "B = SETITEM :GUESS "5
+            MAKE "GUESS = :GUESS + 1
+            MAKE "K = "0
+            MAKE "KOLD = "0
+        ENDIF
+        IF :K = "Key6
+            MAKE "B = SETITEM :GUESS "6
+            MAKE "GUESS = :GUESS + 1
+            MAKE "K = "0
+            MAKE "KOLD = "0
+        ENDIF
+        IF :K = "Escape
+            MAKE "LOOP = 0
+        ENDIF
+
+        GO "POINTS :H :B
+        IF :GUESS = 4
+            MAKE "GUESS = 0
+            GO "RESULT :H :A :B
+            MAKE "H = :H + 10
+            MAKE "B = "[0 0 0 0]
+            MAKE "K = "0
+            MAKE "KOLD = "0
+            MAKE "P = :P + 1
+            IF :P = 13
+                PRINT "[SORRY - GAME OVER]
+                MAKE "LOOP = 0
+            ENDIF
+        ENDIF
+    ENDIF
+]
+
+PRINT "END_OF_PROGRAM
