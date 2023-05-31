@@ -10,7 +10,8 @@ example interpreterprogram recursive tree:
 
 example interpreterprogram codebreaker.g3i - i wrote a game in the interpreter (some call it mastermind):    
 the game has a secret code of four colors. You can guess it. colors are shown below. Red = key1, Green = key 2 and so on.   
-after you guess 4 colors on the right the game shows the results - white box for correct position, orange box for wrong position...    
+after you guess 4 colors on the right the game shows the results - white box for correct position, orange box for wrong position.    
+if you guess all four colors at right position, you win. you have 12 tries.    
 ![Pic4](Godot3DInterpreter/pics/codebreaker.jpg)
 
     
