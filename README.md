@@ -12,7 +12,7 @@ example interpreterprogram codebreaker.g3i - i wrote a game in the interpreter (
 the game has a secret code of four colors. You can guess it. colors are shown below. Red = key1, Green = key 2 and so on.   
 after you guess 4 colors the game shows on the right the results - white box for correct position, orange box for wrong position.    
 if you guess all four colors at right position, you win. you have 12 tries.    
-in the pic you see my try, i first guess red green blue yellow and the result is that red and yellow are right colors but at wrong position.   
+in the pic you see my try, i first guess red green blue yellow (typed keys 1,2,3,4) and the result is that red and yellow are right colors but at wrong position.   
 and blue and green get no result, that means that they are wrong colors. in the next line i try red and yello at other positions and two other colors...    
 ![Pic4](Godot3DInterpreter/pics/codebreaker.jpg)
 
