@@ -1,6 +1,6 @@
 # Godot3DInterpreter - new version 0.MAKE         
 
-a lowlevel logo-like interpreter to produce 3D-graphics with Godot. written in C# with Godot 4.0 mono    
+a lowlevel logo-like interpreter to produce 3D-graphics with Godot. written in C# with Godot 4.2 mono    
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
