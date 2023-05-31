@@ -8,8 +8,10 @@ example interpreterprogram procedure with PENSIZE 3:
 example interpreterprogram recursive tree:    
 ![Pic3](Godot3DInterpreter/pics/tree.jpg)
 
-example interpreterprogram lasershow.g3i:    
-![Pic4](Godot3DInterpreter/pics/lasershow.jpg)
+example interpreterprogram codebreaker.g3i - i wrote a game in the interpreter (some call it mastermind):    
+the game has a secret code of four colors. You can guess it. colors are shown below. Red = key1, Green = key 2 and so on.   
+after you guess 4 colors on the right the game shows the results - white box for correct position, orange box for wrong position...    
+![Pic4](Godot3DInterpreter/pics/codebreaker.jpg)
 
     
 # Welcome back commander:    
