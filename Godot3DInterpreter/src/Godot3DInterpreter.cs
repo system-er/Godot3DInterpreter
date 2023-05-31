@@ -45,7 +45,7 @@ class ActivationRecord
 {
     public string name;
     public int type;
-    public int recursionlevel;
+    public int level;
     public int idx;
     public readonly Dictionary<string, string> members = new();
 
@@ -53,7 +53,7 @@ class ActivationRecord
     {
         name = n;
         type = t;
-        recursionlevel = nl;
+        level = nl;
         idx = i;
     }
 
@@ -107,7 +107,7 @@ class ActivationRecord
         string temp;
         temp = "ActivationRecord name: "+ name + "\n"; 
         temp = temp +"ActivationRecord type: "+ type.ToString()+ "\n"; 
-        temp = temp +"ActivationRecord recursionlevel: "+ recursionlevel.ToString()+ "\n";
+        temp = temp +"ActivationRecord level: "+ level.ToString()+ "\n";
         temp = temp + "ActivationRecord idx: " + idx.ToString() + "\n";
         temp = temp + "memberscount " + members.Count + "\n";
 
@@ -140,13 +140,13 @@ class Globals
     public static ActivationRecord AR = new(
             "mainprogram",
        ARTypeProgram,
-            1, //recursionlevel
+            1, //level
             0 //idx
         );
     //public static Stack myStack = new Stack();
     public static readonly Stack<ActivationRecord> myStack = new();
     public static readonly List<G3IProc> ListProcedures = new();
-    public static int recursionlevelnow = 1;
+    public static int levelnow = 1;
     public static readonly string[] ArgumentArray = new string[42];
     public static bool interpreterrunning = false;
     public static string pressedkey = "";
@@ -881,9 +881,9 @@ public class G3IParser
     {
         //myStack.Push(AR);
 
-        if (TestingParser) GD.Print("Parser: " + "VisitProcedureCall: recursionlevelnow= " + recursionlevelnow);
-        recursionlevelnow++;
-        //name = name + "_"+ recursionlevelnow.ToString();
+        if (TestingParser) GD.Print("Parser: " + "VisitProcedureCall: levelnow= " + levelnow);
+        levelnow++;
+        //name = name + "_"+ levelnow.ToString();
         AR.idx = i;
         //name = name + "_idx";
         //setvar(AR.name + "_idx", (float)i);
@@ -894,7 +894,7 @@ public class G3IParser
         AR = new ActivationRecord(
             name,
             ARTypeProcedure,
-            recursionlevelnow, //recursionlevel
+            levelnow, //level
             0
         );
         //if (TestingParser) GD.Print("Parser: pushed the stack nr objects:" + myStack.Count);
@@ -903,7 +903,7 @@ public class G3IParser
     public int LeaveProcedure()
     {
         if(parsestop) return scanner.scanBuffer.Length; ;
-        if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: recursionlevelnow= " + recursionlevelnow);
+        if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: levelnow= " + levelnow);
  
         //if (myStack.Count == 0)
         //{
@@ -911,7 +911,7 @@ public class G3IParser
         //    return scanner.scanBuffer.Length;
         //}
 
-        recursionlevelnow--;
+        levelnow--;
         AR = null;
         if (myStack.Count() == 0) return scanner.scanBuffer.Length;
         AR = (ActivationRecord)myStack.Pop();
@@ -927,14 +927,14 @@ public class G3IParser
 
     public int LeaveProcedureStop()
     {
-        if (TestingParser) GD.Print("Parser: " + "LeaveProcedureStop: recursionlevelnow= " + recursionlevelnow);
+        if (TestingParser) GD.Print("Parser: " + "LeaveProcedureStop: levelnow= " + levelnow);
         //if (myStack.Count == 0)
         //{
         //    if (TestingParser) GD.Print("Parser: LeaveProcedureStop: myStack empty, leaving");
         //    return scanner.scanBuffer.Length;
         //}
 
-        recursionlevelnow--;
+        levelnow--;
         AR = null;
         AR = (ActivationRecord)myStack.Pop();
 
@@ -2710,7 +2710,7 @@ public class G3IParser
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
 
                         /*
-                        if( AR.recursionlevel > 3)
+                        if( AR.level > 3)
                         {
                             if (TestingParser) GD.Print("Parser: STOP procedure");
                             scanner.idx = LeaveProcedure();
@@ -2730,7 +2730,7 @@ public class G3IParser
                             && endrecursion != true
                             && !parsestop
                             )
-                            //&& AR.recursionlevel < 4)
+                            //&& AR.level < 4)
                         {
                             //if (TestingParser) GD.Print("Parser: starting ParseG3ISentence");
                             ParseG3ISentence();
@@ -2874,7 +2874,7 @@ public partial class Godot3DInterpreter : Node3D
             var analyser = new SemanticAnalyser(scanner);
             analyser.Analyse();
 
-            recursionlevelnow = 1;
+            levelnow = 1;
             stoprecursion = false;
             endrecursion = false;
             parsestop = false;
