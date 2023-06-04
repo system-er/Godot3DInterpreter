@@ -85,7 +85,7 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
    possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
 PRINTTD string size - print three dimensional, it uses Godot Label3D, for example PRINTTD "Helloworld 1000    
    PRINTTD uses the color set with PENCOLOR and is printed at position and rotated like the turtle, if you rotate turte 45 - the text is 45 rotated    
-   see examlpe codebreaker.g3i     
+   see example codebreaker.g3i     
    
 
    
