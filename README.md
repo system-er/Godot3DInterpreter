@@ -83,6 +83,10 @@ BACKGROUND number number number - backgroundcolor, the numbers should be 0-255, 
 CAMERA number number number - move the camera relativ, CAMERA 0 0 100 moves the camera +100 Z, look for example interpreterprogram  procedure.g3i        
 MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, example MESH "SPHERE 30    
    possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
+PRINTTD string size - print three dimensional, for examle PRINTTD "Helloworld 1000    
+   PRINTTD uses the color set with PENCOLOR and is printed rotated like the turtle, if you rotate turte 45 - the text is 45 rotated    
+   see examlpe codebreaker.g3i     
+   
 
    
 # Commands interpreter "language": 
@@ -181,7 +185,7 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT     
 - new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...     
-- new example interpreterprogram codebreaker.g3i, see picture      
+- new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD          
 
 
 
