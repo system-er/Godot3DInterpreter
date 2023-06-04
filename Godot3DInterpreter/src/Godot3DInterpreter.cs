@@ -213,6 +213,7 @@ class Globals
         "ITEM",
         "COUNT",
         "SETITEM",
+        "PRINTTD",
         //---
         "NUMBER",
         "STRING",
@@ -275,7 +276,8 @@ class Globals
         "GETKEY",
         "ITEM",
         "COUNT",
-        "SETITEM"
+        "SETITEM",
+        "PRINTTD"
     };
     public enum Tokens : int
     {
@@ -318,27 +320,28 @@ class Globals
         ITEM=36,
         COUNT=37,
         SETITEM=38,
+        PRINTTD=39,
         //from here not reserved
-        NUMBER = 39, 
-        STRING = 40,
-        COMMENT = 41,
-        LBRACKET = 42,
-        RBRACKET = 43,
-        LPARENTHESIS = 44,
-        RPARENTHESIS = 45,
-        LBRACE=46,
-        RBRACE=47,
-        PLUS=48,
-        HYPHEN=49,
-        ASTERISK=50,
-        SLASH=51,
-        EQUALS=52,
-        LESS=53,
-        GREATER=54,
-        COMMA=55,
-        COLON=56,
-        NOTEQUAL=57,
-        EOF =58
+        NUMBER = 40, 
+        STRING = 41,
+        COMMENT = 42,
+        LBRACKET = 43,
+        RBRACKET = 44,
+        LPARENTHESIS = 45,
+        RPARENTHESIS = 46,
+        LBRACE=47,
+        RBRACE=48,
+        PLUS=49,
+        HYPHEN=50,
+        ASTERISK=51,
+        SLASH=52,
+        EQUALS=53,
+        LESS=54,
+        GREATER=55,
+        COMMA=56,
+        COLON=57,
+        NOTEQUAL=58,
+        EOF =59
     }
     public enum TokensReserved : int
     {
@@ -373,13 +376,14 @@ class Globals
         ERASE = 29,
         SLEEP = 30,
         BACKGROUND = 31,
-        HELP=32,
-        QUIT=33,
-        WHILE=34,
-        GETKEY=35,
+        HELP = 32,
+        QUIT = 33,
+        WHILE = 34,
+        GETKEY = 35,
         ITEM = 36,
         COUNT = 37,
-        SETITEM= 38
+        SETITEM = 38,
+        PRINTTD = 39
     }
 
 }
@@ -1613,6 +1617,7 @@ public class G3IParser
                 case (int)Tokens.ITEM:
                 case (int)Tokens.COUNT:
                 case (int)Tokens.SETITEM:
+                case (int)Tokens.PRINTTD:
                     ParseG3ISentence();
                     break;
 
@@ -2009,13 +2014,29 @@ public class G3IParser
                     {
                         Match((int)Tokens.STRING);
                         scanstring = scanner.scanBuffer;
-                        GD.Print("Parser: found string: "+scanner.scanBuffer);
+                        //GD.Print("Parser: found string: "+scanner.scanBuffer);
                     }
                     else ErrorMessage("Parser: " + "MESH: wrong parameter");
                     n = ParseExpr();
                     IntClass.DrawMesh(new Godot.Vector3(TurtlePos.X / n, TurtlePos.Y / n, TurtlePos.Z / n), n, pencolor, scanstring);
-                    //if (TestingParser) GD.Print("Parser: " + "found sentence FORWARD+Number");
                     break;
+
+                case (int)Tokens.PRINTTD:
+                    Match(nextToken);
+                    //if (!Match((int)Tokens.NUMBER))break;
+                    scanstring = "Text";
+                    if (scanner.NextToken() == (int)Tokens.STRING)
+                    {
+                        Match((int)Tokens.STRING);
+                        scanstring = scanner.scanBuffer;
+                        //GD.Print("Parser: found string: " + scanner.scanBuffer);
+                    }
+                    else ErrorMessage("Parser: " + "PRINT3D: wrong parameter");
+                    n = ParseExpr();
+                    //GD.Print("PRINT3D: string=" + scanstring + " number=" + n.ToString());
+                    IntClass.Print3D(scanstring, (int)n);
+                    break;
+
 
                 case (int)Tokens.LOAD:
                     Match(nextToken);
@@ -2448,7 +2469,7 @@ public class G3IParser
                         {
                             Match((int)Tokens.SETITEM);
                             float setitemn = ParseExpr();
-                            GD.Print("setitem n: " + setitemn.ToString());
+                            //GD.Print("setitem n: " + setitemn.ToString());
                             if (scanner.NextToken() == (int)Tokens.STRING)
                             {
                                 Match((int)Tokens.STRING);
@@ -2467,7 +2488,7 @@ public class G3IParser
                                     {
                                         newtmp = newtmp + " " + itemsubs[i];
                                     }
-                                    GD.Print("newitem:" + newtmp);
+                                    //GD.Print("newitem:" + newtmp);
                                     setvarstring(arrayname, newtmp);
                                 }
                             }
@@ -2488,7 +2509,7 @@ public class G3IParser
                                         newtmp = newtmp + " " + itemsubs[i];
                                     }
                                     setvarstring(arrayname, newtmp);
-                                    GD.Print("newitem:" + newtmp);
+                                    //GD.Print("newitem:" + newtmp);
                                 }
                             }
                         }
@@ -2499,14 +2520,14 @@ public class G3IParser
                             Match((int)Tokens.COLON);
                             string itemvar = getvarstring(scanner.scanBuffer);
                             string[] itemsubs = itemvar.Split(' ');
-                            GD.Print("itemsubs:" + itemsubs);
+                            //GD.Print("itemsubs:" + itemsubs);
                             setvar(arrayname, (float)itemsubs.Length);
                         }
                         else if (scanner.NextToken() == (int)Tokens.STRING)
                         {
                             Match((int)Tokens.STRING);
                             setvarstring(arrayname, scanner.scanBuffer);
-                            GD.Print("MAKE = " + scanner.scanBuffer);
+                            //GD.Print("MAKE = " + scanner.scanBuffer);
                         }
                         else
                         {
@@ -2849,7 +2870,7 @@ public partial class Godot3DInterpreter : Node3D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-  
+        GD.Print("_Ready: started");
         TurtleInit();
         winoutput = GetNode<Window>("Output");
         win1 = GetNode<Window>("Window");
@@ -3212,5 +3233,18 @@ public partial class Godot3DInterpreter : Node3D
     public void PrintLabel(string s)
     {
         outputlabel.Text = outputlabel.Text + s;
+    }
+
+    public void Print3D(string s, int fsize)
+    {
+        Label3D lab = new();
+        lab.Text = s;
+        lab.Position = TurtlePos;
+        lab.RotateX(Deg2Rad(theta));
+        lab.RotateZ(Deg2Rad(phi));
+        lab.FontSize = fsize;
+        lab.Modulate = pencolor;
+        lab.Show();
+        parentN.AddChild(lab);
     }
 }
