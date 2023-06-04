@@ -83,7 +83,7 @@ BACKGROUND number number number - backgroundcolor, the numbers should be 0-255, 
 CAMERA number number number - move the camera relativ, CAMERA 0 0 100 moves the camera +100 Z, look for example interpreterprogram  procedure.g3i        
 MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, example MESH "SPHERE 30    
    possible meshes are SPHERE, BOX, TORUS, CAPSULE, CYLINDER, PLANE, QUAD, PRISM    
-PRINTTD string size - print three dimensional, for example PRINTTD "Helloworld 1000    
+PRINTTD string size - print three dimensional, it uses Godot Label3D, for example PRINTTD "Helloworld 1000    
    PRINTTD uses the color set with PENCOLOR and is printed at position and rotated like the turtle, if you rotate turte 45 - the text is 45 rotated    
    see examlpe codebreaker.g3i     
    
