@@ -51,7 +51,7 @@ GO "X 42
 ```
 and the procedure will write 42 to Godot-output.
 
-If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
+If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor of your choice others and load them with load.   
    
 
   
