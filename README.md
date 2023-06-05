@@ -9,7 +9,7 @@ example interpreterprogram procedure with PENSIZE 3:
 example interpreterprogram recursive tree:    
 ![Pic3](Godot3DInterpreter/pics/tree.jpg)
 
-example interpreterprogram codebreaker.g3i - i wrote a game in the interpreter (some call it mastermind):    
+example interpreterprogram codebreaker.g3i - a game in the interpreter (some call it mastermind):    
 the game has a secret code of four colors. You can guess it. colors are shown below. Red = key1, Green = key 2 and so on.   
 after you guess 4 colors the game shows on the right the results - white box for correct position, orange box for wrong position.    
 if you guess all four colors at right position, you win. you have 12 tries.    
@@ -194,6 +194,6 @@ it works like an old steam machine. Full of bugs and chaos in the code.
 in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
 Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
-i programmed an own interpreter. and now i wear a t-shirt with the text "i wrote an interpreter - and all i got was this stupid t-shirt."    
+   
 
   
