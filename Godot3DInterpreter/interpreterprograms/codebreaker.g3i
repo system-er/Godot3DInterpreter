@@ -103,6 +103,7 @@ TO "RESULT :L :Y :X
                 PRINT "[You break the code! You win!]
                 WHILE 1 = 1 
                 [
+                    PRINT "[You break the code! You win!]
                 ]
             ENDIF
         ENDIF
@@ -124,7 +125,7 @@ END
 
 
 PENSIZE 3
-CAMERA 0 55 0
+CAMERA 0 55 10
 MAKE "X 10
 
 ; paint the gameboard
