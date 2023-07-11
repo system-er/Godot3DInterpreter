@@ -23,7 +23,7 @@ if you enter in the commander for example
 ```
 PRINT "[hello world]    
 ```
-and the string is printed to GODOT-output.    
+and the string is printed to output.    
 
 or you type:    
 ```
