@@ -189,8 +189,7 @@ COUNT - get length of words in a list, example "X = COUNT :A
 
 
 # the program
-it works like an old steam machine. Full of bugs and chaos in the code.    
-in godotforum: https://godotforums.org/d/32849-godot3dinterpreter-logolike-project              
+it works like an old steam machine. Full of bugs and chaos in the code.               
 Its based on a good tutorial https://strongminds.dk/artikler/writing-a-small-parser-interpreter-part-1-scanner/   
 and from this very good tutorial https://ruslanspivak.com/lsbasi-part18/ i changed the variable system to AR and stack, procedures with parameter and recursion now work.     
    
