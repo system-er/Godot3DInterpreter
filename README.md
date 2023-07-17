@@ -2,7 +2,7 @@
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot. but instead of good old Logo the turtle (the graphiccursor) now hovers in 3D-space, the cyberspace.    
 written in C# with Godot 4.0.2 mono.
-im still trying with version 4.1 mono, but still too many errors...    
+im still working with version 4.1 mono, but still errors...    
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
