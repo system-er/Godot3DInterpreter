@@ -1,16 +1,9 @@
 using Godot;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Numerics;
-using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Channels;
 
 namespace Godot3DInterpreter;
 
@@ -19,7 +12,8 @@ using static Globals;
 public class Stack<T>
 {
     public int position => data.Count - 1;
-    readonly IList<T> data = new List<T>();
+    private readonly IList<T> data = new List<T>();
+
     public void Push(T obj) => data.Add(obj);
 
     public T Pop()
@@ -32,10 +26,9 @@ public class Stack<T>
     public override string ToString() => $"Num of elements: {data.Count}. {data}";
 
     public int Count() => data.Count;
-
 }
 
-class ActivationRecord
+internal class ActivationRecord
 {
     public string name;
     public int type;
@@ -52,6 +45,7 @@ class ActivationRecord
     }
 
     public bool ExistItem(string key) => members.ContainsKey(key);
+
     public void SetItem(string key, float value)
     {
         if (members.ContainsKey(key))
@@ -89,24 +83,24 @@ class ActivationRecord
     public int Count() => (int)members.Count;
 
     public string StrDump()
-    { 
+    {
         string temp;
-        temp = "ActivationRecord name: "+ name + "\n"; 
-        temp = temp +"ActivationRecord type: "+ type.ToString()+ "\n"; 
-        temp = temp +"ActivationRecord level: "+ level.ToString()+ "\n";
+        temp = "ActivationRecord name: " + name + "\n";
+        temp = temp + "ActivationRecord type: " + type.ToString() + "\n";
+        temp = temp + "ActivationRecord level: " + level.ToString() + "\n";
         temp = temp + "ActivationRecord idx: " + idx.ToString() + "\n";
         temp = temp + "memberscount " + members.Count + "\n";
 
         foreach (string key in members.Keys)
         {
-            temp += key + "=" + members[key]+"\n";
+            temp += key + "=" + members[key] + "\n";
         }
 
         return temp;
     }
 }
 
-struct G3IProc
+internal struct G3IProc
 {
     public string name;
     public int vidx;
@@ -116,8 +110,7 @@ struct G3IProc
     public List<string> formalparameter;
 };
 
-
-class Globals
+internal class Globals
 {
     public static int ARTypeProgram = 1;
     public static int ARTypeProcedure = 2;
@@ -129,8 +122,10 @@ class Globals
             1, //level
             0 //idx
         );
+
     //public static Stack myStack = new Stack();
     public static readonly Stack<ActivationRecord> myStack = new();
+
     public static readonly List<G3IProc> ListProcedures = new();
     public static int levelnow = 1;
     public static readonly string[] ArgumentArray = new string[42];
@@ -141,8 +136,10 @@ class Globals
     public static bool parsestop = false;
     public static bool TestingScanner = false;
     public static bool TestingParser = false;
+
     //public static bool TurtleMoved = false;
     public static bool NewInput = false;
+
     public static bool InputRequest = false;
     public static string NewTextInput = "";
     public static string OldTextInput = "";
@@ -265,6 +262,7 @@ class Globals
         "SETITEM",
         "PRINTTD"
     };
+
     public enum Tokens : int
     {
         NONE = 0,
@@ -307,8 +305,10 @@ class Globals
         COUNT=37,
         SETITEM=38,
         PRINTTD=39,
+
         //from here not reserved
-        NUMBER = 40, 
+        NUMBER = 40,
+
         STRING = 41,
         COMMENT = 42,
         LBRACKET = 43,
@@ -329,6 +329,7 @@ class Globals
         NOTEQUAL=58,
         EOF =59
     }
+
     public enum TokensReserved : int
     {
         REPEAT = 1,
@@ -371,22 +372,22 @@ class Globals
         SETITEM = 38,
         PRINTTD = 39
     }
-
 }
-
-
 
 public class SemanticAnalyser
 {
     public Dictionary<string, string> symbols = new();
-    G3IScanner scanner;
+    private G3IScanner scanner;
+
     public SemanticAnalyser(G3IScanner sc)
     {
         scanner = sc;
     }
+
     public void Analyse()
     {
-        if (TestingParser) GD.Print("SemanticAnalyer: started");
+        if (TestingParser)
+            GD.Print("SemanticAnalyer: started");
 
         int nexttoken;
 
@@ -405,10 +406,12 @@ public class SemanticAnalyser
                         //GD.Print("variablename:" + foundstring);
                         SetSymbol(foundstring, "VARIABLE");
                     }
-                    else GD.Print("SemanticAnalyer: ERROR: " + "MAKE: wrong parameter");
+                    else
+                        GD.Print("SemanticAnalyer: ERROR: " + "MAKE: wrong parameter");
                     //nexttoken = (int)scanner.NextToken();
                     //Match(nexttoken);
                     break;
+
                 case (int)Tokens.TO:
                     {
                         Match((int)Tokens.TO);
@@ -424,15 +427,13 @@ public class SemanticAnalyser
 
                             while ((int)scanner.NextToken() == (int)Tokens.COLON)
                             {
-
                                 //if (TestingParser) GD.Print("SemanticAnalyer: TO: found COLON and variable: " + scanner.scanBuffer);
                                 SetSymbol(procedurename + "." + scanner.scanBuffer, "VARIABLE");
                                 Match((int)Tokens.COLON);
-
                             }
                         }
-                        else GD.Print("SemanticAnalyer: ERROR: " + "TO: wrong parameter");
-
+                        else
+                            GD.Print("SemanticAnalyer: ERROR: " + "TO: wrong parameter");
 
                         while ((int)scanner.NextToken() != (int)Tokens.END)
                         {
@@ -449,7 +450,6 @@ public class SemanticAnalyser
             nexttoken = (int)scanner.NextToken();
             //GD.Print("\n");
         }
-
 
         //variable references
         scanner.idx = 0;
@@ -483,15 +483,13 @@ public class SemanticAnalyser
 
                             while ((int)scanner.NextToken() == (int)Tokens.COLON)
                             {
-
                                 //if (TestingParser) GD.Print("SemanticAnalyer: TO: found COLON and variable: " + scanner.scanBuffer);
                                 //SetSymbol(procedurename + "." + scanner.scanBuffer, "VARIABLE");
                                 Match((int)Tokens.COLON);
-
                             }
                         }
-                        else GD.Print("SemanticAnalyer: ERROR: " + "TO: wrong parameter");
-
+                        else
+                            GD.Print("SemanticAnalyer: ERROR: " + "TO: wrong parameter");
 
                         while ((int)scanner.NextToken() != (int)Tokens.END)
                         {
@@ -509,6 +507,7 @@ public class SemanticAnalyser
                                     //Match(nexttoken);
 
                                     break;
+
                                 default:
                                     Match(nexttoken);
                                     break;
@@ -519,7 +518,6 @@ public class SemanticAnalyser
                         break;
                     }
 
-
                 default:
                     Match(nexttoken);
                     break;
@@ -529,7 +527,6 @@ public class SemanticAnalyser
         }
     }
 
-
     public void SetSymbol(string key, string value)
     {
         if (symbols.ContainsKey(key))
@@ -538,9 +535,11 @@ public class SemanticAnalyser
         }
         else
         {
-            if (TestingParser) GD.Print("new SetSymbols: " + key + " value: " + value);
+            if (TestingParser)
+                GD.Print("new SetSymbols: " + key + " value: " + value);
             symbols.Add(key, value.ToString());
-            if (TestingParser) GD.Print("symbolscount: " + symbols.Count.ToString());
+            if (TestingParser)
+                GD.Print("symbolscount: " + symbols.Count.ToString());
             //GD.Print("value:" + symbols[key]);
         }
     }
@@ -553,24 +552,23 @@ public class SemanticAnalyser
         }
         else
         {
-            if (TestingParser) GD.Print("SemanticAnalyer: ERROR: " + "missing variabledeclaraion variable: " + key);
+            if (TestingParser)
+                GD.Print("SemanticAnalyer: ERROR: " + "missing variabledeclaraion variable: " + key);
             return null;
         }
     }
 
-    bool Match(int token)
+    private bool Match(int token)
     {
         int nextToken = scanner.Scan();
         if (nextToken != token)
         {
-            GD.Print("Parser: " + "Expected " + Token[token] +" but found " + Token[nextToken]);
+            GD.Print("Parser: " + "Expected " + Token[token] + " but found " + Token[nextToken]);
             return false;
         }
         return true;
     }
 }
-
-
 
 public class G3IScanner
 {
@@ -585,79 +583,89 @@ public class G3IScanner
         idx = 0;
     }
 
-
     public int Scan()
     {
         while (idx < rawContents.Length)
         {
             ch = rawContents[idx];
-            if (idx+1 < rawContents.Length) nextch = rawContents[idx+1];
-
+            if (idx + 1 < rawContents.Length)
+                nextch = rawContents[idx + 1];
 
             if (ch == '[')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found Leftbracket");
+                if (TestingScanner)
+                    GD.Print("Scanner: found Leftbracket");
                 return (int)Tokens.LBRACKET;
             }
             else if (ch == ']')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found Rightbracket");
+                if (TestingScanner)
+                    GD.Print("Scanner: found Rightbracket");
                 return (int)Tokens.RBRACKET;
             }
             else if (ch == '(')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found Left Parenthesis");
+                if (TestingScanner)
+                    GD.Print("Scanner: found Left Parenthesis");
                 return (int)Tokens.LPARENTHESIS;
             }
             else if (ch == ')')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found Right Parenthesis");
+                if (TestingScanner)
+                    GD.Print("Scanner: found Right Parenthesis");
                 return (int)Tokens.RPARENTHESIS;
             }
             if (ch == '{')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found LBRACE");
+                if (TestingScanner)
+                    GD.Print("Scanner: found LBRACE");
                 return (int)Tokens.LBRACE;
             }
             else if (ch == '}')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found RBRACE");
+                if (TestingScanner)
+                    GD.Print("Scanner: found RBRACE");
                 return (int)Tokens.RBRACE;
             }
             else if (ch == '+')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found PLUS");
+                if (TestingScanner)
+                    GD.Print("Scanner: found PLUS");
                 return (int)Tokens.PLUS;
             }
             else if (ch == '-' && !char.IsDigit(nextch))
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found HYPHEN");
+                if (TestingScanner)
+                    GD.Print("Scanner: found HYPHEN");
                 return (int)Tokens.HYPHEN;
             }
             else if (ch == '*')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found ASTERISK");
+                if (TestingScanner)
+                    GD.Print("Scanner: found ASTERISK");
                 return (int)Tokens.ASTERISK;
             }
             else if (ch == '/')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found SLASH");
+                if (TestingScanner)
+                    GD.Print("Scanner: found SLASH");
                 return (int)Tokens.SLASH;
             }
             else if (ch == '=')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found EQUALS");
+                if (TestingScanner)
+                    GD.Print("Scanner: found EQUALS");
                 return (int)Tokens.EQUALS;
             }
             else if (ch == '<')
@@ -667,22 +675,26 @@ public class G3IScanner
                 if (ch == '<' && chnext == '>')
                 {
                     idx++;
-                    if (TestingScanner) GD.Print("Scanner: found NOTEQUAL");
+                    if (TestingScanner)
+                        GD.Print("Scanner: found NOTEQUAL");
                     return (int)Tokens.NOTEQUAL;
                 }
-                if (TestingScanner) GD.Print("Scanner: found LESS");
+                if (TestingScanner)
+                    GD.Print("Scanner: found LESS");
                 return (int)Tokens.LESS;
             }
             else if (ch == '>')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found GREATER");
+                if (TestingScanner)
+                    GD.Print("Scanner: found GREATER");
                 return (int)Tokens.GREATER;
             }
             else if (ch == ',')
             {
                 idx++;
-                if (TestingScanner) GD.Print("Scanner: found COMMA");
+                if (TestingScanner)
+                    GD.Print("Scanner: found COMMA");
                 return (int)Tokens.COMMA;
             }
             else if (ch == ':')
@@ -697,9 +709,11 @@ public class G3IScanner
                         scanBuffer += ch;
                         idx++;
                     }
-                    else break;
+                    else
+                        break;
                 }
-                if (TestingScanner) GD.Print("Scanner: found COLON");
+                if (TestingScanner)
+                    GD.Print("Scanner: found COLON");
                 return (int)Tokens.COLON;
             }
             else if (ch == ';')
@@ -714,9 +728,11 @@ public class G3IScanner
                         scanBuffer += ch;
                         idx++;
                     }
-                    else break;
+                    else
+                        break;
                 }
-                if (TestingScanner) GD.Print("Scanner: found COMMENT");
+                if (TestingScanner)
+                    GD.Print("Scanner: found COMMENT");
                 return (int)Tokens.COMMENT;
             }
             else if (ch == '\"')
@@ -735,9 +751,11 @@ public class G3IScanner
                             scanBuffer += ch;
                             idx++;
                         }
-                        else break;
+                        else
+                            break;
                     }
-                    if (idx == rawContents.Length) GD.Print("ERROR - list: closing ] not found\n");
+                    if (idx == rawContents.Length)
+                        GD.Print("ERROR - list: closing ] not found\n");
                     idx++;
                     //if (TestingScanner) GD.Print("Scanner: found STRING");
                 }
@@ -751,7 +769,8 @@ public class G3IScanner
                             scanBuffer += ch;
                             idx++;
                         }
-                        else break;
+                        else
+                            break;
                     }
                 }
                 //if (TestingScanner) GD.Print("Scanner: found STRING");
@@ -769,9 +788,11 @@ public class G3IScanner
                         scanBuffer += ch;
                         idx++;
                     }
-                    else break;
+                    else
+                        break;
                 }
-                if (TestingScanner) GD.Print("Scanner: found Number");
+                if (TestingScanner)
+                    GD.Print("Scanner: found Number");
                 return (int)Tokens.NUMBER;
             }
             else if (char.IsLetter(ch))
@@ -786,12 +807,14 @@ public class G3IScanner
                         scanBuffer += ch;
                         idx++;
                     }
-                    else break;
+                    else
+                        break;
                 }
                 lookup = LookupReserved(scanBuffer);
                 if (lookup > 0)
                 {
-                    if (TestingScanner) GD.Print("Scanner: found TokenReserved: " + TokenReserved[lookup]);
+                    if (TestingScanner)
+                        GD.Print("Scanner: found TokenReserved: " + TokenReserved[lookup]);
                     return lookup;
                 }
                 LexicalError();
@@ -815,13 +838,17 @@ public class G3IScanner
         for (int i = 0; i < TokenReserved.Length; i++)
         {
             //GD.Print(TokenReserved[i]);
-            if (String.Equals(TokenReserved[i], s)) return i;
+            if (String.Equals(TokenReserved[i], s))
+                return i;
         }
-        if (TestingScanner) GD.Print("LookupReserved: count " + ListProcedures.Count.ToString());
+        if (TestingScanner)
+            GD.Print("LookupReserved: count " + ListProcedures.Count.ToString());
         for (int j = 0; j < ListProcedures.Count; j++)
         {
-            if (TestingScanner) GD.Print("LookupReserved: name "+ ListProcedures[j].name);
-            if (String.Equals(ListProcedures[j].name, s)) return 777;
+            if (TestingScanner)
+                GD.Print("LookupReserved: name " + ListProcedures[j].name);
+            if (String.Equals(ListProcedures[j].name, s))
+                return 777;
         }
         return 0;
     }
@@ -836,22 +863,24 @@ public class G3IScanner
 
     public int NextbutoneToken()
     {
-        if (TestingScanner) GD.Print("Scanner: " + "Start NextbutoneToken");
+        if (TestingScanner)
+            GD.Print("Scanner: " + "Start NextbutoneToken");
         int oldIdx = idx;
         Scan();
         int result = Scan();
         idx = oldIdx;
-        if (TestingScanner) GD.Print("Scanner: " + "NextbutoneToken result "+result.ToString());
+        if (TestingScanner)
+            GD.Print("Scanner: " + "NextbutoneToken result " + result.ToString());
         return result;
     }
 
-    private void LexicalError() => 
+    private void LexicalError() =>
         GD.Print("Scanner: " + "Lexical error at " + ch + " " + scanBuffer);
 
     private void SyntaxError(string s) => GD.Print("Scanner: " + "SyntaxError: " + s);
+
     private void Error(string s) => GD.Print("Scanner: " + "ERROR: " + s);
 }
-
 
 public class G3IParser
 {
@@ -865,19 +894,19 @@ public class G3IParser
         IntClass = IC;
     }
 
-
-
     public void VisitProcedureCall(string name, int i)
     {
         //myStack.Push(AR);
 
-        if (TestingParser) GD.Print("Parser: " + "VisitProcedureCall: levelnow= " + levelnow);
+        if (TestingParser)
+            GD.Print("Parser: " + "VisitProcedureCall: levelnow= " + levelnow);
         levelnow++;
         //name = name + "_"+ levelnow.ToString();
         AR.idx = i;
         //name = name + "_idx";
         //setvar(AR.name + "_idx", (float)i);
-        if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
+        if (TestingParser)
+            GD.Print("Parser: ARdump: " + AR.StrDump());
         //if (TestingParser) GD.Print("idx=" + i.ToString() + "   raw idx=" + scanner.rawContents.Substring(i));
         myStack.Push(AR);
         AR = null;
@@ -892,9 +921,12 @@ public class G3IParser
 
     public int LeaveProcedure()
     {
-        if(parsestop) return scanner.scanBuffer.Length; ;
-        if (TestingParser) GD.Print("Parser: " + "LeaveProcedure: levelnow= " + levelnow);
- 
+        if (parsestop)
+            return scanner.scanBuffer.Length;
+        ;
+        if (TestingParser)
+            GD.Print("Parser: " + "LeaveProcedure: levelnow= " + levelnow);
+
         //if (myStack.Count == 0)
         //{
         //    if (TestingParser) GD.Print("Parser: LeaveProcedure: myStack empty, leaving");
@@ -903,9 +935,11 @@ public class G3IParser
 
         levelnow--;
         AR = null;
-        if (myStack.Count() == 0) return scanner.scanBuffer.Length;
+        if (myStack.Count() == 0)
+            return scanner.scanBuffer.Length;
         AR = (ActivationRecord)myStack.Pop();
-        if (TestingParser) GD.Print("Parser: popped the stack nr objects:" + myStack.Count().ToString());
+        if (TestingParser)
+            GD.Print("Parser: popped the stack nr objects:" + myStack.Count().ToString());
 
         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
@@ -917,7 +951,8 @@ public class G3IParser
 
     public int LeaveProcedureStop()
     {
-        if (TestingParser) GD.Print("Parser: " + "LeaveProcedureStop: levelnow= " + levelnow);
+        if (TestingParser)
+            GD.Print("Parser: " + "LeaveProcedureStop: levelnow= " + levelnow);
         //if (myStack.Count == 0)
         //{
         //    if (TestingParser) GD.Print("Parser: LeaveProcedureStop: myStack empty, leaving");
@@ -928,7 +963,8 @@ public class G3IParser
         AR = null;
         AR = (ActivationRecord)myStack.Pop();
 
-        if (TestingParser) GD.Print("Parser: popped the stack nr objects:"+ myStack.Count().ToString());
+        if (TestingParser)
+            GD.Print("Parser: popped the stack nr objects:" + myStack.Count().ToString());
         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
         //int idx = (int)getvar(AR.name + "_idx");
         int idx = AR.idx;
@@ -948,6 +984,7 @@ public class G3IParser
         }
         return TotalSum;
     }
+
     public void TurtleForward(float dist)
     {
         //if (TestingParser) GD.Print("Parser: "+"TurtleForward");
@@ -959,17 +996,16 @@ public class G3IParser
         y = dist * (float)Math.Sin(Deg2Rad(phi)) * (float)Math.Cos(Deg2Rad(theta));
         z = dist * (float)(Math.Sin(Deg2Rad(theta)));
 
-        TurtlePos.X+= x;
-        TurtlePos.Y+= y;
-        TurtlePos.Z+= z;
+        TurtlePos.X += x;
+        TurtlePos.Y += y;
+        TurtlePos.Z += z;
         //IntClass.Turtle.Translate(new Godot.Vector3(x/2, y/2, z/2));
         //IntClass.Turtle.Translate(new Godot.Vector3(x, y, z));
         IntClass.turtle.Position = TurtlePos;
         //TurtleMoved = true;
-        if (!penup) IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
-
+        if (!penup)
+            IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
     }
-
 
     public void TurtleBack(float dist) =>
         //if (TestingParser) GD.Print("Parser: "+"TurtleBack");
@@ -979,10 +1015,11 @@ public class G3IParser
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleUp");
         phi += angle;
-        if (phi < 0) phi = 360 + phi;
-        if (phi > 360) phi -= 360;
+        if (phi < 0)
+            phi = 360 + phi;
+        if (phi > 360)
+            phi -= 360;
 
-        
         IntClass.turtle.RotateZ(Deg2Rad(angle));
     }
 
@@ -990,8 +1027,10 @@ public class G3IParser
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleDown");
         phi -= angle;
-        if (phi < 0) phi = 360 + phi;
-        if (phi > 360) phi -= 360;
+        if (phi < 0)
+            phi = 360 + phi;
+        if (phi > 360)
+            phi -= 360;
 
         IntClass.turtle.RotateZ(-Deg2Rad(angle));
     }
@@ -1000,8 +1039,10 @@ public class G3IParser
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleLeft");
         theta += angle;
-        if (theta < 0) theta = 360 + theta;
-        if (theta > 360) theta -= 360;
+        if (theta < 0)
+            theta = 360 + theta;
+        if (theta > 360)
+            theta -= 360;
 
         IntClass.turtle.RotateX(Deg2Rad(angle));
     }
@@ -1010,8 +1051,10 @@ public class G3IParser
     {
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
         theta -= angle;
-        if (theta < 0) theta = 360 + theta;
-        if (theta > 360) theta -= 360;
+        if (theta < 0)
+            theta = 360 + theta;
+        if (theta > 360)
+            theta -= 360;
 
         IntClass.turtle.RotateX(-Deg2Rad(angle));
     }
@@ -1023,7 +1066,6 @@ public class G3IParser
     public void Box(float s) =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
         IntClass.DrawBox(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
-
 
     public void TurtleHome()
     {
@@ -1041,7 +1083,7 @@ public class G3IParser
         TurtlePos.X = 0;
         TurtlePos.Y = 0;
         TurtlePos.Z = 0;
-        
+
         theta = 0;
         phi = 90;
 
@@ -1069,7 +1111,6 @@ public class G3IParser
         //if (TestingParser) GD.Print("Parser: " + "LoadProgram");
         IntClass.fileDia.Visible = true;
 
-
     public float mathcalc()
     {
         int ntok = scanner.NextToken();
@@ -1084,21 +1125,19 @@ public class G3IParser
         return 0.0f;
     }
 
- 
-
-    float getvar(string s)
+    private float getvar(string s)
     {
         //for (int i = Listvar.Count() - 1; i >= 0; i--)
         //for (int i = ARProgram.Count() - 1; i >= 0; i--)
         //{
-            //if (Listvar[i].name == s)
+        //if (Listvar[i].name == s)
         if (AR.ExistItem(s))
         {
             //return Listvar[i].value.ToFloat();
             return AR.GetItem(s).ToFloat();
         }
         //}
-        ErrorMessage("Parser: getvar: no value found for variable: "+s);
+        ErrorMessage("Parser: getvar: no value found for variable: " + s);
         return -1;
     }
 
@@ -1106,7 +1145,6 @@ public class G3IParser
     {
         //for (int i = Listvar.Count - 1; i >= 0; i--)
         //{
-         
         if (AR.ExistItem(s))
         {
             return AR.GetItem(s);
@@ -1120,7 +1158,6 @@ public class G3IParser
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-            
             if (ListProcedures[i].name == procedure)
             {
                 return ListProcedures[i].proc;
@@ -1134,7 +1171,6 @@ public class G3IParser
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-
             if (ListProcedures[i].name == procedure)
             {
                 ListProcedures.RemoveAt(i);
@@ -1147,19 +1183,17 @@ public class G3IParser
     public string getallprocbody()
     {
         string tmp = "";
-        for (int i=0; i < ListProcedures.Count; i++)
+        for (int i = 0; i < ListProcedures.Count; i++)
         {
-            tmp=tmp + ListProcedures[i].proc +"\n";
+            tmp = tmp + ListProcedures[i].proc + "\n";
         }
         return tmp;
     }
-
 
     public int getidx(string procedure)
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-
             if (ListProcedures[i].name == procedure)
             {
                 return ListProcedures[i].vidx;
@@ -1173,7 +1207,6 @@ public class G3IParser
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-
             if (ListProcedures[i].name == procedure)
             {
                 return ListProcedures[i].numberparameter;
@@ -1187,7 +1220,6 @@ public class G3IParser
     {
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-
             if (ListProcedures[i].name == procedure)
             {
                 return ListProcedures[i].idxstart;
@@ -1202,7 +1234,6 @@ public class G3IParser
         //procedure= procedure.ToString();
         for (int i = ListProcedures.Count - 1; i >= 0; i--)
         {
-
             if (ListProcedures[i].name == procedure)
             {
                 for (int j = 0; j < nr; j++)
@@ -1215,6 +1246,7 @@ public class G3IParser
         }
         ErrorMessage("Parser: setvarproc: no procedure found to set");
     }
+
     public void setvar(string item, float val) =>
         //AR.SetItem(s, val.ToString());
         AR.SetItem(item, val);//GD.Print( AR.StrDump());
@@ -1242,7 +1274,8 @@ public class G3IParser
         //    Match((int)Tokens.ITEM);
         //    return getitem();
         //}
-        else ErrorMessage("Parser: getstrorvalue: expected number or variablevalue");
+        else
+            ErrorMessage("Parser: getstrorvalue: expected number or variablevalue");
         return "";
     }
 
@@ -1253,6 +1286,7 @@ public class G3IParser
         pressedkey = "";
         return tmpkey;
     }
+
     public float numberor()
     {
         if (scanner.NextToken() == (int)Tokens.NUMBER)
@@ -1277,8 +1311,10 @@ public class G3IParser
             float returnvalue;
             string vartmp = getvarstring(scanner.scanBuffer);
             char ch = vartmp[0];
-            if (Char.IsLetter(ch)) returnvalue = ReturnASCIISum(vartmp);
-            else returnvalue = vartmp.ToFloat();
+            if (Char.IsLetter(ch))
+                returnvalue = ReturnASCIISum(vartmp);
+            else
+                returnvalue = vartmp.ToFloat();
             return returnvalue;
         }
         else if (scanner.NextToken() == (int)Tokens.STRING)
@@ -1305,16 +1341,17 @@ public class G3IParser
                 return (float)rnd.Next(255);
             }
         }
-        else ErrorMessage("Parser: numberor: expected number or variable");
+        else
+            ErrorMessage("Parser: numberor: expected number or variable");
         return 0.0f;
     }
 
-    float ParseExpr()
+    private float ParseExpr()
     {
         //if (TestingParser) GD.Print("Parser: " + "Start ParseExpr");
         float op, op1;
         op = ParseFactor();
-      
+
         int nto = scanner.NextToken();
         if (nto != (int)Tokens.EOF)
         {
@@ -1330,13 +1367,11 @@ public class G3IParser
                 op1 = ParseExpr();
                 op -= op1;
             }
-            
         }
         return op;
     }
 
-
-    float ParseExpr2()
+    private float ParseExpr2()
     {
         //if (TestingParser) GD.Print("Parser: " + "Start ParseExpr");
         float op, op1;
@@ -1390,12 +1425,12 @@ public class G3IParser
         return op;
     }
 
-    float ParseFactor()
+    private float ParseFactor()
     {
         //if (TestingParser) GD.Print("Parser: " + "Start ParseFactor");
         float op, op1;
         op = ParseTerm();
-       
+
         int nto = scanner.NextToken();
         if (nto != (int)Tokens.EOF)
         {
@@ -1415,9 +1450,7 @@ public class G3IParser
         return op;
     }
 
-
-
-    float ParseFactor2()
+    private float ParseFactor2()
     {
         //if (TestingParser) GD.Print("Parser: " + "Start ParseFactor");
         float op, op1;
@@ -1469,7 +1502,7 @@ public class G3IParser
         return op;
     }
 
-    float ParseTerm()
+    private float ParseTerm()
     {
         //if (TestingParser) GD.Print("Parser: " + "Start ParseTerm");
         float returnValue = 0;
@@ -1504,10 +1537,9 @@ public class G3IParser
             }
             else if (nto == (int)Tokens.LPARENTHESIS)
             {
-                
                 Match((int)Tokens.LPARENTHESIS);
                 returnValue = ParseExpr();
-               
+
                 Match((int)Tokens.RPARENTHESIS);
                 return returnValue;
             }
@@ -1518,18 +1550,18 @@ public class G3IParser
             }
             else
             {
-                ErrorMessage("Parser: ParseTerm: math expr parser: not expected token found. scanner.scanBuffer "+ scanner.scanBuffer+ "   raw:"+scanner.rawContents+"   idx:"+scanner.idx.ToString());
+                ErrorMessage("Parser: ParseTerm: math expr parser: not expected token found. scanner.scanBuffer " + scanner.scanBuffer + "   raw:" + scanner.rawContents + "   idx:" + scanner.idx.ToString());
             }
         }
         return returnValue;
     }
 
-
     public void ParseG3IProgram()
     {
         interpreterrunning = true;
-        if (TestingParser) GD.Print("Parser: " + "Start ParseG3IProgram");
-        
+        if (TestingParser)
+            GD.Print("Parser: " + "Start ParseG3IProgram");
+
         GD.Print(scanner.rawContents);
         //IntClass.PrintLabel("Parser: " + "Start ParseG3IProgram");
         ParseG3ISentence();
@@ -1588,6 +1620,7 @@ public class G3IParser
                     parsestop = true;
                     interpreterrunning = false;
                     return;
+
                 default:
                     Match((int)Tokens.EOF);
                     parsestop = true;
@@ -1601,13 +1634,13 @@ public class G3IParser
 
     private void ParseG3ISentence()
     {
-        if (parsestop) return;
+        if (parsestop)
+            return;
         //if (TestingParser) GD.Print("Parser: " + "Start ParseG3ISentence");
         bool nextbutone = false;
         /*
         switch (scanner.NextbutoneToken())
         {
-          
             case (int)Tokens.EQUALS:
                 {
                     //if (TestingParser) GD.Print("Parser: " + "found Token EQUALS");
@@ -1621,7 +1654,7 @@ public class G3IParser
                     //    Match((int)Tokens.RANDOM);
                     //    float ntor = numberor();
                     //    GD.Print("numberor - found RANDOM nto=" + ntor.ToString());
-      
+
                     //}
                     if (nto == (int)Tokens.GETKEY )
                     {
@@ -1644,7 +1677,7 @@ public class G3IParser
                             if (itemsubs.Length - 1 < (int)itemtmp) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + itemvar);
                             else setvarstring(varname, itemsubs[(int)itemtmp]);
                         }
-                        else 
+                        else
                         {
                             if (scanner.NextToken() == (int)Tokens.STRING)
                             {
@@ -1665,7 +1698,6 @@ public class G3IParser
                                 }
                             }
                         }
-
                     }
                     else if (scanner.NextToken() == (int)Tokens.SETITEM)
                     {
@@ -1685,9 +1717,9 @@ public class G3IParser
 
                                 string newtmp = "";
                                 newtmp=itemsubs[0].Trim();
-                                
+
                                 for (int i = 1; i < itemsubs.Length; i++)
-                                { 
+                                {
                                     newtmp = newtmp + " " + itemsubs[i];
                                 }
                                 GD.Print("newitem:"+newtmp);
@@ -1727,7 +1759,6 @@ public class G3IParser
                     }
                     else
                     {
-
                         float result = ParseExpr2();
                         setvar(varname, result);
                     }
@@ -1735,12 +1766,11 @@ public class G3IParser
 
                     break;
                 }
-            
+
             default:
                 //Match((int)Tokens.EOF);
                 //return;
                 break;
-            
         }*/
 
         if (!nextbutone)
@@ -1760,12 +1790,10 @@ public class G3IParser
                     if (svar.Split(' ').Length > 1)
                     {
                         Match((int)Tokens.COLON);
-                    
                     }
                     else
                     {
                         float erg = ParseExpr();
-                        
                     }
                     break;
 
@@ -1864,19 +1892,20 @@ public class G3IParser
                     TurtlePenDown();
                     //if (TestingParser) GD.Print("Parser: " + "found sentence PENDOWN");
                     break;
-                
+
                 case (int)Tokens.STOP:
                     Match(nextToken);
                     stoprecursion = true;
-                    if (TestingParser) GD.Print("Parser: " + "found sentence STOP");
+                    if (TestingParser)
+                        GD.Print("Parser: " + "found sentence STOP");
                     break;
 
                 case (int)Tokens.END:
                     Match(nextToken);
                     endrecursion = true;
-                    if (TestingParser) GD.Print("Parser: " + "found sentence END");
+                    if (TestingParser)
+                        GD.Print("Parser: " + "found sentence END");
                     break;
-
 
                 case (int)Tokens.PENCOLOR:
                     Match(nextToken);
@@ -1922,7 +1951,8 @@ public class G3IParser
                         scanstring = scanner.scanBuffer;
                         //GD.Print("Parser: found string: " + scanner.scanBuffer);
                     }
-                    else ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
+                    else
+                        ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
                     if (scanstring == "ALL")
                     {
                         IntClass.PrintLabel(getallprocbody());
@@ -1944,7 +1974,8 @@ public class G3IParser
                         scanstring = scanner.scanBuffer;
                         //GD.Print("Parser: found string: " + scanner.scanBuffer);
                     }
-                    else ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
+                    else
+                        ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
                     if (scanstring == "ALL")
                     {
                         ListProcedures.Clear();
@@ -1960,7 +1991,7 @@ public class G3IParser
                 case (int)Tokens.SLEEP:
                     Match(nextToken);
                     n = ParseExpr();
-                    Thread.Sleep( Convert.ToInt32(n));
+                    Thread.Sleep(Convert.ToInt32(n));
                     break;
 
                 case (int)Tokens.MESH:
@@ -1973,7 +2004,8 @@ public class G3IParser
                         scanstring = scanner.scanBuffer;
                         //GD.Print("Parser: found string: "+scanner.scanBuffer);
                     }
-                    else ErrorMessage("Parser: " + "MESH: wrong parameter");
+                    else
+                        ErrorMessage("Parser: " + "MESH: wrong parameter");
                     n = ParseExpr();
                     IntClass.DrawMesh(new Godot.Vector3(TurtlePos.X / n, TurtlePos.Y / n, TurtlePos.Z / n), n, pencolor, scanstring);
                     break;
@@ -1988,12 +2020,12 @@ public class G3IParser
                         scanstring = scanner.scanBuffer;
                         //GD.Print("Parser: found string: " + scanner.scanBuffer);
                     }
-                    else ErrorMessage("Parser: " + "PRINT3D: wrong parameter");
+                    else
+                        ErrorMessage("Parser: " + "PRINT3D: wrong parameter");
                     n = ParseExpr();
                     //GD.Print("PRINT3D: string=" + scanstring + " number=" + n.ToString());
                     IntClass.Print3D(scanstring, (int)n);
                     break;
-
 
                 case (int)Tokens.LOAD:
                     Match(nextToken);
@@ -2022,10 +2054,9 @@ public class G3IParser
                     {
                         setvar(varname, i);
                         scanner.idx = oldidx2;
-              
+
                         while (scanner.NextToken() != (int)Tokens.RBRACKET)
                         {
-                    
                             ParseG3ISentence();
                         }
                         //Match(RBRACKET);
@@ -2044,7 +2075,6 @@ public class G3IParser
 
                     while (whiletmp > 0.0f)
                     {
-                  
                         ParseG3ISentence();
                         while (scanner.NextToken() != (int)Tokens.RBRACKET)
                         {
@@ -2074,12 +2104,12 @@ public class G3IParser
                         int matchif = 0;
 
                         Match(nextToken);
-                
+
                         float vecvaltmp = ParseExpr();
 
                         /*
                         if (TestingParser) GD.Print("Parser: " + "result of ParseExpr: "+vecvaltmp.ToString());
-                        
+
                         if (vecvaltmp > 0.0f)
                         {
                             ParseG3ISentence();
@@ -2092,10 +2122,8 @@ public class G3IParser
                         }
                         */
 
-                        
                         if (scanner.NextToken() == (int)Tokens.LESS)
                         {
-                    
                             Match((int)Tokens.LESS);
                             //float vecvaltmp2=numberorvalue();
                             float vecvaltmp2 = ParseExpr();
@@ -2121,7 +2149,8 @@ public class G3IParser
                                 {
                                     while (scanner.NextToken() != (int)Tokens.ENDIF)
                                     {
-                                        if (scanner.NextToken() == (int)Tokens.IF) countif++;
+                                        if (scanner.NextToken() == (int)Tokens.IF)
+                                            countif++;
                                         Match(scanner.NextToken());
                                     }
                                     Match((int)Tokens.ENDIF);
@@ -2131,14 +2160,12 @@ public class G3IParser
                         }
                         else if (scanner.NextToken() == (int)Tokens.GREATER)
                         {
-                         
                             Match((int)Tokens.GREATER);
                             //float vecvaltmp2=numberorvalue();
                             float vecvaltmp2 = numberor();
-                      
+
                             if (vecvaltmp > vecvaltmp2)
                             {
-               
                                 ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
                                 {
@@ -2153,7 +2180,8 @@ public class G3IParser
                                 {
                                     while (scanner.NextToken() != (int)Tokens.ENDIF)
                                     {
-                                        if (scanner.NextToken() == (int)Tokens.IF) countif++;
+                                        if (scanner.NextToken() == (int)Tokens.IF)
+                                            countif++;
                                         Match(scanner.NextToken());
                                     }
                                     Match((int)Tokens.ENDIF);
@@ -2163,14 +2191,12 @@ public class G3IParser
                         }
                         else if (scanner.NextToken() == (int)Tokens.NOTEQUAL)
                         {
-
                             Match((int)Tokens.NOTEQUAL);
                             //float vecvaltmp2=numberorvalue();
                             float vecvaltmp2 = numberor();
 
                             if (vecvaltmp != vecvaltmp2)
                             {
-
                                 ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
                                 {
@@ -2185,7 +2211,8 @@ public class G3IParser
                                 {
                                     while (scanner.NextToken() != (int)Tokens.ENDIF)
                                     {
-                                        if (scanner.NextToken() == (int)Tokens.IF) countif++;
+                                        if (scanner.NextToken() == (int)Tokens.IF)
+                                            countif++;
                                         Match(scanner.NextToken());
                                     }
                                     Match((int)Tokens.ENDIF);
@@ -2195,14 +2222,12 @@ public class G3IParser
                         }
                         else if (scanner.NextToken() == (int)Tokens.EQUALS)
                         {
-                        
                             Match((int)Tokens.EQUALS);
                             //float vecvaltmp2=numberorvalue();
                             float vecvaltmp2 = numberor();
-                      
+
                             if (vecvaltmp == vecvaltmp2)
                             {
-                              
                                 //Match(TOKEN_LBRACKET);
                                 ParseG3ISentence();
                                 while (scanner.NextToken() != (int)Tokens.ENDIF)
@@ -2218,7 +2243,8 @@ public class G3IParser
                                 {
                                     while (scanner.NextToken() != (int)Tokens.ENDIF)
                                     {
-                                        if (scanner.NextToken() == (int)Tokens.IF) countif++;
+                                        if (scanner.NextToken() == (int)Tokens.IF)
+                                            countif++;
                                         Match(scanner.NextToken());
                                     }
                                     Match((int)Tokens.ENDIF);
@@ -2226,8 +2252,7 @@ public class G3IParser
                                 }
                             }
                         }
-                        
-                 
+
                         //Match(TOKEN_RBRACKET);
                         break;
                     }
@@ -2242,7 +2267,7 @@ public class G3IParser
                     IntClass.PrintLabel("HELP: HELP //show this helpmessages");
                     IntClass.PrintLabel("HELP: QUIT //quit program");
                     //IntClass.PrintLabel("HELP: Godot3Dinterpretercommands");
-                    
+
                     //if (TestingParser) GD.Print("Parser: " + "found sentence LOAD");
                     break;
 
@@ -2255,7 +2280,7 @@ public class G3IParser
                     break;
 
                 case (int)Tokens.PRINT:
-              
+
                     Match(nextToken);
 
                     var nextt = scanner.NextToken();
@@ -2268,7 +2293,6 @@ public class G3IParser
                         }
                         if (nextt == (int)Tokens.NUMBER) // || nextt == TOKEN_ITEM)
                         {
-                      
                             float erg = numberor();
                             //if (erg == floor(erg))
                             //{
@@ -2287,15 +2311,12 @@ public class G3IParser
                             string stringvar = getvarstring(scanner.scanBuffer);
 
                             IntClass.PrintLabel(stringvar);
-                            
                         }
                         else if (scanner.NextToken() == (int)Tokens.STRING)
                         {
-                        
                             Match((int)Tokens.STRING);
                             //GD.Print(scanner.scanBuffer);
                             IntClass.PrintLabel(scanner.scanBuffer);
-                      
                         }
                         else if (scanner.NextToken() == (int)Tokens.ITEM)
                         {
@@ -2304,23 +2325,25 @@ public class G3IParser
                             Match((int)Tokens.COLON);
                             string itemvar = getvarstring(scanner.scanBuffer);
                             string[] itemsubs = itemvar.Split(' ');
-                            if (itemsubs.Length-1 < (int)itemtmp) ErrorMessage("Parser: " + "PRINT ITEM: too few items in "+itemvar);
-                            else  IntClass.PrintLabel(itemsubs[(int)itemtmp]);
+                            if (itemsubs.Length - 1 < (int)itemtmp)
+                                ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + itemvar);
+                            else
+                                IntClass.PrintLabel(itemsubs[(int)itemtmp]);
                         }
                         else if (scanner.NextToken() == (int)Tokens.GETKEY)
                         {
-
                             Match((int)Tokens.GETKEY);
                             //GD.Print("pressed key="+pressedkey+ " interpreterrunning="+interpreterrunning.ToString());
                             string tmppressedkey = getpressedkey();
-                            if(tmppressedkey != "") IntClass.PrintLabel(tmppressedkey);
-
+                            if (tmppressedkey != "")
+                                IntClass.PrintLabel(tmppressedkey);
                         }
-                        else ErrorMessage("Parser: "+"PRINT: wrong parameter");
+                        else
+                            ErrorMessage("Parser: " + "PRINT: wrong parameter");
                         nextt = scanner.NextToken();
                         IntClass.PrintLabel("\n");
                     }
-                    
+
                     //GD.Print("\n");
                     break;
 
@@ -2328,11 +2351,10 @@ public class G3IParser
                     Match(nextToken);
                     Match((int)Tokens.STRING);
                     string arrayname = scanner.scanBuffer;
-               
+
                     int nextto = scanner.NextToken();
                     if (nextto == (int)Tokens.LBRACE)//array
                     {
-          
                     }
                     else if (nextto == (int)Tokens.NUMBER)
                     {
@@ -2377,7 +2399,8 @@ public class G3IParser
                         if (nto == (int)Tokens.GETKEY)
                         {
                             string tmppkey = getpressedkey();
-                            if (tmppkey != "") setvarstring(arrayname, tmppkey);
+                            if (tmppkey != "")
+                                setvarstring(arrayname, tmppkey);
                             //GD.Print("pressedkey=" + tmppkey);
                             Match((int)Tokens.GETKEY);
                         }
@@ -2392,8 +2415,10 @@ public class G3IParser
                                 string itemvar = getvarstring(scanner.scanBuffer);
 
                                 string[] itemsubs = itemvar.Split(' ');
-                                if (itemsubs.Length - 1 < (int)itemtmp) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + itemvar);
-                                else setvarstring(arrayname, itemsubs[(int)itemtmp]);
+                                if (itemsubs.Length - 1 < (int)itemtmp)
+                                    ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + itemvar);
+                                else
+                                    setvarstring(arrayname, itemsubs[(int)itemtmp]);
                             }
                             else
                             {
@@ -2403,7 +2428,8 @@ public class G3IParser
                                     string itemstr = scanner.scanBuffer;
 
                                     string[] itemsubs = getvarstring(arrayname).Split(' ');
-                                    if (itemsubs.Length - 1 < (int)itemtmp) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + arrayname);
+                                    if (itemsubs.Length - 1 < (int)itemtmp)
+                                        ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + arrayname);
                                     else
                                     {
                                         itemsubs[(int)itemtmp] = itemstr;
@@ -2416,7 +2442,6 @@ public class G3IParser
                                     }
                                 }
                             }
-
                         }
                         else if (scanner.NextToken() == (int)Tokens.SETITEM)
                         {
@@ -2429,7 +2454,8 @@ public class G3IParser
                                 string itemstr = scanner.scanBuffer;
                                 itemstr = itemstr.Trim();
                                 string[] itemsubs = getvarstring(arrayname).Split(' ');
-                                if (itemsubs.Length - 1 < (int)setitemn) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + arrayname);
+                                if (itemsubs.Length - 1 < (int)setitemn)
+                                    ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + arrayname);
                                 else
                                 {
                                     itemsubs[(int)setitemn] = itemstr;
@@ -2451,7 +2477,8 @@ public class G3IParser
                                 string itemvar = getvarstring(scanner.scanBuffer);
                                 itemvar = itemvar.Trim();
                                 string[] itemsubs = getvarstring(arrayname).Split(' ');
-                                if (itemsubs.Length - 1 < (int)setitemn) ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + arrayname);
+                                if (itemsubs.Length - 1 < (int)setitemn)
+                                    ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + arrayname);
                                 else
                                 {
                                     itemsubs[(int)setitemn] = itemvar;
@@ -2484,7 +2511,6 @@ public class G3IParser
                         }
                         else
                         {
-
                             float result = ParseExpr2();
                             setvar(arrayname, result);
                         }
@@ -2494,10 +2520,10 @@ public class G3IParser
                     }
                     break;
 
-
                 case (int)Tokens.TO:
                     {
-                        if (TestingParser) GD.Print("Parser: " + "start TO");
+                        if (TestingParser)
+                            GD.Print("Parser: " + "start TO");
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         int idxbegin = scanner.idx;
                         Match(nextToken);
@@ -2522,7 +2548,7 @@ public class G3IParser
 
                             //nextt = scanner.NextToken();
                         }
-                        if (TestingParser && tmpproc.numberparameter>0)
+                        if (TestingParser && tmpproc.numberparameter > 0)
                         {
                             for (int i = 0; i < tmpproc.numberparameter; i++)
                             {
@@ -2538,16 +2564,16 @@ public class G3IParser
                         }
 
                         //Match(RBRACKET);
-                        //} 
+                        //}
 
                         Match((int)Tokens.END);
                         int idxend = scanner.idx;
                         //if (TestingParser) GD.Print("Parser: " + "proc= " + scanner.rawContents.Substring(idxbegin, idxend));
                         //GD.Print("idxbegin:"+idxbegin.ToString()+"   idxend:"+idxend.ToString());
-                        tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend-idxbegin)+" ";
+                        tmpproc.proc = scanner.rawContents.Substring(idxbegin, idxend - idxbegin) + " ";
                         GD.Print("procedure:" + tmpproc.proc);
                         ListProcedures.Add(tmpproc);
-                        
+
                         //if (TestingParser) GD.Print("Parser: " + "found sentence TO name " + tmpproc.name);
                         //if (TestingParser) GD.Print("Parser: Procedure: " + getprocbody(tmpproc.name));
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
@@ -2556,15 +2582,16 @@ public class G3IParser
                     }
                 case (int)Tokens.GO:
                     {
-                        if (TestingParser) GD.Print("Parser: " + "start GO");
-                        if (parsestop) return;
+                        if (TestingParser)
+                            GD.Print("Parser: " + "start GO");
+                        if (parsestop)
+                            return;
                         //myStack.Push(AR);
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         Match(nextToken);
                         Match((int)Tokens.STRING);
                         string procedurename = scanner.scanBuffer;
 
-                        
                         int argumentnr = 0;
                         nextt = (int)scanner.NextToken();
                         while (nextt is ((int)Tokens.NUMBER) or ((int)Tokens.COLON) or ((int)Tokens.STRING))
@@ -2578,7 +2605,6 @@ public class G3IParser
                                 //Match(nextt);
                                 //nextt = (int)scanner.NextToken();
                                 argumentnr++;
-                            
                             }
                             else if (nextt == (int)Tokens.COLON)
                             {
@@ -2596,7 +2622,7 @@ public class G3IParser
                                     float erg = ParseExpr();
                                     ArgumentArray[argumentnr] = erg.ToString();
                                 }
-  
+
                                 //GD.Print("Parser: GO: argument " + argumentnr.ToString() + " = " + erg);
                                 //Match(nextt);
                                 nextt = (int)scanner.NextToken();
@@ -2604,22 +2630,22 @@ public class G3IParser
                             }
                             else if (nextt == (int)Tokens.STRING)
                             {
-                                 Match((int)Tokens.STRING);
-                                 string stri = scanner.scanBuffer;
-                                 ArgumentArray[argumentnr] = stri;
-                                 //GD.Print("Parser: GO: argument " + argumentnr.ToString() + " = " + stri);
-                                 //Match(nextt);
-                                 //nextt = (int)scanner.NextToken();
-                                 argumentnr++;
+                                Match((int)Tokens.STRING);
+                                string stri = scanner.scanBuffer;
+                                ArgumentArray[argumentnr] = stri;
+                                //GD.Print("Parser: GO: argument " + argumentnr.ToString() + " = " + stri);
+                                //Match(nextt);
+                                //nextt = (int)scanner.NextToken();
+                                argumentnr++;
                             }
-                            
+
                             nextt = scanner.NextToken();
                             //GD.Print("nextt: " + nextt.ToString());
                         }
-                        
 
-                        if (TestingParser) GD.Print("Parser: " + "found sentence GO name " + procedurename);
-                        if ( argumentnr != getprocparanr(procedurename))
+                        if (TestingParser)
+                            GD.Print("Parser: " + "found sentence GO name " + procedurename);
+                        if (argumentnr != getprocparanr(procedurename))
                         {
                             ErrorMessage("Parser: GO procedure - number formalparameter to arguments not equal");
                             break;
@@ -2632,11 +2658,11 @@ public class G3IParser
                         //VisitProcedureCall(procedurename);
                         //setvarproc(procedurename, argumentnr);
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-                          
+
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
 
                         //if (TestingParser) GD.Print("Parser: raw: "+ scanner.rawContents);
-                        
+
                         string regpattern = @"\bTO\s*""";
                         regpattern += procedurename;
                         //if (TestingParser) GD.Print("Parser: regpattern: " +regpattern);
@@ -2644,21 +2670,23 @@ public class G3IParser
                         //if (TestingParser) GD.Print("Parser: regresult: " + regresult+ "   length: "+regresult.Length.ToString());
                         //if (TestingParser) GD.Print("regexsearch: " + Regex.Match(scanner.rawContents, regpattern).Index.ToString());
 
-
-                        if (regresult.Length > 0 )
+                        if (regresult.Length > 0)
                         {
-                            if (TestingParser) GD.Print("Parser: " + "found procedure in raw " + procedurename);
+                            if (TestingParser)
+                                GD.Print("Parser: " + "found procedure in raw " + procedurename);
                             //scanner.idx = Regex.Match(scanner.rawContents, regpattern).Index + regresult.Length;
                             //scanner.idx = getidx(procedurename);
                             //scanner.idx = getstartidx(procedurename);
                             scanner.idx = getidx(procedurename);
-                            if (TestingParser) GD.Print("Parser: " + "idx " + scanner.idx.ToString());
+                            if (TestingParser)
+                                GD.Print("Parser: " + "idx " + scanner.idx.ToString());
                         }
                         else
                         {
                             //if (TestingParser) GD.Print("Parser: " + "found no procedure in raw " + procedurename);
                             string p = getprocbody(procedurename);
-                            if (TestingParser) GD.Print("Parser: procbody: " + p);
+                            if (TestingParser)
+                                GD.Print("Parser: procbody: " + p);
                             if (p != " ")
                             {
                                 scanner.rawContents = scanner.rawContents.Insert(0, p);
@@ -2667,12 +2695,13 @@ public class G3IParser
                                 scanner.idx = getstartidx(procedurename);
                                 //scanner.idx = getidx(procedurename);
                                 //if (TestingParser) GD.Print("Parser: idx=" + scanner.idx);
-                                if (TestingParser) GD.Print("Parser: " + "idx " + scanner.idx.ToString());
+                                if (TestingParser)
+                                    GD.Print("Parser: " + "idx " + scanner.idx.ToString());
                                 //if (TestingParser) GD.Print("scanner.rawcontents: " + scanner.rawContents);
                             }
                             else
                             {
-                                ErrorMessage("Parser: GO procedure - no procedure with name "+procedurename+ " found.");
+                                ErrorMessage("Parser: GO procedure - no procedure with name " + procedurename + " found.");
                                 //scanner.idx = oldidx3;
                                 //AR = null;
                                 //AR = (ActivationRecord)myStack.Pop();
@@ -2711,15 +2740,14 @@ public class G3IParser
                             && endrecursion != true
                             && !parsestop
                             )
-                            //&& AR.level < 4)
+                        //&& AR.level < 4)
                         {
                             //if (TestingParser) GD.Print("Parser: starting ParseG3ISentence");
                             ParseG3ISentence();
                             nextt = scanner.NextToken();
                         }
                         //if (TestingParser) GD.Print("Parser: ending procedure");
-                        
-                        
+
                         //if (TestingParser) GD.Print("Parser: procedure ended");
                         //Match(TOKEN_END);
                         //scanner.idx = oldidx3;
@@ -2727,7 +2755,7 @@ public class G3IParser
                         //AR=(ActivationRecord)myStack.Pop();
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
                         //if (TestingParser) GD.Print("Parser: ARdump: " + AR.StrDump());
-    
+
                         if (stoprecursion)
                         {
                             scanner.idx = LeaveProcedureStop();
@@ -2740,7 +2768,7 @@ public class G3IParser
                             //myStack.Clear();
                             //if (TestingParser) GD.Print("Parser: procedure ended");
                         }
-                        
+
                         stoprecursion = false;
                         endrecursion = false;
                         // --- now old AR is poped back from stack -----------------------------------
@@ -2761,9 +2789,9 @@ public class G3IParser
                     for (int i = 0; i < numberrecord; i++)
                     {
                         scanner.idx = oldidx;
-                       
+
                         ParseG3ISentence();
-              
+
                         while ((int)scanner.NextToken() != (int)Tokens.RBRACKET)
                         {
                             ParseG3ISentence();
@@ -2782,19 +2810,19 @@ public class G3IParser
         }
     }
 
-    bool Match(int token)
+    private bool Match(int token)
     {
         int nextToken = scanner.Scan();
         if (nextToken != token)
         {
-            ErrorMessage("Parser: " + "Expected " + Token[token] +" but found " + Token[nextToken]);
+            ErrorMessage("Parser: " + "Expected " + Token[token] + " but found " + Token[nextToken]);
             return false;
         }
         return true;
     }
+
     private void ErrorMessage(string errorMessage) => GD.Print("Parser: " + "ERROR: " + errorMessage);
 }
-
 
 public partial class Godot3DInterpreter : Node3D
 {
@@ -2809,8 +2837,6 @@ public partial class Godot3DInterpreter : Node3D
     public FileDialog fileDia;
     public Camera3D cam;
     public Godot.Vector3 camDir;
-
-
 
     public float Deg2Rad(float deg) => 3.14159265358979f * deg / 180.0f;
 
@@ -2827,12 +2853,11 @@ public partial class Godot3DInterpreter : Node3D
         turtle = GetNode<MeshInstance3D>("Turtle");
         fileDia = GetNode<FileDialog>("FileDialog");
         cam = GetNode<Camera3D>("Camera3D");
-        
+
         //GD.Print("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
-        PrintLabel( "\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
+        PrintLabel("\nWELCOME TO GODOT3DINTERPRETER\nPlease type a command in the Commander\nFor example type PRINT \"[HELLO WORLD]\nmove camera3d with ASWD and arrowkeys\n");
         line.GrabFocus();
     }
-
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
@@ -2853,19 +2878,18 @@ public partial class Godot3DInterpreter : Node3D
             stoprecursion = false;
             endrecursion = false;
             parsestop = false;
- 
+
             var parser = new G3IParser(new G3IScanner(NewTextInput), this);
             try
             {
-                
-                var t = new Thread(delegate () { parser.ParseG3IProgram(); });
+                var t = new Thread(delegate ()
+                { parser.ParseG3IProgram(); });
                 t.Start();
                 //parser.ParseG3IProgram();
-  
             }
             catch (Exception e)
             {
-                GD.Print("exception caught: "+ e.ToString());
+                GD.Print("exception caught: " + e.ToString());
             }
             line.GrabFocus();
             OldTextInput = NewTextInput;
@@ -2878,94 +2902,95 @@ public partial class Godot3DInterpreter : Node3D
         {
             if (@event is InputEventKey eventKey)
             {
-                if (eventKey.Pressed) pressedkey = eventKey.Keycode.ToString();
-                if (eventKey.Pressed && eventKey.Keycode == Key.Escape) GetTree().Quit();
+                if (eventKey.Pressed)
+                    pressedkey = eventKey.Keycode.ToString();
+                if (eventKey.Pressed && eventKey.Keycode == Key.Escape)
+                    GetTree().Quit();
             }
         }
     }
+
     public override void _Input(InputEvent Inp)
     {
-            if (Godot.Input.IsKeyPressed(Key.W))
-            {
-                camDir -= Transform.Basis.Z;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsKeyPressed(Key.S))
-            {
-                camDir += Transform.Basis.Z;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsKeyPressed(Key.A))
-            {
-                camDir -= Transform.Basis.X;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsKeyPressed(Key.D))
-            {
-                camDir += Transform.Basis.X;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsKeyPressed(Key.Up))
-            {
-                camDir += Transform.Basis.Y;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsKeyPressed(Key.Down))
-            {
-                camDir -= Transform.Basis.Y;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsKeyPressed(Key.Left))
-            {
-                camDir -= Transform.Basis.Y;
-                camDir = camDir.Normalized();
-                cam.RotateY(Deg2Rad(3));
-            }
-            if (Godot.Input.IsKeyPressed(Key.Right))
-            {
-                camDir -= Transform.Basis.Y;
-                camDir = camDir.Normalized();
-                cam.RotateY(-Deg2Rad(3));
-            }
-            /*
-            if (Godot.Input.IsMouseButtonPressed(MouseButton.Right))
-            {
-                camDir -= Transform.Basis.Y;
-                camDir = camDir.Normalized();
-                cam.RotateY(Deg2Rad(3));
-            }
-            if (Godot.Input.IsMouseButtonPressed(MouseButton.Left))
-            {
-                camDir -= Transform.Basis.Y;
-                camDir = camDir.Normalized();
-                cam.RotateY(Deg2Rad(3));
-            }
-            if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelUp))
-            {
-                camDir -= Transform.Basis.Z;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelDown))
-            {
-                camDir += Transform.Basis.Z;
-                camDir = camDir.Normalized();
-                cam.Translate(camDir);
-            }
-            */
-        
+        if (Godot.Input.IsKeyPressed(Key.W))
+        {
+            camDir -= Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.S))
+        {
+            camDir += Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.A))
+        {
+            camDir -= Transform.Basis.X;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.D))
+        {
+            camDir += Transform.Basis.X;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.Up))
+        {
+            camDir += Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.Down))
+        {
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsKeyPressed(Key.Left))
+        {
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(Deg2Rad(3));
+        }
+        if (Godot.Input.IsKeyPressed(Key.Right))
+        {
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(-Deg2Rad(3));
+        }
+        /*
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.Right))
+        {
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(Deg2Rad(3));
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.Left))
+        {
+            camDir -= Transform.Basis.Y;
+            camDir = camDir.Normalized();
+            cam.RotateY(Deg2Rad(3));
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelUp))
+        {
+            camDir -= Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        if (Godot.Input.IsMouseButtonPressed(MouseButton.WheelDown))
+        {
+            camDir += Transform.Basis.Z;
+            camDir = camDir.Normalized();
+            cam.Translate(camDir);
+        }
+        */
     }
 
     //public override void _PhysicsProcess(double delta)
     //{
     //}
-
 
     public void TurtleInit()
     {
@@ -2984,7 +3009,6 @@ public partial class Godot3DInterpreter : Node3D
         //Turtle.Translate(new Godot.Vector3(TurtlePos.X, TurtlePos.Y, TurtlePos.Z));
         theta = 0;
         phi = 90;
- 
     }
 
     public void DrawLine3DThin(Godot.Vector3 begin, Godot.Vector3 end, Godot.Color c)
@@ -2999,7 +3023,7 @@ public partial class Godot3DInterpreter : Node3D
             VertexColorUseAsAlbedo = true,
             Transparency = BaseMaterial3D.TransparencyEnum.Alpha
         };
-        mi.MaterialOverride= mat;
+        mi.MaterialOverride = mat;
         mi.RotationEditMode = Node3D.RotationEditModeEnum.Quaternion;
         me.SurfaceBegin(Mesh.PrimitiveType.Lines);
         me.SurfaceSetColor(c);
@@ -3025,7 +3049,7 @@ public partial class Godot3DInterpreter : Node3D
             //Transparency = BaseMaterial3D.TransparencyEnum.Alpha,
             //Metallic = 0.85f,
             //Roughness = 0.4f
-    };
+        };
 
         //mat.
         //mat.
@@ -3041,8 +3065,7 @@ public partial class Godot3DInterpreter : Node3D
         parentN.AddChild(mi);
     }
 
-
-    public void DrawSphere(Godot.Vector3 pos, float scale , Godot.Color c)
+    public void DrawSphere(Godot.Vector3 pos, float scale, Godot.Color c)
     {
         MeshInstance3D mi = new()
         {
@@ -3063,7 +3086,6 @@ public partial class Godot3DInterpreter : Node3D
         mi.Translate(pos);
         parentN.AddChild(mi);
     }
-
 
     public void DrawBox(Godot.Vector3 pos, float scale, Godot.Color c)
     {
@@ -3121,7 +3143,6 @@ public partial class Godot3DInterpreter : Node3D
         parentN.AddChild(mi);
     }
 
-
     public void Remove3D()
     {
         var Childs = parentN.GetChildren();
@@ -3131,12 +3152,11 @@ public partial class Godot3DInterpreter : Node3D
         }
     }
 
-
     public void _on_line_edit_text_submitted(string newtext)
     {
         input = newtext;
         //GD.Print(input);
-        PrintLabel(input+"\n");
+        PrintLabel(input + "\n");
 
         NewInput = true;
         NewTextInput = input;
@@ -3147,7 +3167,7 @@ public partial class Godot3DInterpreter : Node3D
     public void _on_file_dialog_file_selected(string file)
     {
         //GD.Print("selected files is: " + file);
-        PrintLabel("selected files is: " + file+ "\n");
+        PrintLabel("selected files is: " + file + "\n");
         SelectedFile = file;
         fileDia.Visible = false;
 
@@ -3168,7 +3188,7 @@ public partial class Godot3DInterpreter : Node3D
             //NewTextInput = OldTextInput;
             //NewInput = true;
             //PrintLabel(NewTextInput);
-            line.Text = OldTextInput;    
+            line.Text = OldTextInput;
         }
     }
 
