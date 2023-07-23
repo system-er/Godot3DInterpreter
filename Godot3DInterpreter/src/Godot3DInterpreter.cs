@@ -1481,7 +1481,7 @@ public class G3IParser
             //	Match(nto);
             //	return ParseExpr();
             //}
-            if (nto == ((int)Tokens.NUMBER) || nto == ((int)Tokens.COLON))
+            if (nto is ((int)Tokens.NUMBER) or ((int)Tokens.COLON))
             {
                 return numberor();
             }
@@ -2259,11 +2259,7 @@ public class G3IParser
                     Match(nextToken);
 
                     var nextt = scanner.NextToken();
-                    while (nextt == ((int)Tokens.COMMA) 
-                        || nextt == ((int)Tokens.COLON) 
-                        || nextt == ((int)Tokens.STRING)
-                        || nextt == ((int)Tokens.ITEM)
-                        || nextt == ((int)Tokens.GETKEY)) //|| nextt == (int)Tokens.ITEM
+                    while (nextt is ((int)Tokens.COMMA) or ((int)Tokens.COLON) or ((int)Tokens.STRING) or ((int)Tokens.ITEM) or ((int)Tokens.GETKEY)) //|| nextt == (int)Tokens.ITEM
                     {
                         if (nextt == (int)Tokens.COMMA)
                         {
@@ -2571,7 +2567,7 @@ public class G3IParser
                         
                         int argumentnr = 0;
                         nextt = (int)scanner.NextToken();
-                        while ((nextt == (int)Tokens.NUMBER)  || (nextt == (int)Tokens.COLON) || (nextt == (int)Tokens.STRING))
+                        while (nextt is ((int)Tokens.NUMBER) or ((int)Tokens.COLON) or ((int)Tokens.STRING))
                         {
                             if (nextt == (int)Tokens.NUMBER)
                             {
