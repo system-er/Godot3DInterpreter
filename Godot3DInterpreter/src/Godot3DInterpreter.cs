@@ -29,15 +29,9 @@ public class Stack<T>
         return ret;
     }
 
-    public override string ToString()
-    {
-        return $"Num of elements: {data.Count}. {data}";
-    }
+    public override string ToString() => $"Num of elements: {data.Count}. {data}";
 
-    public int Count()
-    { 
-        return data.Count; 
-    }
+    public int Count() => data.Count;
 
 }
 
@@ -57,10 +51,7 @@ class ActivationRecord
         idx = i;
     }
 
-    public bool ExistItem(string key)
-    {
-        return members.ContainsKey(key);
-    }
+    public bool ExistItem(string key) => members.ContainsKey(key);
     public void SetItem(string key, float value)
     {
         if (members.ContainsKey(key))
@@ -91,16 +82,11 @@ class ActivationRecord
         }
     }
 
-    public string GetItem(string key)
-    {
+    public string GetItem(string key) =>
         //GD.Print("Getitem: " + key );
-        return members[key];
-    }
+        members[key];
 
-    public int Count()
-    {
-        return (int)members.Count;
-    }
+    public int Count() => (int)members.Count;
 
     public string StrDump()
     { 
@@ -951,10 +937,7 @@ public class G3IParser
         return idx;
     }
 
-    public float Deg2Rad(float deg)
-    {
-        return 3.14159265358979f * deg / 180.0f;
-    }
+    public float Deg2Rad(float deg) => 3.14159265358979f * deg / 180.0f;
 
     public float ReturnASCIISum(string StringX)
     {
@@ -988,11 +971,9 @@ public class G3IParser
     }
 
 
-    public void TurtleBack(float dist)
-    {
+    public void TurtleBack(float dist) =>
         //if (TestingParser) GD.Print("Parser: "+"TurtleBack");
         TurtleForward(-dist);
-    }
 
     public void TurtleLeft(float angle)
     {
@@ -1035,17 +1016,13 @@ public class G3IParser
         IntClass.turtle.RotateX(-Deg2Rad(angle));
     }
 
-    public void Sphere(float s)
-    {
+    public void Sphere(float s) =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
         IntClass.DrawSphere(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
-    }
 
-    public void Box(float s)
-    {
+    public void Box(float s) =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
         IntClass.DrawBox(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
-    }
 
 
     public void TurtleHome()
@@ -1072,37 +1049,25 @@ public class G3IParser
         IntClass.turtle.Rotation = Godot.Vector3.Zero;
     }
 
-    public void TurtleClean()
-    {
+    public void TurtleClean() =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleClean");
         IntClass.Remove3D();
-        
-    }
 
-    public void TurtlePenUp()
-    {
+    public void TurtlePenUp() =>
         //if (TestingParser) GD.Print("Parser: " + "TurtlePenUp");
-        penup = true; 
-    }
+        penup = true;
 
-    public void TurtlePenDown()
-    {
+    public void TurtlePenDown() =>
         //if (TestingParser) GD.Print("Parser: " + "TurtlePenDown");
         penup = false;
-    }
 
-    public void TurtleSetPenColor(float c1, float c2, float c3)
-    {
+    public void TurtleSetPenColor(float c1, float c2, float c3) =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleSetPenColor");
-        pencolor = new Godot.Color(c1/255, c2/255, c3/255);
-    }
+        pencolor = new Godot.Color(c1 / 255, c2 / 255, c3 / 255);
 
-    public void LoadProgram()
-    {
+    public void LoadProgram() =>
         //if (TestingParser) GD.Print("Parser: " + "LoadProgram");
         IntClass.fileDia.Visible = true;
-
-    }
 
 
     public float mathcalc()
@@ -1250,22 +1215,14 @@ public class G3IParser
         }
         ErrorMessage("Parser: setvarproc: no procedure found to set");
     }
-    public void setvar(string item, float val)
-    //public void setvar(string s, string val)
-    { 
+    public void setvar(string item, float val) =>
         //AR.SetItem(s, val.ToString());
-        AR.SetItem(item, val);
-        //GD.Print( AR.StrDump());
-    }
+        AR.SetItem(item, val);//GD.Print( AR.StrDump());
 
-    public void setvarstring(string item, string str)
-    //public void setvar(string s, string val)
-    {
+    public void setvarstring(string item, string str) =>
         //AR.SetItem(s, val.ToString());
         //GD.Print("item: "+item+"  var: " + str);
-        AR.SetItemString(item, str);
-        //GD.Print( AR.StrDump());
-    }
+        AR.SetItemString(item, str);//GD.Print( AR.StrDump());
 
     public string getstrorvalue()
     {
@@ -2839,10 +2796,7 @@ public class G3IParser
         }
         return true;
     }
-    private void ErrorMessage(string errorMessage)
-    {
-        GD.Print("Parser: " + "ERROR: " +errorMessage);
-    }
+    private void ErrorMessage(string errorMessage) => GD.Print("Parser: " + "ERROR: " + errorMessage);
 }
 
 
@@ -2862,10 +2816,7 @@ public partial class Godot3DInterpreter : Node3D
 
 
 
-    public float Deg2Rad(float deg)
-    {
-        return 3.14159265358979f * deg / 180.0f;
-    }
+    public float Deg2Rad(float deg) => 3.14159265358979f * deg / 180.0f;
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
@@ -3225,15 +3176,9 @@ public partial class Godot3DInterpreter : Node3D
         }
     }
 
-    public void setbackgroundcolor(Godot.Color color)
-    {
-        RenderingServer.SetDefaultClearColor(color);
-    }
+    public void setbackgroundcolor(Godot.Color color) => RenderingServer.SetDefaultClearColor(color);
 
-    public void PrintLabel(string s)
-    {
-        outputlabel.Text = outputlabel.Text + s;
-    }
+    public void PrintLabel(string s) => outputlabel.Text = outputlabel.Text + s;
 
     public void Print3D(string s, int fsize)
     {
