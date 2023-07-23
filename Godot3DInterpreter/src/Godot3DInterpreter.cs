@@ -3174,7 +3174,7 @@ public partial class Godot3DInterpreter : Node3D
 
     public void setbackgroundcolor(Godot.Color color) => RenderingServer.SetDefaultClearColor(color);
 
-    public void PrintLabel(string s) => outputlabel.Text = outputlabel.Text + s;
+    public void PrintLabel(string s) => outputlabel.Text += s;
 
     public void Print3D(string s, int fsize)
     {
