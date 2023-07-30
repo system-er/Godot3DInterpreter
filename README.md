@@ -185,7 +185,7 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT     
 - new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...     
 - new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD
-- changed threadcalls to CallDeferred, now works with 4.1 up            
+- for godotversion 4.1 up changed threadcalls to CallDeferred            
 
 
 
