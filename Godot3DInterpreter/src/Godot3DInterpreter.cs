@@ -155,6 +155,7 @@ internal class Globals
     public static int pendensity = 255;
     public static bool turtlevisible = true;
     public static string SelectedFile;
+    public static Godot.Vector3 globalcampos;
 
     public static readonly string[] Token = {
         "NONE",
@@ -1001,10 +1002,13 @@ public class G3IParser
         TurtlePos.Z += z;
         //IntClass.Turtle.Translate(new Godot.Vector3(x/2, y/2, z/2));
         //IntClass.Turtle.Translate(new Godot.Vector3(x, y, z));
-        IntClass.turtle.Position = TurtlePos;
+        //IntClass.turtle.Position = TurtlePos;
+        IntClass.CallDeferred("SetTurtlePos", TurtlePos);
         //TurtleMoved = true;
-        if (!penup)
-            IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
+        if (!penup) 
+            //IntClass.DrawLine3D(TurtlePosOld, TurtlePos, pencolor, thickness);
+            IntClass.CallDeferred("DrawLine3D", TurtlePosOld, TurtlePos, pencolor, thickness);
+
     }
 
     public void TurtleBack(float dist) =>
@@ -1020,7 +1024,8 @@ public class G3IParser
         if (phi > 360)
             phi -= 360;
 
-        IntClass.turtle.RotateZ(Deg2Rad(angle));
+        //IntClass.turtle.RotateZ(Deg2Rad(angle));
+        IntClass.CallDeferred("RotateTurtleZ", Deg2Rad(angle));
     }
 
     public void TurtleRight(float angle)
@@ -1032,7 +1037,8 @@ public class G3IParser
         if (phi > 360)
             phi -= 360;
 
-        IntClass.turtle.RotateZ(-Deg2Rad(angle));
+        //IntClass.turtle.RotateZ(-Deg2Rad(angle));
+        IntClass.CallDeferred("RotateTurtleZ", -Deg2Rad(angle));
     }
 
     public void TurtleUp(float angle)
@@ -1044,7 +1050,8 @@ public class G3IParser
         if (theta > 360)
             theta -= 360;
 
-        IntClass.turtle.RotateX(Deg2Rad(angle));
+        //IntClass.turtle.RotateX(Deg2Rad(angle));
+        IntClass.CallDeferred("RotateTurtleX", Deg2Rad(angle));
     }
 
     public void TurtleDown(float angle)
@@ -1056,16 +1063,22 @@ public class G3IParser
         if (theta > 360)
             theta -= 360;
 
-        IntClass.turtle.RotateX(-Deg2Rad(angle));
+        //IntClass.turtle.RotateX(-Deg2Rad(angle));
+        IntClass.CallDeferred("RotateTurtleX", -Deg2Rad(angle));
     }
 
     public void Sphere(float s) =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
-        IntClass.DrawSphere(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+        //IntClass.DrawSphere(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+        IntClass.CallDeferred("DrawSphere", new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+    }
 
     public void Box(float s) =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleRight");
-        IntClass.DrawBox(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+        //IntClass.DrawBox(new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+        IntClass.CallDeferred("DrawBox", new Godot.Vector3(TurtlePos.X / s, TurtlePos.Y / s, TurtlePos.Z / s), s, pencolor);
+    }
+
 
     public void TurtleHome()
     {
@@ -1087,13 +1100,17 @@ public class G3IParser
         theta = 0;
         phi = 90;
 
-        IntClass.turtle.Position = TurtlePos;
-        IntClass.turtle.Rotation = Godot.Vector3.Zero;
+        //IntClass.turtle.Position = TurtlePos;
+        IntClass.CallDeferred("SetTurtlePos", TurtlePos);
+        //IntClass.turtle.Rotation = Godot.Vector3.Zero;
+        IntClass.CallDeferred("SetTurtleRot", Godot.Vector3.Zero);
     }
 
     public void TurtleClean() =>
         //if (TestingParser) GD.Print("Parser: " + "TurtleClean");
-        IntClass.Remove3D();
+        //IntClass.Remove3D();
+        IntClass.CallDeferred("Remove3D");
+    }
 
     public void TurtlePenUp() =>
         //if (TestingParser) GD.Print("Parser: " + "TurtlePenUp");
@@ -1109,7 +1126,10 @@ public class G3IParser
 
     public void LoadProgram() =>
         //if (TestingParser) GD.Print("Parser: " + "LoadProgram");
-        IntClass.fileDia.Visible = true;
+        //IntClass.fileDia.Visible = true;
+        IntClass.CallDeferred("FileDiaVisible", true);
+    }
+
 
     public float mathcalc()
     {
@@ -1923,7 +1943,9 @@ public class G3IParser
                     n = ParseExpr();
                     n2 = ParseExpr();
                     n3 = ParseExpr();
-                    IntClass.setbackgroundcolor(Godot.Color.Color8((byte)n, (byte)n2, (byte)n3));
+                    //IntClass.setbackgroundcolor(Godot.Color.Color8((byte)n, (byte)n2, (byte)n3));
+                    IntClass.CallDeferred("setbackgroundcolor", Godot.Color.Color8((byte)n, (byte)n2, (byte)n3));
+
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
 
@@ -1934,11 +1956,15 @@ public class G3IParser
                     n2 = ParseExpr();
                     n3 = ParseExpr();
 
-                    Godot.Vector3 campos = IntClass.cam.Position;
+                    Godot.Vector3 campos;
+                    //Godot.Vector3 campos = IntClass.cam.Position;
+                    //Godot.Vector3 campos = (Godot.Vector3)IntClass.CallDeferred("CamGetPos");
+                    //IntClass.CallDeferred("CamGetPos");
                     campos.X = n;
                     campos.Y = n2;
                     campos.Z = n3;
-                    IntClass.cam.Translate(campos);
+                    //IntClass.cam.Translate(campos);
+                    IntClass.CallDeferred("CamTranslate", campos);
                     //if (TestingParser) GD.Print("Parser: " + "found sentence SETPENCOLOR+N1+N2+N3");
                     break;
 
@@ -1955,13 +1981,17 @@ public class G3IParser
                         ErrorMessage("Parser: " + "PRINTOUT: wrong parameter");
                     if (scanstring == "ALL")
                     {
-                        IntClass.PrintLabel(getallprocbody());
-                        IntClass.PrintLabel("\n");
+                        //IntClass.PrintLabel(getallprocbody());
+                        IntClass.CallDeferred("PrintLabel", getallprocbody());
+                        //IntClass.PrintLabel("\n");
+                        IntClass.CallDeferred("PrintLabel", "\n");
                     }
                     else
                     {
-                        IntClass.PrintLabel(getprocbody(scanstring));
-                        IntClass.PrintLabel("\n");
+                        //IntClass.PrintLabel(getprocbody(scanstring));
+                        IntClass.CallDeferred("PrintLabel", getprocbody(scanstring));
+                        //IntClass.PrintLabel("\n");
+                        IntClass.CallDeferred("PrintLabel", "\n");
                     }
                     break;
 
@@ -1979,12 +2009,14 @@ public class G3IParser
                     if (scanstring == "ALL")
                     {
                         ListProcedures.Clear();
-                        IntClass.PrintLabel("Parser: Erased all procedures.");
+                        //IntClass.PrintLabel("Parser: Erased all procedures.");
+                        IntClass.CallDeferred("PrintLabel", "Parser: Erased all procedures.");
                     }
                     else
                     {
                         removeproc(scanstring);
-                        IntClass.PrintLabel("Parser: Erased procedure " + scanstring);
+                        //IntClass.PrintLabel("Parser: Erased procedure " + scanstring);
+                        IntClass.CallDeferred("PrintLabel", "Parser: Erased procedure " + scanstring);
                     }
                     break;
 
@@ -2007,7 +2039,8 @@ public class G3IParser
                     else
                         ErrorMessage("Parser: " + "MESH: wrong parameter");
                     n = ParseExpr();
-                    IntClass.DrawMesh(new Godot.Vector3(TurtlePos.X / n, TurtlePos.Y / n, TurtlePos.Z / n), n, pencolor, scanstring);
+                    //IntClass.DrawMesh(new Godot.Vector3(TurtlePos.X / n, TurtlePos.Y / n, TurtlePos.Z / n), n, pencolor, scanstring);
+                    IntClass.CallDeferred("DrawMesh", new Godot.Vector3(TurtlePos.X / n, TurtlePos.Y / n, TurtlePos.Z / n), n, pencolor, scanstring);
                     break;
 
                 case (int)Tokens.PRINTTD:
@@ -2024,7 +2057,9 @@ public class G3IParser
                         ErrorMessage("Parser: " + "PRINT3D: wrong parameter");
                     n = ParseExpr();
                     //GD.Print("PRINT3D: string=" + scanstring + " number=" + n.ToString());
-                    IntClass.Print3D(scanstring, (int)n);
+                    //IntClass.Print3D(scanstring, (int)n);
+                    //IntClass.CallDeferred("Print3D", scanstring, (int)n);
+                    IntClass.CallDeferred("Print3D", scanstring, (int)n, TurtlePos, theta, phi, pencolor);
                     break;
 
                 case (int)Tokens.LOAD:
@@ -2260,12 +2295,19 @@ public class G3IParser
                 case (int)Tokens.HELP:
                     Match(nextToken);
                     //if (!Match((int)Tokens.STRING)) break;
-                    IntClass.PrintLabel("HELP: commander-commands:");
-                    IntClass.PrintLabel("HELP: LOAD //load an interpreterprogram *.g3i");
-                    IntClass.PrintLabel("HELP: PRINTOUT string //prints procedure, with \"ALL prints all");
-                    IntClass.PrintLabel("HELP: ERASE string //erases procedure, with \"ALL erases all");
-                    IntClass.PrintLabel("HELP: HELP //show this helpmessages");
-                    IntClass.PrintLabel("HELP: QUIT //quit program");
+                    //IntClass.PrintLabel("HELP: commander-commands:");
+                    //IntClass.PrintLabel("HELP: LOAD //load an interpreterprogram *.g3i");
+                    //IntClass.PrintLabel("HELP: PRINTOUT string //prints procedure, with \"ALL prints all");
+                    //IntClass.PrintLabel("HELP: ERASE string //erases procedure, with \"ALL erases all");
+                    //IntClass.PrintLabel("HELP: HELP //show this helpmessages");
+                    //IntClass.PrintLabel("HELP: QUIT //quit program");
+
+                    IntClass.CallDeferred("PrintLabel", "HELP: commander-commands:");
+                    IntClass.CallDeferred("PrintLabel", "HELP: LOAD //load an interpreterprogram *.g3i");
+                    IntClass.CallDeferred("PrintLabel", "HELP: PRINTOUT string //prints procedure, with \"ALL prints all");
+                    IntClass.CallDeferred("PrintLabel", "HELP: ERASE string //erases procedure, with \"ALL erases all");
+                    IntClass.CallDeferred("PrintLabel", "HELP: HELP //show this helpmessages");
+                    IntClass.CallDeferred("PrintLabel", "HELP: QUIT //quit program");
                     //IntClass.PrintLabel("HELP: Godot3Dinterpretercommands");
 
                     //if (TestingParser) GD.Print("Parser: " + "found sentence LOAD");
@@ -2296,7 +2338,8 @@ public class G3IParser
                             float erg = numberor();
                             //if (erg == floor(erg))
                             //{
-                            IntClass.PrintLabel(erg.ToString());
+                            //IntClass.PrintLabel(erg.ToString());
+                            IntClass.CallDeferred("PrintLabel", erg.ToString());
                             //}
                             //else
                             //{
@@ -2310,13 +2353,16 @@ public class G3IParser
                             //IntClass.PrintLabel("PRINT COLON: " + scanner.scanBuffer);
                             string stringvar = getvarstring(scanner.scanBuffer);
 
-                            IntClass.PrintLabel(stringvar);
+                            //IntClass.PrintLabel(stringvar);
+                            IntClass.CallDeferred("PrintLabel", stringvar);
+
                         }
                         else if (scanner.NextToken() == (int)Tokens.STRING)
                         {
                             Match((int)Tokens.STRING);
                             //GD.Print(scanner.scanBuffer);
-                            IntClass.PrintLabel(scanner.scanBuffer);
+                            //IntClass.PrintLabel(scanner.scanBuffer);
+                            IntClass.CallDeferred("PrintLabel", scanner.scanBuffer);
                         }
                         else if (scanner.NextToken() == (int)Tokens.ITEM)
                         {
@@ -2325,23 +2371,26 @@ public class G3IParser
                             Match((int)Tokens.COLON);
                             string itemvar = getvarstring(scanner.scanBuffer);
                             string[] itemsubs = itemvar.Split(' ');
-                            if (itemsubs.Length - 1 < (int)itemtmp)
-                                ErrorMessage("Parser: " + "PRINT ITEM: too few items in " + itemvar);
+                            if (itemsubs.Length-1 < (int)itemtmp) ErrorMessage("Parser: " + "PRINT ITEM: too few items in "+itemvar);
                             else
-                                IntClass.PrintLabel(itemsubs[(int)itemtmp]);
+                                //IntClass.PrintLabel(itemsubs[(int)itemtmp]);
+                                IntClass.CallDeferred("PrintLabel", itemsubs[(int)itemtmp]);
                         }
                         else if (scanner.NextToken() == (int)Tokens.GETKEY)
                         {
                             Match((int)Tokens.GETKEY);
                             //GD.Print("pressed key="+pressedkey+ " interpreterrunning="+interpreterrunning.ToString());
                             string tmppressedkey = getpressedkey();
-                            if (tmppressedkey != "")
-                                IntClass.PrintLabel(tmppressedkey);
+                            if(tmppressedkey != "")
+                                //IntClass.PrintLabel(tmppressedkey);
+                                IntClass.CallDeferred("PrintLabel",tmppressedkey) ;
+
                         }
                         else
                             ErrorMessage("Parser: " + "PRINT: wrong parameter");
                         nextt = scanner.NextToken();
-                        IntClass.PrintLabel("\n");
+                        //IntClass.PrintLabel("\n");
+                        IntClass.CallDeferred("PrintLabel", "\n");
                     }
 
                     //GD.Print("\n");
@@ -2844,7 +2893,9 @@ public partial class Godot3DInterpreter : Node3D
     public override void _Ready()
     {
         GD.Print("_Ready: started");
+
         TurtleInit();
+
         winoutput = GetNode<Window>("Output");
         win1 = GetNode<Window>("Window");
         outputlabel = winoutput.GetNode<RichTextLabel>("RichTextLabel");
@@ -3196,16 +3247,56 @@ public partial class Godot3DInterpreter : Node3D
 
     public void PrintLabel(string s) => outputlabel.Text += s;
 
-    public void Print3D(string s, int fsize)
+    public void Print3D(string s, int fsize, Godot.Vector3 tpos, float t, float p, Godot.Color penc)
     {
-        Label3D lab = new();
+        Label3D lab = new Label3D();
         lab.Text = s;
-        lab.Position = TurtlePos;
-        lab.RotateX(Deg2Rad(theta));
-        lab.RotateZ(Deg2Rad(phi));
+        //lab.Position = TurtlePos;
+        lab.Position = tpos;
+        //lab.RotateX(Deg2Rad(theta));
+        //lab.RotateZ(Deg2Rad(phi));
+        lab.RotateX(Deg2Rad(t));
+        lab.RotateZ(Deg2Rad(p));
         lab.FontSize = fsize;
-        lab.Modulate = pencolor;
+        //lab.Modulate = pencolor;
+        lab.Modulate = penc;
         lab.Show();
         parentN.AddChild(lab);
     }
+
+    public void SetTurtlePos(Godot.Vector3 p)
+    {
+        turtle.Position = p;
+    }
+
+    public void SetTurtleRot(Godot.Vector3 r)
+    {
+        turtle.Rotation = r;
+    }
+
+    public void RotateTurtleZ(float d)
+    {
+        turtle.RotateZ(d);
+    }
+
+    public void RotateTurtleX(float d)
+    {
+        turtle.RotateX(d);
+    }
+
+    public void FileDiaVisible(bool v)
+    {
+        fileDia.Visible = v;
+    }
+
+    public void CamTranslate(Godot.Vector3 v)
+    {
+        cam.Translate(v);
+    }
+
+    public void CamGetPos()
+    {
+        globalcampos = cam.Position;
+    }
+
 }

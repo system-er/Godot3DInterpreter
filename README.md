@@ -1,8 +1,7 @@
-# Godot3DInterpreter - new version 0.codebreaker         
+# Godot3DInterpreter - new version 0.CallDeferred     
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot. but instead of good old Logo the turtle (the graphiccursor) now hovers in 3D-space, the cyberspace.    
-written in C# with Godot 4.0.2 mono.
-im still trying with version 4.1 mono, but still errors...    
+written in C# with Godot 4.1, also tested with 4.2devsnapshot              
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
@@ -185,7 +184,8 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - added a window for commanderoutput, repeat last command with arrow-up in commander and a semanticanalyser at start checking undeclared variables      
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT     
 - new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...     
-- new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD          
+- new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD
+- for godotversion 4.1 up changed threadcalls to CallDeferred            
 
 
 
