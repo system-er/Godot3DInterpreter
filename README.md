@@ -54,7 +54,7 @@ If you want interpreterprograms, type LOAD and you can load one of the example-p
 
   
 # Commands commander:   
-arrow-up pressed in commander repeats last command    
+arrow-up pressed in commander repeats last commands    
 LOAD - If you want interpreterprograms, type LOAD and you can load one of the example-programs in the interpreterprograms-directory. You can write with your editor others and load them with load.   
 PRINTOUT string - prints a procedure or with "ALL it prints all procedures.    
 ERASE string - erases a procedure or with "ALL it erases all procedures.    
@@ -185,7 +185,8 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - WHILE command that works til expression greater 0, GETKEY command and Lists, commands ITEM, SETITEM, COUNT     
 - new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...     
 - new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD
-- for godotversion 4.1 up changed threadcalls to CallDeferred            
+- for godotversion 4.1 up changed threadcalls to CallDeferred
+- the commander knows more old commands - get them back with UP arroy key            
 
 
 
