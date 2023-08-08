@@ -159,7 +159,9 @@ class Globals
     public static bool NewInput = false;
     public static bool InputRequest = false;
     public static string NewTextInput = "";
-    public static string OldTextInput = "";
+    public static string[] OldTextInput = new string[42];
+    public static int OldTextInputNr = 0;
+    public static int BackupOldTextInputNr = 0;
     public static string inprocedure = "";
 
     public static int anglex, angley;
@@ -215,6 +217,7 @@ class Globals
         "COUNT",
         "SETITEM",
         "PRINTTD",
+        "GETFOCUS",
         //---
         "NUMBER",
         "STRING",
@@ -278,7 +281,8 @@ class Globals
         "ITEM",
         "COUNT",
         "SETITEM",
-        "PRINTTD"
+        "PRINTTD",
+        "GETFOCUS"
     };
     public enum Tokens : int
     {
@@ -322,27 +326,28 @@ class Globals
         COUNT=37,
         SETITEM=38,
         PRINTTD=39,
+        GETFOCUS=40,
         //from here not reserved
-        NUMBER = 40, 
-        STRING = 41,
-        COMMENT = 42,
-        LBRACKET = 43,
-        RBRACKET = 44,
-        LPARENTHESIS = 45,
-        RPARENTHESIS = 46,
-        LBRACE=47,
-        RBRACE=48,
-        PLUS=49,
-        HYPHEN=50,
-        ASTERISK=51,
-        SLASH=52,
-        EQUALS=53,
-        LESS=54,
-        GREATER=55,
-        COMMA=56,
-        COLON=57,
-        NOTEQUAL=58,
-        EOF =59
+        NUMBER = 41, 
+        STRING = 42,
+        COMMENT = 43,
+        LBRACKET = 44,
+        RBRACKET = 45,
+        LPARENTHESIS = 46,
+        RPARENTHESIS = 47,
+        LBRACE=48,
+        RBRACE=49,
+        PLUS=50,
+        HYPHEN=51,
+        ASTERISK=52,
+        SLASH=53,
+        EQUALS=54,
+        LESS=55,
+        GREATER=56,
+        COMMA=57,
+        COLON=58,
+        NOTEQUAL=59,
+        EOF =60
     }
     public enum TokensReserved : int
     {
@@ -384,7 +389,8 @@ class Globals
         ITEM = 36,
         COUNT = 37,
         SETITEM = 38,
-        PRINTTD = 39
+        PRINTTD = 39,
+        GETFOCUS = 40
     }
 
 }
@@ -1629,6 +1635,7 @@ public class G3IParser
                 case (int)Tokens.COUNT:
                 case (int)Tokens.SETITEM:
                 case (int)Tokens.PRINTTD:
+                case (int)Tokens.GETFOCUS:
                     ParseG3ISentence();
                     break;
 
@@ -2063,6 +2070,10 @@ public class G3IParser
                     IntClass.CallDeferred("Print3D", scanstring, (int)n, TurtlePos, theta, phi, pencolor);
                     break;
 
+                case (int)Tokens.GETFOCUS:
+                    Match(nextToken);
+                    IntClass.CallDeferred("GrabTheFocus");
+                    break;
 
                 case (int)Tokens.LOAD:
                     Match(nextToken);
@@ -2963,7 +2974,10 @@ public partial class Godot3DInterpreter : Node3D
                 GD.Print("exception caught: "+ e.ToString());
             }
             line.GrabFocus();
-            OldTextInput = NewTextInput;
+            OldTextInput[OldTextInputNr] = NewTextInput;
+            OldTextInputNr++;
+            if (OldTextInputNr>15)OldTextInputNr= 0;
+            BackupOldTextInputNr = OldTextInputNr;
         }
     }
 
@@ -3237,6 +3251,7 @@ public partial class Godot3DInterpreter : Node3D
         NewTextInput = input;
         //NewTextInput = Input.ToUpper();
         line.Text = "";
+        OldTextInputNr = BackupOldTextInputNr;
     }
 
     public void _on_file_dialog_file_selected(string file)
@@ -3260,10 +3275,11 @@ public partial class Godot3DInterpreter : Node3D
     {
         if (Godot.Input.IsKeyPressed(Key.Up))
         {
+            OldTextInputNr--;
             //NewTextInput = OldTextInput;
             //NewInput = true;
             //PrintLabel(NewTextInput);
-            line.Text = OldTextInput;    
+            line.Text = OldTextInput[OldTextInputNr];    
         }
     }
 
@@ -3329,4 +3345,9 @@ public partial class Godot3DInterpreter : Node3D
         globalcampos = cam.Position;
     }
 
+    public void GrabTheFocus()
+    {
+   
+        
+    }
 }
