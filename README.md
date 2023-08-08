@@ -94,7 +94,8 @@ PRINTTD string size - print three dimensional, it uses Godot Label3D, for exampl
 ; xxx - a comment   
 "X - a string   
 "[xx xx] - a string with spaces, for example "[hello world], its a list of words   
-MAKE "variablename number/string - declare a variable, NO GLOBAL variables, get the value with :variablename, change with MAKE "varname = ... example:   
+MAKE "variablename number/string - declare a variable, NO GLOBAL variables, warning: you have to declare a variable, except a variable in procedureparameters    
+get the value with :variablename, change with MAKE "varname = ... example:   
 ```
    MAKE "X 7    
    PRINT :X   
