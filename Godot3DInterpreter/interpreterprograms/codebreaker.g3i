@@ -1,5 +1,6 @@
 ; codebreaker 
 
+
 TO "COL :C
     IF :C = 1
         PENCOLOR 255 0 0
@@ -101,10 +102,10 @@ TO "RESULT :L :Y :X
             MAKE "WIN = :WIN + 1
             IF :WIN = 4
                 PRINT "[You break the code! You win!]
-                WHILE 1 = 1 
-                [
-                    PRINT "[You break the code! You win!]
-                ]
+                ;WHILE 1 = 1 
+                ;[
+                ;    PRINT "[You break the code! You win!]
+                ;]
             ENDIF
         ENDIF
 
@@ -129,6 +130,17 @@ CAMERA 0 55 10
 MAKE "X 10
 
 ; paint the gameboard
+
+HOME
+PENUP
+FORWARD 90
+LEFT 90
+FORWARD 80
+RIGHT 180
+PENCOLOR 255 255 255
+PRINTTD "Codebreaker 2000
+
+HOME
 REPEAT 5
 [
     PENCOLOR 100 100 100
@@ -158,17 +170,7 @@ REPEAT 14
     MAKE "X = :X + 10
     LEFT 90
     PENDOWN
-]
-
-HOME
-PENUP
-FORWARD 90
-LEFT 90
-FORWARD 80
-RIGHT 180
-PENCOLOR 255 255 255
-PRINTTD "Codebreaker 2000
- 
+] 
 
 ; present colors for user
 HOME
@@ -178,9 +180,11 @@ LEFT 90
 FORWARD 90
 RIGHT 180
 FORWARD 30
+
 ; red
 PENCOLOR 255 0 0
 MESH "BOX 10
+
 
 ; Text3D
 RIGHT 90
@@ -262,7 +266,6 @@ FORWARD 12
 RIGHT 90
 
 FORWARD 15
-
 
 
 
