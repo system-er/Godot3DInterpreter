@@ -188,7 +188,7 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...     
 - new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD
 - for godotversion 4.1 up changed threadcalls to CallDeferred
-- the commander knows more old commands - get them back with UP arroy key            
+- the commander knows more old commands - get them back with UP arrow key            
 
 
 
