@@ -86,7 +86,7 @@ MESH meshnamestring number - draws a mesh (godot MeshInstance3D) with size n, ex
 PRINTTD string size - print three dimensional, it uses Godot Label3D, for example PRINTTD "Helloworld 1000    
    PRINTTD uses the color set with PENCOLOR and is printed at position and rotated like the turtle, if you rotate turte 45 - the text is 45 rotated    
    see example codebreaker.g3i     
-   
+GETFOCUS - get the focus to the mainwindow without mouseclick to it    
 
    
 # Commands interpreter "language": 
@@ -188,7 +188,7 @@ COUNT - get length of words in a list, example "X = COUNT :A
 - new Token NOTEQUAL <> , change command MAKE - variabledeclaration with MAKE "varname value, change with MAKE "varname = ...     
 - new example interpreterprogram codebreaker.g3i, see picture, new command PRINTTD
 - for godotversion 4.1 up changed threadcalls to CallDeferred
-- the commander knows more old commands - get them back with UP arrow key            
+- the commander knows more old commands - get them back with UP arrow key, and new command GETFOCUS to get focus back to mainwindow         
 
 
 
