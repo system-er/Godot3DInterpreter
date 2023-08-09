@@ -3347,7 +3347,6 @@ public partial class Godot3DInterpreter : Node3D
 
     public void GrabTheFocus()
     {
-   
-        
+        parentN.GetWindow().GrabFocus();
     }
 }
