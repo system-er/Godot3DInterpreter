@@ -1,7 +1,8 @@
 # Godot3DInterpreter - new version 0.CallDeferred     
 
 a lowlevel logo-like interpreter to produce 3D-graphics with Godot. but instead of good old Logo the turtle (the graphiccursor) now hovers in 3D-space, the cyberspace.    
-written in C# with Godot 4.1 .NET/mono                
+written in C# with Godot 4.1 .NET/mono        
+and tested with 4.2-stable-mono    
 
 example interpreterprogram procedure with PENSIZE 3:    
 ![Pic1](Godot3DInterpreter/pics/firstpic.JPG)
